@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %} Import {% endblock %}
+
+{% block content %}
+<div id="page-content" class="container-fluid">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h1>Import Scores</h1>
+                <form action="{% url 'import' %}" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="save btn btn-default">Save</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

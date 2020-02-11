@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Register / Login{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+{% endblock %}
+
+{% block content %}
+    <!-- Main Content -->
+    <div id="page-content" class="container-fluid">
+        <div class="container">
+            <div class="row register-padding">
+                <div class="col-4"></div>
+                <div class="col-4">
+                    <h1>Add a Game</h1>
+                    <div class="horizontal-separator"></div>
+                    <form action="{% url 'add_game' %}" method="POST">
+                        {% csrf_token %}
+                        {{ add_game_form.non_field_errors }}
+                        {% for field in add_game_form.visible_fields %}
+                            <div class="form-group">{{field.label_tag}}{{field}}
+                                <span class=“error”>{{field.errors}}</span>
+                            </div>
+                        {% endfor %}
+                        <button id="login-submit" type="submit" class="btn btn-primary" name="submit" value="login">Submit</button>
+                    </form>
+                </div>
+                <div class="col-4"></div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block footer %}
+{% endblock %}

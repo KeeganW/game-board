@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}{{player.user.first_name}} {{player.user.last_name}}{% endblock %}
+
+{% block css %}
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/player.css' %}">
+{% endblock %}
+
+{% block header_scripts %}
+    {% load static %}
+{% endblock %}
+
+{% block content %}
+    <div>
+        <nav class="navbar navbar-expand-md player-nav">
+            <div class="container justify-content-center player-nav-container">
+                <ul class="navbar-nav player-nav-ul">
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'player' in request.path and 'profile' in request.path %}active{% endif %}
+                                           {% if 'player' in request.path and 'statistics' not in request.path and 'trophies' not in request.path and 'groups' not in request.path %}active{% endif %}"
+                           href="{% url 'player.profile' player %}">Profile</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'player' in request.path and 'statistics' in request.path %}active{% endif %}" href="{% url 'player.statistics' player %}">Statistics</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'player' in request.path and 'trophies' in request.path %}active{% endif %}" href="{% url 'player.trophies' player %}">Trophies</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'player' in request.path and 'groups' in request.path %}active{% endif %}" href="{% url 'player.groups' player %}">Groups</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+    <div class="container">
+        {% block player_content %}
+        {% endblock %}
+    </div>
+{% endblock %}

@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% load static %}
+
+<!-- Main Content -->
+<div id="page-content" class="container-fluid">
+    <div class="container">
+        <div id="visible-holder" class="alert" role="alert" style="display: block; height: 50px">
+        </div>
+        <div id="success-msg" class="alert alert-success" role="alert" style="display: none">
+            <strong>Well done!</strong> This entry has been submitted.
+        </div>
+        <div id="fail-msg" class="alert alert-danger d-none" role="alert" style="display: none">
+            <strong>Oh snap!</strong> Something went wrong with this game submission.
+        </div>
+        <div class="row register-padding justify-content-center">
+            <div class="col-6">
+            <h1>Add a New Game Played</h1>
+            <div class="horizontal-separator"></div>
+                <form id="add-round-form" action="{% url 'add_round' %}" autocomplete="off" method="POST">
+                    {% csrf_token %}
+                    <div>
+                        <div class="form-group row">
+                            <label for="game" class="col-2 col-form-label text-left">{{ add_round_form.game.label }}</label>
+                            <div class="col-8 autocomplete" style="padding-right: 0px">
+                                {{ add_round_form.game }}
+                            </div>
+                            <div class="col-2">
+                                <a class="btn btn-outline-success" href="{% url 'add_game' %}">+</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="form-group row">
+                            <label for="date" class="col-sm-2 col-form-label text-left">{{ add_round_form.date.label }}</label>
+                            <div class="col-10">
+                                {{ add_round_form.date }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="form-group row">
+                            <label for="player" class="col-sm-2 col-form-label text-left">{{ add_round_form.player.label }}</label>
+                            <div class="col-10 autocomplete">
+                                {{ add_round_form.player }}
+                            </div>
+                        </div>
+                    </div>
+                    {{ add_round_form.players }}
+                    {{ add_round_form.winners }}
+
+                    <div class="winners-title">
+                        <div class="row justify-content-center">
+                            <p class="submit-space">Select winners by clicking their names below, and </p>
+                        </div>
+                        <div class="row justify-content-center">
+                            <button type="submit" class="btn btn-outline-success" name="submit" value="submit" style="margin-left: 10px; margin-right: 10px">Submit</button>
+{#                            <p class="submit-space"> or </p>#}
+                            <button type="submit" class="btn btn-outline-info" name="submit" value="clear" style="margin-left: 10px; margin-right: 10px">Submit and Clear</button>
+                        </div>
+                    </div>
+
+                    <div class="content" style="margin-top: 10px">
+                        <div class="row justify-content-center">
+                            <div class="col-6">
+                                <div class="list-group" id="players-list">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block css %}
+    <link href="{% static 'css/autocomplete.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        let all_games = [{% for item in all_games %}"{{ item.name }}",{% endfor %}];
+        let all_players = [{% for item in all_players %}"{{ item.user.username }}",{% endfor %}];
+        let idMap = [{% for item in all_players %}"{{ item.user.id }}",{% endfor %}];
+        var players = [];
+        var winners = [];
+
+        autocomplete(document.getElementById("id_game"), all_games);
+        autocomplete(document.getElementById("id_player"), all_players);
+    </script>
+    <script>
+        function addPlayer(name) {
+            let id = idMap[all_players.indexOf(name)];
+            let content =
+                '<div class="" id="li-' + id + '">' +
+                    '<input type="hidden" name="players_ids" value="' + id + '">' +
+                    '<input class="winners" type="checkbox" name="winners_ids" value="' + id + '" id="check-' + id + '"/>' +
+                    '<label class="list-group-item list-group-item-dark list-group-item-action" for="check-' + id + '">' +
+                        name +
+                        '<button class="close" aria-label="Close" name="close" value="' + id + '" onclick="removePlayer(' + id + ')">' +
+                            '<span aria-hidden="true">&times;</span>' +
+                        '</button>' +
+                    '</label>' +
+                '</div>';
+            $('#players-list').append(content);
+            players.push(name)
+        }
+
+        function removePlayer(id) {
+            $("#li-" + id).remove();
+        }
+
+        function resetForm() {
+            $("#id_players").val("");
+            $("#id_winners").val("");
+            $("#id_game").val("");
+            $("#players-list").empty();
+            players = [];
+            winners = [];
+        }
+
+        $("form button[type=submit]").click(function() {
+            $("button[type=submit]", $(this).parents("form")).removeAttr("clicked");
+            $(this).attr("clicked", "true");
+        });
+        $("#add-round-form").submit(function(event){
+            // Prevent default action of a normal submission
+            event.preventDefault();
+
+            // Get submit button value
+            let button_clicked = $("button[type=submit][clicked=true]").val();
+
+            // Get winners information
+            winners = $('.winners:checkbox:checked').map(function() {
+                return all_players[idMap.indexOf(this.value)];
+            }).get();
+
+            // Store missing values in the form
+            $("#id_players").val(players.toString());
+            $("#id_winners").val(winners.toString());
+
+            // Get components needed for ajax call
+            var post_url = $(this).attr("action");
+            var request_method = $(this).attr("method");
+            var form_data = $(this).serializeArray();
+
+            // Call using ajax request
+            $.ajax({
+                url : post_url,
+                type: request_method,
+                data : form_data,
+                dataType: "json",
+                success: function(response){
+                    $("#visible-holder").hide().delay(5000).show(0);
+                    $("#success-msg").show().delay(5000).hide(0);
+                    if (button_clicked === "clear") {
+                        // Clear the page of data entered
+                        resetForm()
+                    }
+                },
+                error: function (response) {
+                    $("#visible-holder").hide().delay(5000).show(0);
+                    $("#fail-msg").show().delay(5000).hide(0);
+                    console.log(response.responseJSON)
+                }
+            })
+        });
+    </script>
+{% endblock %}
+

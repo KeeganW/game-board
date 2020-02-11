@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block content %}
+    {% csrf_token %}
+    <div id="group-title">
+        <h1>{% block title %}{{ player.primary_group.name }}{% endblock %}</h1>
+    </div>
+
+    <div class="group-log row justify-content-center">
+        <table class="table table-striped table-dark table-hover">
+            <thead class="thead-dark">
+            <tr>
+                <th scope="col">Date</th>
+                <th scope="col">Game</th>
+                <th scope="col">Winners</th>
+                <th scope="col">Info</th>
+                {% if player in player.primary_group.admins.all %}<th scope="col">Delete</th>{% endif %}
+            </tr>
+            </thead>
+            <tbody>
+                {% for round in recent_games %}
+                    <tr>
+                        <td>{{ round.date }}</td>
+                        <td>{{ round.game.name }}</td>
+                        <td>{{ round.winners.all|join:", " }}</td>
+                        <td><button type="button" class="btn btn-outline-primary" onclick='gameInfo("{{ round.game.name }}", "{{ round.date }}", "{{ round.players.all|join:", " }}", "{{ round.winners.all|join:", " }}");'>Info</button></td>
+                        {% if player in player.primary_group.admins.all %}<td><button type="button" class="btn btn-outline-danger" onclick='deleteGame({{ round.id }});'>X</button></td>{% endif %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+
+{% block modal_placeholder %}
+    <div class="modal modal-dark" id="info" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true" style="z-index: 9999;" >
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div id="modal-content-info" class="modal-content">
+
+            </div>
+        </div>
+    </div>
+    <div class="modal modal-dark" id="delete" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true" style="z-index: 9999;" >
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div id="modal-content-delete" class="modal-content">
+
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        function gameInfo(gameName, date, players, winners) {
+            let modal = $("#modal-content-info");
+            let content = '' +
+                '<div class="modal-header">\n' +
+                '    <h5 class="modal-title" id="exampleModalCenterTitle">' + gameName + '</h5>\n' +
+                '    <button type="button" class="close" data-dismiss="modal" aria-label="Close">\n' +
+                '        <span aria-hidden="true">&times;</span>\n' +
+                '    </button>\n' +
+                '</div>\n' +
+                '<div class="modal-body">\n' +
+                '    <p><strong>Date: </strong>' + date + '</p>\n' +
+                '    <p><strong>Players: </strong>' + players + '</p>\n' +
+                '    <p><strong>Winner(s): </strong>' + winners + '</p>\n' +
+                '</div>\n' +
+                '<div class="modal-footer">\n' +
+                '    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>\n' +
+                '</div>'
+            modal.empty();
+            modal.append(content);
+            $('#info').modal('show');
+        }
+        function deleteGame(id) {
+            let modal = $("#modal-content-delete");
+            let content = '' +
+                '<div class="modal-header">\n' +
+                '    <h5 class="modal-title" id="exampleModalCenterTitle">Delete This Entry?</h5>\n' +
+                '    <button type="button" class="close" data-dismiss="modal" aria-label="Close">\n' +
+                '        <span aria-hidden="true">&times;</span>\n' +
+                '    </button>\n' +
+                '</div>\n' +
+                '<div class="modal-footer">\n' +
+                '    <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>\n' +
+                '    <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="removeRound(' + id + ')">Delete</button>\n' +
+                '</div>';
+            modal.empty();
+            modal.append(content);
+            $('#delete').modal('show');
+        }
+        function csrfSafeMethod(method) {
+            // these HTTP methods do not require CSRF protection
+            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+        }
+        function removeRound(id) {
+            // Setup the csrf token so we can remove this properly.
+            $.ajaxSetup({
+                beforeSend: function(xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                    }
+                }
+            });
+
+            // Call using ajax request
+            $.ajax({
+                url : {% url 'remove_round' %},
+                type: 'POST',
+                data : {'roundId': id},
+                dataType: "json",
+                success: function(response){
+                    console.log(response.responseJSON);
+                    location.reload();
+                },
+                error: function (response) {
+                    console.log(response.responseJSON)
+                }
+            })
+        }
+    </script>
+{% endblock %}

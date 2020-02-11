@@ -1,0 +1,75 @@
+{% extends "player/player.html" %}
+
+{% block player_content %}
+    {% load static %}
+    <div class="row">
+        <div class="profile-image-wrapper">
+            <div class="profile-image">
+                {% if player.profile_image %}
+                    <img class="profile-image" src="{{ player.profile_image.url }}" height="150" width="150" alt="Profile image">
+                {% else %}
+                    <img class="profile-image invert" src="{% static 'images/Profile.png' %}" height="150" width="150" alt="Profile image">
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="profile-name row">
+        <h3 class="col-12">
+            {{ player.user.first_name }} {{ player.user.last_name }}
+        </h3>
+        <h5 class="col-12">
+            ({{ player.user.username }})
+        </h5>
+    </div>
+    <div class="profile-info row justify-content-center">
+        <ul class="list-group col-5">
+            <li class="list-group-item list-group-item-dark">
+                <div class="row">
+                    <div class="profile-info-item col-6 text-left">
+                        Primary Group
+                    </div>
+                    <div class="profile-info-stat col-6 text-right">
+                        {{ player.primary_group.name }}
+                    </div>
+                </div>
+            </li>
+            <li class="list-group-item list-group-item-dark">
+                <div class="row">
+                    <div class="profile-info-item col-6 text-left">
+                        Favorite Game
+                    </div>
+                    <div class="profile-info-stat col-6 text-right">
+                        {{ favorite_game }}
+                    </div>
+                </div>
+            </li>
+            <li class="list-group-item list-group-item-dark">
+                <div class="row">
+                    <div class="profile-info-item col-6 text-left">
+                        Win Rate
+                    </div>
+                    <div class="profile-info-stat col-6 text-right">
+                        {{ win_rate|floatformat:2 }}%
+                    </div>
+                </div>
+            </li>
+            <li class="list-group-item list-group-item-dark">
+                <div class="row">
+                    <div class="profile-info-item col-6 text-left">
+                        Playing Since
+                    </div>
+                    <div class="profile-info-stat col-6 text-right">
+                        {{ player.date_of_birth|date:"N j, Y" }}
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div class="profile-edit row">
+        {% if user.username == player.user.username %}
+            <div class="profile-item profile-actions col-12">
+                <a id="edit-profile-btn" class="btn btn-outline-primary" href="{% url 'edit_player' %}">Edit Profile</a>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

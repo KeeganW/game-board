@@ -1,0 +1,37 @@
+{% extends "player/player.html" %}
+
+{% block player_content %}
+    {% load static %}
+    {% for time, stats in trophies.items %}
+        <div>
+            <h3>{{ time|capfirst }}</h3>
+            {% for stat, trophy_case in stats.items %}
+                {% for metal, winners in trophy_case.items %}
+                    {% for winner in winners %}
+                        {% if player.user.username == winner.0 %}
+                            <div class="profile-info row justify-content-center">
+                                <ul class="list-group col-8">
+                                    <li class="list-group-item list-group-item-dark">
+                                        <div class="row">
+                                            <div class="profile-info-item col-9 text-left">
+                                                <img class="trophy" src="{% if metal == "gold" %}{% static 'img/trophy_gold.png' %}{% elif metal == "silver" %}{% static 'img/trophy_silver.png' %}{% else %}{% static 'img/trophy_bronze.png' %}{% endif %}" alt="logo">
+                                                {{ stat }}
+                                            </div>
+                                            <div class="profile-info-stat col-3 text-right">
+                                                {{ winner.1 }}
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}
+            {% endfor %}
+        </div>
+    {% endfor %}
+{% endblock %}
+
+{% block attribution %}
+    Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon"> www.flaticon.com</a>
+{% endblock %}

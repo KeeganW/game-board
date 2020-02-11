@@ -1,0 +1,46 @@
+{% extends "player/player.html" %}
+
+{% block player_content %}
+    {% load static %}
+    <div class="group">
+        {% for group in groups %}
+            <div class="group-header">
+                <h3>{{ group.name }}</h3>
+                <div class="group-status group-status-yellow">
+                </div>
+            </div>
+            <div class="group-seperator"></div>
+            <div class="group-members">
+                <div class="group-members-players">
+                    <ul class="d-flex d-inline-flex">
+                        {% for player in group.players.all %}
+                            <li class="group-admin d-inline-flex" data-toggle="tooltip" data-placement="top" title="{{ player.user.first_name }} {{ player.user.last_name }}">
+                                <a href="{% url 'player' player %}">
+                                    <div class="group-player group-status-{{ status|get_item:player.user.username }}">
+                                        <div class="profile-image-wrapper-mini">
+                                            <div class="profile-image-mini">
+                                                {% if player.profile_image %}
+                                                    <img class="profile-image-mini" src="{{ player.profile_image.url }}" alt="Profile image">
+                                                {% else %}
+                                                    <img class="profile-image-mini invert" src="{% static 'images/Profile.png' %}" alt="Profile image">
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        })
+    </script>
+{% endblock %}

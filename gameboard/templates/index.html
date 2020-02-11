@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+<!-- Example modified from https://getbootstrap.com/docs/4.3/examples/cover/ -->
+
+{% block title %}
+    Game Board
+{% endblock %}
+
+
+{% block css %}
+    {% load static %}
+    <link href="{% static 'css/cover.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block page %}
+<div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+    <header class="masthead mt-auto">
+        <img class="logo" src="{% static 'images/logo_white.png' %}" alt="logo" style="width:200px;height:200px;">
+    </header>
+
+    <main role="main" class="inner cover mb-auto">
+        <h1 class="cover-heading">Welcome to Game Board!</h1>
+        <p class="lead">Game Board is an application used to track games played, display statistics, and keep track of a player’s individual achievements within a group of friends.</p>
+        <p class="lead">
+            <a href="{% url 'login' %}" id="register-btn" class="btn btn-lg btn-secondary min-button">Register / Log In</a>
+        </p>
+    </main>
+
+</div>
+{% endblock %}
+
+{% block footer %}
+    <footer class="mastfoot mt-auto">
+    </footer>
+{% endblock %}
