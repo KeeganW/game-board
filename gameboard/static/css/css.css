@@ -191,7 +191,6 @@ body {
 .statistics-graph {
     margin: 0px 2px 0px 2px;
     min-height: 200px;
-    background-color: darkred;
 }
 .trophy {
     margin-top:-2px;
@@ -223,3 +222,44 @@ body {
 .close {
     color: #ffffff;
 }
+
+/* C3.js chart */
+.tick text {
+    fill: white;
+}
+.c3 .c3-axis-x path, .c3 .c3-axis-x line {
+    stroke: white;
+}
+.c3 .c3-axis-y path, .c3 .c3-axis-y line {
+    stroke: white;
+}
+.c3-legend-item text {
+    fill: white;
+}
+
+/* C3.js tooltip */
+.c3 .c3-tooltip-container {
+    color: white;
+}
+.c3 .c3-tooltip-container .c3-tooltip {
+    background-color: #404040;
+}
+.c3 .c3-tooltip th {
+    background-color: #404040;
+}
+.c3 .c3-tooltip td {
+    background-color: #404040;
+}
+.c3 .c3-tooltip tr {
+    border-color: #545454;
+}
+
+
+
+/* Colors
+Primary:    #1e1e1d
+Secondary:  #404040
+Borders:    #545454
+Highlight:  #ff9429
+Font:       #ffffff
+*/
