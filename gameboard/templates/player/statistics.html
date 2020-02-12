@@ -3,13 +3,35 @@
 {% block player_content %}
     {% load static %}
     <div class="row">
-        <div class="col-6 statistics-item">
+        <div class="col-12 statistics-item">
             <div class="statistics-title row">
-                <h3 class="col-12">Win Count</h3>
+                <h3 class="col-12">Activity</h3>
             </div>
             <div class="statistics-graph row">
                 <div class="col-12">
-                    Bar graph showing the last 12 months, with # of wins.
+                    <div id="activity-chart"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 statistics-item">
+            <div class="statistics-title row">
+                <h3 class="col-12">Wins By Month</h3>
+            </div>
+            <div class="statistics-graph row">
+                <div class="col-12">
+                    <div id="win-chart"></div>
+{#                    Bar graph showing the last 12 months, with # of wins.#}
+                </div>
+            </div>
+        </div>
+        <div class="col-6 statistics-item">
+            <div class="statistics-title row">
+                <h3 class="col-12">Win Rate Over Time</h3>
+            </div>
+            <div class="statistics-graph row">
+                <div class="col-12">
+                    <div id="win-time-chart"></div>
+{#                    Line chart showing {{ player.user.first_name }} win rate over time.#}
                 </div>
             </div>
         </div>
@@ -19,39 +41,73 @@
             </div>
             <div class="statistics-graph row">
                 <div class="col-12">
-                    Pie chart showing {{ player.user.first_name }}'s top 5 games played of all time.
+                    <div id="favorite-chart"></div>
+{#                    Pie chart showing {{ player.user.first_name }}'s top 4 games played and other section.#}
                 </div>
             </div>
         </div>
         <div class="col-6 statistics-item">
             <div class="statistics-title row">
-                <h3 class="col-12">Heavy Game Wins</h3>
+                <h3 class="col-12">Win Rate In Favorite Games</h3>
             </div>
             <div class="statistics-graph row">
                 <div class="col-12">
-                    Bar chart showing the number of heavy game wins.
-                </div>
-            </div>
-        </div>
-        <div class="col-6 statistics-item">
-            <div class="statistics-title row">
-                <h3 class="col-12">Win Rate By Game</h3>
-            </div>
-            <div class="statistics-graph row">
-                <div class="col-12">
-                    Bar chart showing {{ player.user.first_name }}'s top 5 win rate games.
-                </div>
-            </div>
-        </div>
-        <div class="col-6 statistics-item">
-            <div class="statistics-title row">
-                <h3 class="col-12">Activity</h3>
-            </div>
-            <div class="statistics-graph row">
-                <div class="col-12">
-                    A github commit history like graph showing {{ player.user.first_name }}'s recent game activity, where a shaded square = a game played that day.
+                    <div id="win-game-chart"></div>
+{#                    Bar chart showing {{ player.user.first_name }}'s top 5 win rate games.#}
                 </div>
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/calendar-heatmap.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/c3.min.css' %}">
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'js/d3.min.js' %}"></script>
+    <script src="{% static 'js/d3-color.min.js' %}"></script>
+    <script src="{% static 'js/c3.min.js' %}"></script>
+    <script src="{% static 'js/moment.js' %}"></script>
+    <script src="{% static 'js/calendar-heatmap.js' %}"></script>
+    <script>
+        const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        const monthNamesShort = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+        {#const winData = [#}
+        {#    ['Month', '2019-02-01', '2019-03-01', '2019-04-01', '2019-05-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-10-01', '2019-11-01', '2019-12-01', '2020-01-01'],#}
+        {#    ['Win Count', 5, 7, 9, 1, 0, 1, 8, 4, 2, 3, 1, 4]#}
+        {#];#}
+        const winData = {{win_time|safe}};
+
+        {#const winTimeData = [#}
+        {#    ['Month', '2019-02-01', '2019-03-01', '2019-04-01', '2019-05-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-10-01', '2019-11-01', '2019-12-01', '2020-01-01'],#}
+        {#    ['Win Rate', 50, 70, 65, 60, 50, 40, 45, 35, 40, 43, 38, 39]#}
+        {#];#}
+        const winTimeData = {{ rate_time|safe }};
+
+        {#const favoriteData = [#}
+        {#    ['Love Letter', 30],#}
+        {#    ['Resistance', 15],#}
+        {#    ['Coup', 15],#}
+        {#    ['Small World', 10],#}
+        {#    ['Other', 2],#}
+        {#];#}
+
+        const favoriteData = {{ favorite|safe }};
+
+        {#const winGameData = [#}
+        {#    ['Coup', 'Resistance', 'Love Letter', 'Carcasone', 'Small World'],#}
+        {#    ['Win Rate', 35, 40, 43, 38, 39]#}
+        {#];#}
+
+        const winGameData = {{ win_game|safe }};
+
+        const activityData = [
+{#            {% for day_log in activity %}{"date": moment("{{ day_log.date }}", "YYYY-MM-DD").toDate(), "count": {{ day_log.game_count }}}, {% endfor %}#}
+            {% for day_log in activity %}{"date": moment("{{ day_log.date }}", "YYYY-MM-DD").toDate(), "count": {% if day_log.game_count > 0 %}1{% else %}0{% endif %}}, {% endfor %}
+        ];
+    </script>
+    <script src="{% static 'js/statistics.js' %}"></script>
 {% endblock %}

@@ -1,20 +1,12 @@
+from collections import OrderedDict
+
 from dateutil.relativedelta import relativedelta
+from django.db.models import Count
+
 from gameboard.models import Player, Round, Group, Game
 from operator import itemgetter
 from datetime import datetime, timedelta
 from django.core.cache import cache
-
-
-# TODO Functions:
-# Wins and losses function
-# Something which takes in a Round queryset, and sorts it by date.
-# Something similar to find_favorite_game for find_best_game, where wins are factored at a higher weight
-# Finds your rival player based on most loses to them (maybe extra focus on 1v1s?)
-# Most active player function
-# Group version of favorite game
-# Longest winstreak for individual player
-# Get oldest game played date for individual player?
-# Add/remove players and admins from group
 
 
 def find_win_percentage(player):
@@ -209,6 +201,94 @@ def find_player_status(player):
         return "red"
 
 
+def find_player_monthly_log(player):
+    # Get the dates for this search
+    date_start, date_end = generate_dates("recent_year")
+
+    date_log = ['Month']
+    wins_log = ['Win Count']
+    rate_log = ['Win Rate']
+
+    total_months = lambda dt: dt.month + 12 * dt.year
+    day = int(date_start.strftime("%d"))
+    last_month = date_start
+    for total_month in range(total_months(date_start), total_months(date_end)):
+        year, month = divmod(total_month, 12)
+        month_wins = search_wins_by_player_in_time(player, last_month, datetime(year, month + 1, day)).count()
+        total_wins = search_wins_by_player_in_time(player, date_start, datetime(year, month + 1, day)).count()
+        total_games = search_games_by_player_in_time(player, date_start, datetime(year, month + 1, day)).count()
+        last_month = datetime(year, month + 1, 1)
+
+        wins_log.append(month_wins)
+        try:
+            rate_log.append(round(total_wins/total_games*100, 2))
+        except ZeroDivisionError:
+            rate_log.append(0)
+        date_log.append(last_month.strftime("%Y-%m-%d"))
+
+    return [date_log, wins_log], [date_log, rate_log]
+
+
+def favorite_games(player):
+    # Get the dates for this search
+    date_start, date_end = generate_dates("all")
+
+    # Get all the games
+    all_games = search_games_by_player_in_time(player, date_start, date_end)
+    all_wins = search_wins_by_player_in_time(player, date_start, date_end)
+
+    # Group the games by their game_id, then count how many of each id there are
+    sorted_most_played = all_games.values("game_id").annotate(total=Count('game_id')).order_by('-total')
+    sorted_most_wins = all_wins.values("game_id").annotate(total=Count('game_id')).order_by('-total')
+
+    total_games = {}
+    for game_count in sorted_most_played:
+        total_games[game_count['game_id']] = game_count['total']
+
+    favorites = []
+    game_log = []
+    win_rate = ['Win Rate']
+    loop_count = 0
+    other_count = 0
+    # Reformat wins into simple array
+    for game_win in sorted_most_wins:
+        game = Game.objects.filter(id=game_win["game_id"]).first()
+        if loop_count < 5:
+            favorites.append([game.name, game_win["total"]])
+            game_log.append(game.name)
+            win_rate.append(round(game_win["total"]/total_games[game.id]*100, 2))
+        else:
+            # Add to "other"
+            other_count += game_win["total"]
+        loop_count += 1
+    favorites.append(['Other Games', other_count])
+
+    return favorites, [game_log, win_rate]
+
+
+def find_player_activity_log(player):
+    """
+
+    :param player:
+    :return:
+    """
+    # Get the dates for this search
+    date_start, date_end = generate_dates("recent_year")
+
+    # Search for recent games and count them
+    recent_games = search_games_by_player_in_time(player, date_start, date_end)
+
+    activity_log = list()
+
+    # Make sure all dates are filled out
+    delta = timedelta(days=1)
+    while date_start <= date_end:
+        activity_log.append({"date": date_start.strftime("%Y-%m-%d"), "game_count": len(recent_games.filter(date__exact=date_start.strftime("%Y-%m-%d")))})
+        date_start += delta
+
+    return activity_log
+
+
 def generate_dates(date_string="all"):
     """
     Generates a pair of datetime objects, which represent a time range to search the database over. There are a few
@@ -237,9 +317,12 @@ def generate_dates(date_string="all"):
     elif date_string == "recent":
         # Just the last 30 days
         return datetime.now() - timedelta(days=30), datetime.now()
+    elif date_string == "recent_year":
+        # Just the last 30 days
+        return datetime.now() - timedelta(days=366), datetime.now()
     else: # date_string == "all":
         # Get time since start of the epoch
-        return datetime.now(), datetime.strptime("1970-1-1", '%Y-%m-%d')
+        return datetime.strptime("1970-1-1", '%Y-%m-%d'), datetime.now()
 
 
 def generate_heavy_game_list():

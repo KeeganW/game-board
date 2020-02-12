@@ -242,6 +242,13 @@ def player(request, player=None, message=None):
     # Add additional data based on the request.
     end_path = request.path_info.split('/')
     if len(end_path) > 1 and end_path[-2] == 'statistics':
+        win_log, rate_log = find_player_monthly_log(player)
+        data["win_time"] = win_log
+        data["rate_time"] = rate_log
+        favorites, game_rate_log = favorite_games(player)
+        data["favorite"] = favorites
+        data["win_game"] = game_rate_log
+        data["activity"] = find_player_activity_log(player)
         return render(request, "player/statistics.html", data)
     elif len(end_path) > 1 and end_path[-2] == 'trophies':
         # Check the cache for the trophies for this group, so we don't have to run a long calculation.
