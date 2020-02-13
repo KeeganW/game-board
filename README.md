@@ -1,103 +1,26 @@
-# Starting Game Board
-Navigate to the directory with the django manage file.
-```bash
-cd src/gameboardapp
-```
-## Setup
-Create the database by migrating with the following
-```bash
-python manage.py makemigrations gameboard
-python manage.py migrate --run-syncdb
-```
-## Running
-Run the web server.
-```bash
-python manage.py runserver localhost:8080
-``` 
-Open a browser to [localhost:8080](http://localhost:8080/).
+# Game Board
+Game board is an application for tracking games played with your friend groups, and viewing their results in interesting ways. 
 
-## Load Data
-Just navigate to [the import page](http://localhost:8080/import).
+# Running Game Board
+In order to run this application, follow the following directions to run the game on your local machine.
 
-# TODO Feature list
-- Change fonts
-- Get profile pictures working
-- Fix edit group page
-    - Make more complete, different layout
-    - Get dropdowns working with correct formatting
-- Fix all css pages
-- Change add data page
-    - Change Game selection to a dropdown (with text input? is that possible?)
-    - Add a add game button/modal
-- Add a new group/find group function to a new users page
-- Auto highlight from autofill to indicate that it is selected (and enter can be pressed)
-- Add hover text for submit and submit and clear
-- Put submit and clear before submit
+## First Time Setup
+1. Clone the repository
+    - `git clone https://github.com/KeeganW/game-board.git && cd game-board`
+2. Install the requirements (it is recommended you do this inside a virtual environment. See [Configuring your local environment](https://github.com/KeeganW/game-board/wiki/Configuring-Your-Local-Environment))
+    - `pip install -r requirements.txt`
+3. Setup your local variables
+    - `export SECRET_KEY="$(cat /dev/urandom | env LC_CTYPE=C tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)"`
+    - (optional, if running on a remote server) `export WEBSITE_SITE_NAME="<this machine's full dns name>"`
+4. Create your database
+    - `python manage.py makemigrations gameboard && python manage.py migrate --run-syncdb`
 
+## Running the website
+1. Run the web server.
+    - `python manage.py runserver localhost:8080`
+2. Open a browser to [localhost:8080](http://localhost:8080/).
 
+## (Optional) Load Test Dataset
+1. Just navigate to [the import page](http://localhost:8080/import).
 
-# IDE Configuration
-## Intellij
-To setup intellij to work on and run the code natively, follow these steps.
-
-- File -> Open
-- Select the top level directory for this repository
-- Project settings
-	- Project
-		- Project SDK should be set to python env set up before. If not, click new > python SDK. Select existing environment, which should be in your home directory in the .virtualenvs directory.
-	- Modules
-		- Select the `+` sign > New Module
-		- Python
-			- Select the checkbox next to Django
-			- Application name: Game Board, Next
-			- Module Name: Game Board, Finish
-		- Click on the new module
-			- Change project root to src directory
-			- Change settings to point at gameboardapp/settings.py
-			- Point manage script to the manage.py file
-	- Apply and OK
-- Add Configuration
-	- Host: localhost
-	- Environment Variables: Click on the right side of the text box
-		- Add `DJANGO_SETTINGS_MODULE` with its value being `gameboardapp.settings`
-	- Apply and OK
-
-
-# Configuring your local environment (extended)
-## MacOS
-- Install homebrew
-`/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"`
-- Install python3
-```bash
-brew install python
-export PATH="/usr/local/opt/python/libexec/bin:/usr/local/sbin:$PATH"
-```
-- Install virtualenv and wrapper
-```bash
-pip install virtualenv
-pip install virtualenvwrapper
-export WORKON_HOME=$HOME/.virtualenvs
-source /usr/local/bin/virtualenvwrapper.sh
-```
-- Create a virtualenvironment
-`mkvirtualenv general`
-- Install this
-MacOS
-`brew install postgresql`
-`pip install -r requirements.txt`
-
-## Ubuntu
-```bash
-sudo apt-get install python-pip
-sudo pip install virtualenv
-mkdir ~/.virtualenvs
-sudo pip install virtualenvwrapper
-export WORKON_HOME=~/.virtualenvs
-```
-Add to bashrc `. /usr/local/bin/virtualenvwrapper.sh`
-
-```bash
-source ~/.bashrc
-mkvirtualenv --python=/usr/bin/python3 general
-pip install -r requirements.txt
-```
+For additional information, please see our [Wiki Page](https://github.com/KeeganW/game-board/wiki).
