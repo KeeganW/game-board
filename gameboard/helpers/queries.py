@@ -18,8 +18,8 @@ def find_win_percentage(player):
     """
     percentage = 0
     if player:
-        games_played = Round.objects.all().filter(players__user__username__exact=player.user.username)
-        wins = Round.objects.all().filter(winners__user__username__exact=player.user.username)
+        games_played = Round.objects.filter(players__user=player.user)
+        wins = Round.objects.filter(winners__user=player.user)
         if len(games_played) > 0:
             percentage = (len(wins)/len(games_played)) * 100
     return percentage
@@ -36,7 +36,7 @@ def find_favorite_game(player):
     if player.favorite_game:
         return player.favorite_game
     if player:
-        games_played = Round.objects.all().filter(players__user__username__exact=player.user.username)
+        games_played = Round.objects.filter(players__user=player.user)
         game_dict = dict()
         for g in games_played:
             if g.game.name not in game_dict:
@@ -84,7 +84,7 @@ def find_groups(player):
     :param player: A Player object, which contains the user info
     :return: A queryset of group objects the player belongs to
     """
-    group = Group.objects.filter(players__user__username=player.user.username)
+    group = Group.objects.filter(players__user=player.user)
 
     return group
 
