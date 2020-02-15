@@ -3,7 +3,6 @@
 migrations/
 
 # Ignore any datasets with PII
-dataset.csv
 backup.csv
 
 
