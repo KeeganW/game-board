@@ -4,6 +4,7 @@ from django import forms
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.forms import DateInput
+from django.utils import timezone
 
 from gameboard.models import Round, Game
 
@@ -24,7 +25,6 @@ class AddRoundForm(forms.Form):
             'class': 'form-control datetimepicker-input',
             'data-target': '#datetimepicker1',
             'type': 'date',
-            'value': datetime.now().strftime("%Y-%m-%d")
         })
     )
     player = forms.CharField(label='Player:', required=False, max_length=50)
@@ -45,6 +45,7 @@ class AddRoundForm(forms.Form):
         super(AddRoundForm, self).__init__(*args, **kwargs)
         for visible in self.visible_fields():
             visible.field.widget.attrs['class'] = 'form-control autocomplete'
+        self.fields['date'].initial = timezone.localtime()
 
     def clean(self):
         """
