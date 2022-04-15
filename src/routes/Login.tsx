@@ -7,8 +7,11 @@ import axios from 'src/axiosAuth'
 export const Login: React.FC = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
 
+  // Good resource
+  // https://medium.com/swlh/django-rest-framework-and-spa-session-authentication-with-docker-and-nginx-aa64871f29cd
   const handleOnSubmit = (data: any) => {
     // Get our objects
+    console.log(data)
     axios.get('http://localhost:8000/set-csrf/').then(res => console.log(res))
     // TODO need to await for above to finish
     axios.post('http://localhost:8000/login/', data, {
