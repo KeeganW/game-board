@@ -2,70 +2,24 @@ import React, { useEffect, useState } from 'react'
 import { Button, Form, Stack } from 'react-bootstrap'
 import { useForm } from 'react-hook-form'
 import { FieldValues } from 'react-hook-form/dist/types/fields'
-
-type USERNAME_PASSWORD = {
-  username: string
-  password: string
-}
-
-const useFetch = (url: string, options: RequestInit) => {
-  const [data, setData] = useState(null)
-
-  // empty array as second argument equivalent to componentDidMount
-  useEffect(() => {
-    async function fetchData() {
-      const response = await fetch(url, options)
-      const json = await response.json()
-      setData(json)
-    }
-    fetchData()
-  }, [])
-
-  return data
-}
-
-/**
- *
- * @param data
- */
-const createFetchObjects = (data: any) => {
-  const url = 'http://localhost:8000/token/'
-  const body = data  // TODO we should be validating this data right?
-  const headers: HeadersInit = {
-    'Content-Type': 'application/json',
-  }
-  const requestInfo: RequestInit = {
-    headers: headers,
-    body: JSON.stringify(data),
-    method: "POST",
-  }
-  return {url, requestInfo}
-}
-const onSubmit = async (data: any) => {
-  // Get our objects
-  const { url, requestInfo } = createFetchObjects(data)
-
-  // Send the fetch
-  const response = await fetch(url, requestInfo)
-
-  // Get the json
-  const json = await response.json()
-
-  // Return the promise to the caller
-  return json
-};
+import axios from 'src/axiosAuth'
 
 export const Login: React.FC = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
 
-  const handleOnSubmit = async (data: any) => {
+  const handleOnSubmit = (data: any) => {
     // Get our objects
-    const json = await onSubmit(data)
-
-    // Store the token for future requests
-    console.log(json)
+    axios.get('http://localhost:8000/set-csrf/').then(res => console.log(res))
+    // TODO need to await for above to finish
+    axios.post('http://localhost:8000/login/', data, {
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json'
+      }
+    }).then(res => console.log(res)).catch(res => console.log({res}))
 
     // Route to main logged in page
+    // TODO
   };
 
   return (
