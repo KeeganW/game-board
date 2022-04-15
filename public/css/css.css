@@ -1,0 +1,271 @@
+/* Colors
+Primary:    #1e1e1d
+Secondary:  #404040
+Borders:    #545454
+Highlight:  #ff9429
+Font:       #ffffff
+*/
+
+/* Base configuration */
+html,
+body {
+    color: #ffffff;
+    background-color: #1e1e1d;
+    caret-color: #ff9429;
+}
+html {
+    position: relative;
+    min-height: 100%;
+}
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+.bg-dark {
+    background-color: #404040!important;
+}
+input.form-control,
+input.form-control:-webkit-autofill,
+input.form-control:-webkit-autofill:hover,
+input.form-control:-webkit-autofill:focus,
+textarea.form-control:-webkit-autofill,
+textarea.form-control:-webkit-autofill:hover,
+textarea.form-control:-webkit-autofill:focus,
+select.form-control:-webkit-autofill,
+select.form-control:-webkit-autofill:hover,
+select.form-control:-webkit-autofill:focus {
+    border: none;
+    background-color: #404040!important;
+    color: #ffffff!important;
+}
+input.form-control:focus {
+    border: 1px solid #ff9429;
+    background-color: #404040;
+    color: #ffffff;
+}
+
+/* Nav Specific */
+.nav-link {
+    font-size: 15pt;
+}
+.logo {
+    height:50px;
+    width:50px;
+}
+.navbar .navbar-nav .nav-link{
+    padding: 8px 0px 8px 0px;
+    margin: 0px 8px 0px 8px;
+}
+/*.navbar-dark .navbar-nav .nav-link {*/
+/*    color: #ffffff;*/
+/*}*/
+/*.navbar-dark .navbar-nav .nav-link:hover {*/
+/*    border-bottom: #ff9429 solid 3px;*/
+/*    padding-bottom: 5px;*/
+/*}*/
+
+.nav-item > .nav-link {
+    position: relative;
+    color: #ff9429;
+    text-decoration: none;
+}
+.nav-item > .nav-link:hover {
+    color: #ff9429;
+}
+.nav-item > .nav-link:before {
+    content: "";
+    position: absolute;
+    width: 0%;
+    height: 2px;
+    bottom: 0;
+    left: 0;
+    background-color: #ff9429;
+    visibility: hidden;
+    /* Add the following for middle out*/
+    /*-webkit-transform: scaleX(0);*/
+    /*transform: scaleX(0);*/
+    -webkit-transition: all 0.3s ease-in-out 0s;
+    transition: all 0.3s ease-in-out 0s;
+}
+.nav-item > .nav-link:hover:before {
+     visibility: visible;
+    width: 100%;
+     -webkit-transform: scaleX(1);
+     transform: scaleX(1);
+ }
+
+
+/* Footer specific components */
+body {
+    margin-bottom: 80px; /* Margin bottom by footer height */
+}
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 60px; /* Set the fixed height of the footer here */
+    line-height: 40px; /* Vertically center the text there */
+}
+.footer-content {
+    padding: 10px;
+}
+
+/* Player Page */
+/* Player Navbar */
+.player-nav-container {
+    border-bottom: 2px solid #545454;
+    padding-bottom: 10px;
+}
+.player-nav-ul > .nav-item > .nav-link {
+    color: rgba(255,255,255,.5);
+}
+.player-nav-ul > .nav-item > .nav-link:hover {
+    color: rgba(255,255,255,.75);
+}
+.player-nav-ul > .nav-item > .nav-link.active {
+    color: #ffffff;
+}
+
+/* Player Profile */
+.profile-image-wrapper {
+    /* Make it a circle */
+    overflow: hidden;
+    border: 1px solid #1e1e1d;
+    border-radius: 75px;
+
+    /* Height and width need to match profile image */
+    height: 150px;
+    width: 150px;
+
+    /* Recenter after assigning specific size */
+    margin-left: auto;
+    margin-right: auto;
+}
+.profile-image {
+    height: 150px;
+    width: 150px;
+}
+.profile-image-wrapper-mini {
+    /* Make it a circle */
+    overflow: hidden;
+    border: 4px solid #1e1e1d;
+    border-radius: 25px;
+
+    /* Height and width need to match profile image */
+    height: 50px;
+    width: 50px;
+
+    /* Recenter after assigning specific size */
+    margin-left: auto;
+    margin-right: auto;
+}
+.profile-image-mini {
+    height: 50px;
+    width: 50px;
+
+    /* In order to correctly center the image in the status, need to move it slightly */
+    margin-left: -2px;
+    margin-top: -2px;
+}
+.profile-name {
+    padding-top: 5px;
+}
+.profile-edit {
+    padding-bottom: 10px;
+}
+.list-group-item-dark {
+    background-color: #404040;
+    color: #ffffff;
+    border-color: #545454;
+}
+.invert {
+    -webkit-filter: invert(1);
+    filter: invert(1);
+}
+
+/* Adding Round */
+.winners {
+    margin-left: 10px;
+    width: 75px;
+}
+
+/* Player Statistics */
+.statistics-item {
+    margin: 5px 0px;
+}
+.statistics-graph {
+    margin: 0px 2px 0px 2px;
+    min-height: 200px;
+}
+.trophy {
+    margin-top:-2px;
+    height:20px;
+    width:20px;
+}
+
+/* Group Pages */
+.group-status-green > .profile-image-wrapper-mini {
+    border-color: #5db900;
+}
+.group-status-yellow > .profile-image-wrapper-mini {
+    border-color: #b9b900;
+}
+.group-status-red > .profile-image-wrapper-mini {
+    border-color: #b90000;
+}
+.group-admin {
+    margin: 5px;
+}
+.group-seperator {
+    height: 10px;
+    /*border-top: 1px solid red;*/
+}
+
+.modal-dark .modal-content {
+    background-color: #1e1e1d;
+}
+.close {
+    color: #ffffff;
+}
+
+/* C3.js chart */
+.tick text {
+    fill: white;
+}
+.c3 .c3-axis-x path, .c3 .c3-axis-x line {
+    stroke: white;
+}
+.c3 .c3-axis-y path, .c3 .c3-axis-y line {
+    stroke: white;
+}
+.c3-legend-item text {
+    fill: white;
+}
+
+/* C3.js tooltip */
+.c3 .c3-tooltip-container {
+    color: white;
+}
+.c3 .c3-tooltip-container .c3-tooltip {
+    background-color: #404040;
+}
+.c3 .c3-tooltip th {
+    background-color: #404040;
+}
+.c3 .c3-tooltip td {
+    background-color: #404040;
+}
+.c3 .c3-tooltip tr {
+    border-color: #545454;
+}
+
+
+
+/* Colors
+Primary:    #1e1e1d
+Secondary:  #404040
+Borders:    #545454
+Highlight:  #ff9429
+Font:       #ffffff
+*/

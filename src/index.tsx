@@ -10,9 +10,9 @@ import {
 import 'src/index.css'
 import { App } from 'src/App'
 import { NotFound } from 'src/routes/NotFound'
-import { Whales } from 'src/routes/Whales'
-import { Sharks } from 'src/routes/Sharks'
+import { Login } from 'src/routes/Login'
 import { Default } from 'src/routes/Default'
+import { Player } from 'src/routes/Player'
 
 // More route information can be found at https://reactrouter.com/docs/en/v6/getting-started/tutorial
 const rootElement = document.getElementById('root')
@@ -22,10 +22,8 @@ render(
       <Route path="/" element={<App />}>
         <Route path="/*" element={<NotFound />} />
         <Route path="/" element={<Default />} />
-        <Route path="/whales" element={<Whales />} />
-        <Route path="/sharks" element={<Sharks />}>
-          <Route path=":sharkName" element={<Sharks />} />
-        </Route>
+        <Route path="/login" element={<Login />} />
+        <Route path="/player" element={<Player />} />
       </Route>
       <Route path="/*" element={<Navigate to="/" />} />
     </Routes>
