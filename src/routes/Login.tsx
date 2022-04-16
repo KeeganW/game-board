@@ -1,28 +1,37 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { Button, Form, Stack } from 'react-bootstrap'
 import { useForm } from 'react-hook-form'
-import { FieldValues } from 'react-hook-form/dist/types/fields'
 import axios from 'src/axiosAuth'
+import { Navigate } from 'react-router-dom'
+import { AuthContext } from 'src/Context'
 
 export const Login: React.FC = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
+  const { setAuthenticated, player, setPlayer } = useContext(AuthContext);
 
   // Good resource
   // https://medium.com/swlh/django-rest-framework-and-spa-session-authentication-with-docker-and-nginx-aa64871f29cd
   const handleOnSubmit = (data: any) => {
+    // TODO: validate data
     // Get our objects
     console.log(data)
-    axios.get('http://localhost:8000/set-csrf/').then(res => console.log(res))
-    // TODO need to await for above to finish
-    axios.post('http://localhost:8000/login/', data, {
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json'
-      }
-    }).then(res => console.log(res)).catch(res => console.log({res}))
-
-    // Route to main logged in page
-    // TODO
+    axios.get('http://localhost:8000/set-csrf/').then(res => {
+      axios.post('http://localhost:8000/login/', data, {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json'
+        }
+      }).then(res => {
+        // User was logged in, we should have credentials, so redirect
+        // TODO could have trouble with this if there is a player zero
+        setAuthenticated(true)
+        setPlayer(res.data.player || 0)
+      }).catch(res => {
+        // TODO handle incorrect credentials
+      })
+    }).catch(res => {
+      // TODO handle error of unable to get csrf token
+    })
   };
 
   return (
@@ -44,6 +53,8 @@ export const Login: React.FC = () => {
             Submit
           </Button>
         </Form>
+          {/* If login button stops working randomly, it probably has to do with this statement */}
+          {player >= 0 && (player > 0 ? <Navigate replace to={"/player/" + player} /> : <Navigate replace to="/player/" />)}
       </main>
     </Stack>
   )

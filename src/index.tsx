@@ -11,6 +11,7 @@ import 'src/index.css'
 import { App } from 'src/App'
 import { NotFound } from 'src/routes/NotFound'
 import { Login } from 'src/routes/Login'
+import { Logout } from 'src/routes/Logout'
 import { Default } from 'src/routes/Default'
 import { Player } from 'src/routes/Player'
 
@@ -23,7 +24,10 @@ render(
         <Route path="/*" element={<NotFound />} />
         <Route path="/" element={<Default />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/player" element={<Player />} />
+        <Route path="/logout" element={<Logout />} />
+        <Route path="/player" element={<Player />} >
+          <Route path=":pk" element={<Player />} />
+        </Route>
       </Route>
       <Route path="/*" element={<Navigate to="/" />} />
     </Routes>

@@ -1,44 +1,24 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { Stack } from 'react-bootstrap'
-import axios from '../axiosAuth'
-
-const useFetch = (url: string, options: RequestInit) => {
-  const [data, setData] = useState(null)
-
-  // empty array as second argument equivalent to componentDidMount
-  useEffect(() => {
-    async function fetchData() {
-      const response = await fetch(url, options)
-      const json = await response.json()
-      setData(json)
-    }
-    fetchData()
-  }, [])
-
-  return data
-}
-
-const createFetchObjects = (body: any) => {
-  const headers: HeadersInit = {
-    'Content-Type': 'application/json',
-  }
-  const requestInfo: RequestInit = {
-    headers: headers,
-    body: JSON.stringify(body),
-    method: "GET",
-  }
-  return requestInfo
-}
+import axios from 'src/axiosAuth'
+import { useParams } from 'react-router-dom'
+import { AuthContext } from 'src/Context'
 
 export const Player: React.FC = () => {
-  // const [player, setPlayer] = useState(useFetch('http://localhost:8000/player/', createFetchObjects({})))
-  const [player, setPlayer] = useState({})
-  axios.get('http://localhost:8000/player/').then(res => console.log(res.data))
+  // Get player info if provided
+  const params = useParams()
+  const { pk } = params
+  const playerPk = pk || ''
+  const { player } = useContext(AuthContext);
+  console.log(player)
+
+  // TODO on 401, redirect
+  axios.get('http://localhost:8000/player/' + playerPk).then(res => console.log(res.data))
 
   return (
     <Stack className="mx-auto">
       <main className="p-3 mx-auto text-center">
-        {player}
+        Player info {playerPk && 'for player ' + playerPk}
       </main>
     </Stack>
   )
