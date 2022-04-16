@@ -7,7 +7,7 @@ import { AuthContext } from 'src/Context'
 
 export const Login: React.FC = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
-  const { setAuthenticated, player, setPlayer } = useContext(AuthContext);
+  const { authenticated, setAuthenticated, player, setPlayer } = useContext(AuthContext);
 
   // Good resource
   // https://medium.com/swlh/django-rest-framework-and-spa-session-authentication-with-docker-and-nginx-aa64871f29cd
@@ -25,7 +25,7 @@ export const Login: React.FC = () => {
         // User was logged in, we should have credentials, so redirect
         // TODO could have trouble with this if there is a player zero
         setAuthenticated(true)
-        setPlayer(res.data.player || 0)
+        setPlayer(res.data.player || -1)
       }).catch(res => {
         // TODO handle incorrect credentials
       })
@@ -53,8 +53,8 @@ export const Login: React.FC = () => {
             Submit
           </Button>
         </Form>
-          {/* If login button stops working randomly, it probably has to do with this statement */}
-          {player >= 0 && (player > 0 ? <Navigate replace to={"/player/" + player} /> : <Navigate replace to="/player/" />)}
+        {/* If login button stops working randomly, it probably has to do with this statement */}
+        {authenticated && (player >= 0 && (player >= 0 ? <Navigate replace to={"/player/" + player} /> : <Navigate replace to="/player/" />))}
       </main>
     </Stack>
   )
