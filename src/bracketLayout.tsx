@@ -1,6 +1,18 @@
-export const calculateBracketRound = (numberOfTeams: number, sizeOfTeams: number, offset?: number): any => {
+/**
+ * Calculate a single round of a bracket. See `calculateBracket` for more information on how this
+ * is done.
+ *
+ * @param numberOfTeams The number of teams in the bracket.
+ * @param sizeOfTeams How many individual players are on each team.
+ * @param offset When starting to match teams up, which team to start placing them on
+ */
+export const calculateBracketRound = (
+  numberOfTeams: number,
+  sizeOfTeams: number,
+  offset?: number,
+): number[][] => {
   // Starting placement is the provided offset, or 1 (since first team doesn't need to place on own)
-  let startingPlacement = offset || 1
+  const startingPlacement = offset || 1
 
   // Quickly initialize the current week to have every team play a home game
   const currentWeek = []
@@ -23,8 +35,7 @@ export const calculateBracketRound = (numberOfTeams: number, sizeOfTeams: number
       // If we are over the limit, wrap
       else if (currentPlacementForTeam >= numberOfTeams) {
         currentPlacementForTeam = 0
-      }
-      else {
+      } else {
         // We are good to place here, so add it
         currentWeek[currentPlacementForTeam].push(currentTeam)
         // Now move forward and reduce how many we still need to place
@@ -36,16 +47,27 @@ export const calculateBracketRound = (numberOfTeams: number, sizeOfTeams: number
   return currentWeek
 }
 
-export const calculateBracket = (numberOfRounds: number, numberOfTeams: number, sizeOfTeams: number): any => {
-  /*
-    Algorithm:
-    - Everyone gets a "home" game every week
-    - Place (teamSize - 1) spots in consecutive order
-    - Do not place, on a board where a teammate is playing TODO edge case to handle in future
-    - Wrap, so if you would place in an invalid location, go to start
-    - In the following week week, shift + 1 the spot you started placing from before
-   */
-  // We only calculate fair brackets (with no extra matches, always playing everyone equally).
+/**
+ * Calculates a round-robin bracket for given inputs. Bracket is fair, in that there will always be
+ * enough rounds for each team to match up equally.
+ *
+ * Algorithm:
+ * - Everyone gets a "home" game every week
+ * - Place (teamSize - 1) spots in consecutive order
+ * - Do not place, on a board where a teammate is playing TODO edge case to handle in future
+ * - Wrap, so if you would place in an invalid location, go to start
+ * - In the following week week, shift + 1 the spot you started placing from before
+ *
+ * @param numberOfRounds The number of times individual members on teams should play.
+ * @param numberOfTeams The number of teams in the bracket.
+ * @param sizeOfTeams How many individual players are on each team.
+ */
+export const calculateBracket = (
+  numberOfRounds: number,
+  numberOfTeams: number,
+  sizeOfTeams: number,
+): number[][][] => {
+  // Get the number of rounds needed for there to be even matchups.
   const minBracketSize = numberOfTeams - 1
   const totalBracketSize = Math.ceil(numberOfRounds / minBracketSize) * minBracketSize
 

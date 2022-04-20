@@ -1,44 +1,43 @@
 import React, { useContext, useEffect, useState } from 'react'
 import axios from 'src/axiosAuth'
-import { Link, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { AuthContext } from 'src/Context'
 import {
   BracketMatchesObject,
-  BracketObject,
   PlayerRankObject,
-  RoundObject,
   TournamentObject,
 } from 'src/types'
-import { BasicList, BasicResponse, Loading, useUpdatePlayerInfo } from 'src/helpers'
+import {
+  BasicList, BasicResponse, Loading, useUpdatePlayerInfo,
+} from 'src/helpers'
 import { Col, Container, Row } from 'react-bootstrap'
-import { calculateBracket } from '../bracketLayout'
+import { calculateBracket } from 'src/bracketLayout'
 
-export const convertBracketToView: React.FC = (bracket: any, tournament: TournamentObject) => {
+export const convertBracketToView = (bracket: number[][][], tournament: TournamentObject) => {
   const tournamentTeams = tournament.bracket.teams
   // TODO sort teams by pk
 
   const results = bracket.map((week: number[][], weekIndex: number) => {
     const roundsForWeek = week.map((round: number[], roundIndex: number, fullArray: any) => {
-      const rounds = round.map((team: number, teamIndex: number) => {
-        return (
-          <div key={weekIndex + roundIndex + teamIndex}>
-            {tournamentTeams[team].name}
-          </div>
-        )
-      })
+      const rounds = round.map((team: number, teamIndex: number) => (
+        <div key={weekIndex + roundIndex + teamIndex}>
+          {tournamentTeams[team].name}
+        </div>
+      ))
       const gameNumber = (weekIndex * fullArray.length) + roundIndex + 1
       const tournamentGame = tournament.bracket.rounds.find((value: BracketMatchesObject) => value.match === gameNumber)
       if (tournamentGame) {
-        const round = tournamentGame.round
-        console.log(round)
-        const playerRanks = round.players.map((player: PlayerRankObject) => {
+        const { round } = tournamentGame
+        const playerRanks = round.players.map((player: PlayerRankObject) =>
           // TODO sort players by score/rank
-          return (
+          (
             <div key={tournamentGame.match + player.player.username}>
-              {player.rank}: {player.player.username}{player.score && ' - ' + player.score}
+              {player.rank}
+              :
+              {player.player.username}
+              {player.score && ` - ${player.score}`}
             </div>
-          )
-        })
+          ))
         return (
           <Col key={tournamentGame.match}>
             <h4>
@@ -49,18 +48,22 @@ export const convertBracketToView: React.FC = (bracket: any, tournament: Tournam
         )
       }
       return (
-        <Col key={'game' + gameNumber}>
+        <Col key={`game${gameNumber}`}>
           <h4>
-            Game {gameNumber}
+            Game
+            {' '}
+            {gameNumber}
           </h4>
           {rounds}
         </Col>
       )
     })
     return (
-      <Row className={'pb-2'} key={weekIndex}>
+      <Row className="pb-2" key={weekIndex}>
         <h3>
-          Week {weekIndex + 1}
+          Week
+          {' '}
+          {weekIndex + 1}
         </h3>
         {roundsForWeek}
       </Row>
@@ -78,8 +81,6 @@ export const Tournament: React.FC = () => {
   const { playerPk } = useContext(AuthContext)
   const [tournamentArray, setTournamentArray] = useState<TournamentObject[] | undefined>(undefined)
   const [tournament, setTournament] = useState<TournamentObject | undefined>(undefined)
-  const [bracket, setBracket] = useState<BracketObject | undefined>(undefined)
-  const [rounds, setRounds] = useState<RoundObject[] | undefined>(undefined)
 
   // Get tournament info if provided
   const params = useParams()
@@ -131,6 +132,7 @@ export const Tournament: React.FC = () => {
             <h2>
               Current Standings
             </h2>
+            TODO
           </Row>
           <Row>
             <h2>
@@ -141,9 +143,10 @@ export const Tournament: React.FC = () => {
             </Row>
           </Row>
           <Row>
-            <Col>
+            <h2>
               Tournament Stats
-            </Col>
+            </h2>
+            TODO
           </Row>
         </Row>
       </Container>
