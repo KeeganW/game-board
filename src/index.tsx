@@ -16,6 +16,8 @@ import { Default } from 'src/routes/Default'
 import { Player } from 'src/routes/Player'
 import { Group } from 'src/routes/Group'
 import { Tournament } from 'src/routes/Tournament'
+import { AddRound } from 'src/routes/AddRound'
+import { AddMatch } from 'src/routes/AddMatch'
 
 // More route information can be found at https://reactrouter.com/docs/en/v6/getting-started/tutorial
 const rootElement = document.getElementById('root')
@@ -36,6 +38,10 @@ render(
         <Route path="/tournament" element={<Tournament />}>
           <Route path=":pk" element={<Tournament />} />
         </Route>
+        <Route path="/add_match" element={<AddMatch />}>
+          <Route path=":tournamentPk/:match" element={<AddMatch />} />
+        </Route>
+        <Route path="/add_round" element={<AddRound />} />
       </Route>
       <Route path="/*" element={<Navigate to="/" />} />
     </Routes>

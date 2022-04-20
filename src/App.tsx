@@ -29,7 +29,13 @@ export function App() {
               {' '}
               {authenticated ? groupName : 'Game Board'}
             </Navbar.Brand>
+            <Nav className="me-auto">
+              {/* TODO move these into a hamburger menu when needed */}
+              { authenticated && <Nav.Link as={Link} to="/tournament">Tournaments</Nav.Link> }
+              { authenticated && <Nav.Link as={Link} to="/add_round">Add Round</Nav.Link> }
+            </Nav>
             <Nav className="mr-auto">
+              {/* TODO add link to profile page, hide under user image */}
               { authenticated ? <Nav.Link as={Link} to="/logout">Logout</Nav.Link> : <Nav.Link as={Link} to="/login">Login</Nav.Link> }
             </Nav>
           </Container>

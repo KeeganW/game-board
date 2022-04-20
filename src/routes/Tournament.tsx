@@ -1,10 +1,10 @@
 import React, { useContext, useEffect, useState } from 'react'
 import axios from 'src/axiosAuth'
-import { useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { AuthContext } from 'src/Context'
 import {
   BracketMatchesObject,
-  PlayerRankObject,
+  PlayerRankObject, TeamObject,
   TournamentObject,
 } from 'src/types'
 import {
@@ -13,10 +13,34 @@ import {
 import { Col, Container, Row } from 'react-bootstrap'
 import { calculateBracket } from 'src/bracketLayout'
 
+export const convertStatsToView = (tournamentStats: Object) => {
+  const results = Object.entries(tournamentStats).map((value: any, index: number) => {
+    if (value[0] === 'scoring') {
+      const scoring = Object.entries(value[1]).map((scoringValue: any, scoringIndex: number) => {
+        return (
+          <div key={'scoring' + scoringValue[0]}>
+            {scoringValue[0]}{': '}{scoringValue[1]}
+          </div>
+        )
+      })
+      return (
+        <Row key={'rawscoring'} className="text-center">
+          <h3>
+            Raw Scoring
+          </h3>
+          {scoring}
+        </Row>
+      )
+    }
+  })
+  return (
+    <Container>
+      {results}
+    </Container>
+  )
+}
 export const convertBracketToView = (bracket: number[][][], tournament: TournamentObject) => {
-  const tournamentTeams = tournament.bracket.teams
-  // TODO sort teams by pk
-
+  const tournamentTeams = tournament.bracket.teams.sort((a: TeamObject, b: TeamObject) => a.pk - b.pk)
   const results = bracket.map((week: number[][], weekIndex: number) => {
     const roundsForWeek = week.map((round: number[], roundIndex: number, fullArray: any) => {
       const rounds = round.map((team: number, teamIndex: number) => (
@@ -28,39 +52,39 @@ export const convertBracketToView = (bracket: number[][][], tournament: Tourname
       const tournamentGame = tournament.bracket.rounds.find((value: BracketMatchesObject) => value.match === gameNumber)
       if (tournamentGame) {
         const { round } = tournamentGame
-        const playerRanks = round.players.map((player: PlayerRankObject) =>
-          // TODO sort players by score/rank
-          (
-            <div key={tournamentGame.match + player.player.username}>
-              {player.rank}
-              :
-              {player.player.username}
-              {player.score && ` - ${player.score}`}
-            </div>
-          ))
+        const playerRanks = round.players.sort((a: PlayerRankObject, b: PlayerRankObject) => a.rank - b.rank).map((player: PlayerRankObject) => (
+          <div key={tournamentGame.match + player.player.username}>
+            {player.rank}
+            {': '}
+            {player.player.username}
+            {player.score && ` - ${player.score}`}
+          </div>
+        ))
         return (
           <Col key={tournamentGame.match}>
-            <h4>
+            <h5>
               {round.game.name}
-            </h4>
+            </h5>
             {playerRanks}
           </Col>
         )
       }
       return (
         <Col key={`game${gameNumber}`}>
-          <h4>
-            Game
-            {' '}
-            {gameNumber}
-          </h4>
+          <h5>
+            <Link to={`/add_match/${tournament.pk}/${gameNumber}`} >
+              Game
+              {' '}
+              {gameNumber}
+            </Link>
+          </h5>
           {rounds}
         </Col>
       )
     })
     return (
-      <Row className="pb-2" key={weekIndex}>
-        <h3>
+      <Row className="mb-3" key={weekIndex}>
+        <h3 className="text-center">
           Week
           {' '}
           {weekIndex + 1}
@@ -81,6 +105,7 @@ export const Tournament: React.FC = () => {
   const { playerPk } = useContext(AuthContext)
   const [tournamentArray, setTournamentArray] = useState<TournamentObject[] | undefined>(undefined)
   const [tournament, setTournament] = useState<TournamentObject | undefined>(undefined)
+  const [tournamentStats, setTournamentStats] = useState<Object | undefined>(undefined)
 
   // Get tournament info if provided
   const params = useParams()
@@ -94,6 +119,9 @@ export const Tournament: React.FC = () => {
       axios.get(`http://localhost:8000/tournament_info/${tournamentPk}`).then((tournamentRes) => {
         const tournamentResObj = tournamentRes.data.tournament as TournamentObject | undefined
         setTournament(tournamentResObj)
+      })
+      axios.get(`http://localhost:8000/tournament_stats/${tournamentPk}`).then((tournamentStatsRes) => {
+        setTournamentStats(tournamentStatsRes.data)
       })
     } else {
       axios.get(`http://localhost:8000/tournament/${tournamentPk}`).then((tournamentRes) => {
@@ -111,43 +139,41 @@ export const Tournament: React.FC = () => {
       </BasicResponse>
     )
   } if (tournamentPk) {
-    if (!tournament) {
-      return <Loading />
-    }
     const thisBracket = calculateBracket(10, 6, 4)
-
-    const convertedBracket = convertBracketToView(thisBracket, tournament)
+    const convertedBracket = !tournament ? <Loading /> : convertBracketToView(thisBracket, tournament)
+    const convertedStats = !tournamentStats ? <Loading /> : convertStatsToView(tournamentStats)
 
     return (
       <Container>
-        <Row>
+        <Row className="mb-4">
           <Col>
-            <h1>
-              {tournament.name}
+            {!tournament && <Loading />}
+            <h1 className="text-center">
+              {tournament && tournament.name}
             </h1>
           </Col>
         </Row>
         <Row>
-          <Row>
-            <h2>
-              Current Standings
-            </h2>
-            TODO
-          </Row>
-          <Row>
-            <h2>
-              Full Bracket
-            </h2>
-            <Row>
+          <Col>
+            <Row className="mb-4">
+              <h2 className="text-center">
+                Current Standings
+              </h2>
+              {convertedStats}
+            </Row>
+            <Row className="mb-4">
+              <h2 className="text-center">
+                Full Bracket
+              </h2>
               {convertedBracket}
             </Row>
-          </Row>
-          <Row>
-            <h2>
-              Tournament Stats
-            </h2>
-            TODO
-          </Row>
+            {/* <Row> */}
+            {/*   <h2 className="text-center"> */}
+            {/*     Tournament Stats */}
+            {/*   </h2> */}
+            {/*   TODO */}
+            {/* </Row> */}
+          </Col>
         </Row>
       </Container>
     )

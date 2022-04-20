@@ -10,10 +10,16 @@ export type GameObject = {
   name: string
 }
 
+export type GroupObject = {
+  pk: number
+  name: string
+  players: PlayerObjectLite[]
+}
+
 export type PlayerRankObject = {
   pk: number
-  score: string
-  rank: string
+  score: number
+  rank: number
   player: PlayerObjectLite
 }
 
@@ -62,5 +68,12 @@ export type PlayerInfo = {
   groupPk: number
   groupName: string
   groupImageUrl: string
+  detail: string
+}
+
+export type AddRoundInfo = {
+  player: PlayerObjectLite
+  group: GroupObject
+  games: GameObject[]
   detail: string
 }
