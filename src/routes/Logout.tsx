@@ -5,17 +5,19 @@ import { AuthContext } from 'src/Context'
 import { Stack } from 'react-bootstrap'
 
 export const Logout: React.FC = () => {
-  const { authenticated, setAuthenticated, player, setPlayer } = useContext(AuthContext);
-  axios.get('http://localhost:8000/logout/').then(res => {
+  const {
+    authenticated, setAuthenticated, playerPk, setPlayerPk,
+  } = useContext(AuthContext)
+  axios.get('http://localhost:8000/logout/').then((res) => {
     setAuthenticated(false)
-    setPlayer(-1)
+    setPlayerPk(-1)
   })
 
   return (
     <Stack className="mx-auto">
       <main className="p-3 mx-auto text-center">
         Logging you out... Your browser should redirect you automatically.
-        {!authenticated && (player == -1 && (<Navigate replace to="/" />))}
+        {!authenticated && (playerPk == -1 && (<Navigate replace to="/" />))}
       </main>
     </Stack>
   )

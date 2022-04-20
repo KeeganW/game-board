@@ -14,6 +14,8 @@ import { Login } from 'src/routes/Login'
 import { Logout } from 'src/routes/Logout'
 import { Default } from 'src/routes/Default'
 import { Player } from 'src/routes/Player'
+import { Group } from 'src/routes/Group'
+import { Tournament } from 'src/routes/Tournament'
 
 // More route information can be found at https://reactrouter.com/docs/en/v6/getting-started/tutorial
 const rootElement = document.getElementById('root')
@@ -25,8 +27,14 @@ render(
         <Route path="/" element={<Default />} />
         <Route path="/login" element={<Login />} />
         <Route path="/logout" element={<Logout />} />
-        <Route path="/player" element={<Player />} >
+        <Route path="/player" element={<Player />}>
           <Route path=":pk" element={<Player />} />
+        </Route>
+        <Route path="/group" element={<Group />}>
+          <Route path=":pk" element={<Group />} />
+        </Route>
+        <Route path="/tournament" element={<Tournament />}>
+          <Route path=":pk" element={<Tournament />} />
         </Route>
       </Route>
       <Route path="/*" element={<Navigate to="/" />} />
