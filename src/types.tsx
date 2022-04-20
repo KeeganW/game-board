@@ -51,8 +51,7 @@ export enum BracketTypes {
 export type BracketObject = {
   pk: number
   type: BracketTypes
-  // TODO change this to matches
-  rounds: BracketMatchesObject[]
+  matches: BracketMatchesObject[]
   teams: TeamObject[]
 }
 

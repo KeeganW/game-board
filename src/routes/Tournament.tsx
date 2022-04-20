@@ -40,16 +40,20 @@ export const convertStatsToView = (tournamentStats: Object) => {
   )
 }
 export const convertBracketToView = (bracket: number[][][], tournament: TournamentObject) => {
+  console.log(tournament)
   const tournamentTeams = tournament.bracket.teams.sort((a: TeamObject, b: TeamObject) => a.pk - b.pk)
   const results = bracket.map((week: number[][], weekIndex: number) => {
     const roundsForWeek = week.map((round: number[], roundIndex: number, fullArray: any) => {
-      const rounds = round.map((team: number, teamIndex: number) => (
-        <div key={weekIndex + roundIndex + teamIndex}>
-          {tournamentTeams[team].name}
-        </div>
-      ))
+      const rounds = round.map((team: number, teamIndex: number) => {
+        const real_team = tournamentTeams[team]
+        return real_team ? (
+          <div key={weekIndex + roundIndex + teamIndex}>
+            {real_team.name}
+          </div>
+        ) : (<div key={weekIndex + roundIndex + teamIndex}></div>)
+      })
       const gameNumber = (weekIndex * fullArray.length) + roundIndex + 1
-      const tournamentGame = tournament.bracket.rounds.find((value: BracketMatchesObject) => value.match === gameNumber)
+      const tournamentGame = tournament.bracket.matches.find((value: BracketMatchesObject) => value.match === gameNumber)
       if (tournamentGame) {
         const { round } = tournamentGame
         const playerRanks = round.players.sort((a: PlayerRankObject, b: PlayerRankObject) => a.rank - b.rank).map((player: PlayerRankObject) => (
@@ -118,6 +122,7 @@ export const Tournament: React.FC = () => {
     if (tournamentPk) {
       axios.get(`http://localhost:8000/tournament_info/${tournamentPk}`).then((tournamentRes) => {
         const tournamentResObj = tournamentRes.data.tournament as TournamentObject | undefined
+        console.log(tournamentResObj)
         setTournament(tournamentResObj)
       })
       axios.get(`http://localhost:8000/tournament_stats/${tournamentPk}`).then((tournamentStatsRes) => {
