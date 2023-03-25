@@ -10,11 +10,29 @@ import {
 import {
   BasicList, BasicResponse, Loading, useUpdatePlayerInfo,
 } from 'src/helpers'
-import { Col, Container, Row } from 'react-bootstrap'
+import { Col, Container, ListGroupItem, Row, Stack } from 'react-bootstrap'
 import { calculateBracket } from 'src/bracketLayout'
 
 export const convertStatsToView = (tournamentStats: Object) => {
+  console.log(tournamentStats)
   const results = Object.entries(tournamentStats).map((value: any, index: number) => {
+    if (value[0] === 'raw_scoring') {
+      const scoring = Object.entries(value[1]).map((scoringValue: any, scoringIndex: number) => {
+        return (
+          <div key={'raw_scoring' + scoringValue[0]}>
+            {scoringValue[0]}{': '}{scoringValue[1]}
+          </div>
+        )
+      })
+      return (
+        <Row key={'raw_scoring'} className="text-center">
+          <h3>
+            Raw Scoring
+          </h3>
+          {scoring}
+        </Row>
+      )
+    }
     if (value[0] === 'scoring') {
       const scoring = Object.entries(value[1]).map((scoringValue: any, scoringIndex: number) => {
         return (
@@ -142,7 +160,7 @@ export const Tournament: React.FC = () => {
       </BasicResponse>
     )
   } if (tournamentPk) {
-    const thisBracket = calculateBracket(10, 6, 4)
+    const thisBracket = calculateBracket(10, tournament ? tournament.bracket.teams.length : 6, 4)
     const convertedBracket = !tournament ? <Loading /> : convertBracketToView(thisBracket, tournament)
     const convertedStats = !tournamentStats ? <Loading /> : convertStatsToView(tournamentStats)
 
@@ -182,8 +200,10 @@ export const Tournament: React.FC = () => {
     )
   }
   return (
-    <BasicList
-      listObject={tournamentArray}
-    />
+    <>
+      <BasicList
+        listObject={[...(tournamentArray || []), {pk: '/add_tournament', name: 'Add Tournament'}]}
+      />
+    </>
   )
 }

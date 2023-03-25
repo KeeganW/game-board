@@ -20,6 +20,7 @@ export type PlayerRankObject = {
   pk: number
   score: number
   rank: number
+  handicap: number
   player: PlayerObjectLite
 }
 
@@ -74,5 +75,10 @@ export type AddRoundInfo = {
   player: PlayerObjectLite
   group: GroupObject
   games: GameObject[]
+  detail: string
+}
+
+export type AddTournamentInfo = {
+  teams: TeamObject[]
   detail: string
 }

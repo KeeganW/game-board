@@ -9,7 +9,7 @@ export const Default: React.FC = () => {
     <Stack className="mx-auto">
       <main className="col-md-6 p-3 mx-auto text-center">
         <h4>
-          Learn about some sea life!
+          Play board games!
         </h4>
       </main>
       {authenticated && (playerPk >= 0 && (playerPk >= 0 ? <Navigate replace to={`/player/${playerPk}`} /> : <Navigate replace to="/player/" />))}
