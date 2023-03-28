@@ -56,16 +56,18 @@ export const calculateBracketRound = (
  * - Place (teamSize - 1) spots in consecutive order
  * - Do not place, on a board where a teammate is playing TODO edge case to handle in future
  * - Wrap, so if you would place in an invalid location, go to start
- * - In the following week week, shift + 1 the spot you started placing from before
+ * - In the following week, shift + 1 the spot you started placing from before
  *
  * @param numberOfRounds The number of times individual members on teams should play.
  * @param numberOfTeams The number of teams in the bracket.
- * @param sizeOfTeams How many individual players are on each team.
+ * @param gamesPerWeek How many individual players are on each team.
+ * @param maxNumberOfWeeks How many weeks we should make the bracket, even if it is uneven.
  */
 export const calculateBracket = (
   numberOfRounds: number,
   numberOfTeams: number,
-  sizeOfTeams: number,
+  gamesPerWeek: number,
+  maxNumberOfWeeks?: number,
 ): number[][][] => {
   // Get the number of rounds needed for there to be even matchups.
   const minBracketSize = numberOfTeams - 1
@@ -74,7 +76,7 @@ export const calculateBracket = (
   // Calculate all weeks of bracket
   const allWeeksBracket = []
   for (let currentWeek = 0; currentWeek < totalBracketSize; currentWeek++) {
-    allWeeksBracket.push(calculateBracketRound(numberOfTeams, sizeOfTeams, currentWeek))
+    allWeeksBracket.push(calculateBracketRound(numberOfTeams, gamesPerWeek, currentWeek))
   }
 
   /*
@@ -83,5 +85,8 @@ export const calculateBracket = (
     - You would play on every non home board 3 times
     - You should have the exact same combination twice
    */
+  if (maxNumberOfWeeks) {
+    return allWeeksBracket.slice(0, maxNumberOfWeeks)
+  }
   return allWeeksBracket
 }

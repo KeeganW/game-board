@@ -80,7 +80,7 @@ export const convertBracketToView = (bracket: number[][][], tournament: Tourname
             {player.rank}
             {': '}
             {player.player.username}
-            {player.score && ` - ${player.score}`}
+            {` - ${player.score}`}
           </div>
         ))
         return (
@@ -145,7 +145,12 @@ export const TournamentDetails: React.FC = () => {
   const tournamentInfo = tournamentInfoResponse.response.data?.tournament
   const tournamentStats = tournamentStatsResponse.response.data
 
-  const thisBracket = calculateBracket(10, tournamentInfo ? tournamentInfo.bracket.teams.length : 6, 4)
+  const thisBracket = calculateBracket(
+    10,
+    tournamentInfo ? tournamentInfo.bracket.teams.length : 6,
+    4,
+    10
+  )
   const convertedBracket = !tournamentInfo ? <Loading /> : convertBracketToView(thisBracket, tournamentInfo)
   const convertedStats = !tournamentStats ? <Loading /> : convertStatsToView(tournamentStats)
 

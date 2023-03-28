@@ -6,6 +6,7 @@ import { Navigate } from 'react-router-dom'
 import { useUpdatePlayerInfo } from 'src/utils/hooks'
 import { Typeahead } from 'react-bootstrap-typeahead'
 import { AddRoundInfo } from 'src/types'
+import { RoundForm } from '../forms/RoundForm'
 
 function NewType(props: { field: any, fieldState: ControllerFieldState }) {
   const {field, fieldState} = props
@@ -54,86 +55,7 @@ export const AddRound: React.FC = () => {
       <main className="p-3 mx-auto text-center" style={{ width: '300px' }}>
         <Form onSubmit={handleSubmit(handleOnSubmit)}>
           {/* https://github.com/react-hook-form/react-hook-form/discussions/2624 */}
-          <Controller
-            control={control}
-            name="game"
-            rules={{
-              required: "Please, select at least one Game input value"
-            }}
-            render={({ field, fieldState }) => (
-              <div className="mb-3">
-                <label htmlFor="game" className="form-label">
-                  Game
-                </label>
-                <Typeahead
-                  {...field}
-                  id="game"
-                  // multiple
-                  clearButton
-                  className={fieldState.invalid ? "is-invalid" : ""}
-                  aria-describedby="gameError"
-                  options={addRoundData ? addRoundData.games.map(value => value.name) : []}
-                />
-                <p id="gameError" className="invalid-feedback">
-                  {fieldState.error?.message}
-                </p>
-              </div>
-            )}
-          />
-          <Form.Group className="mb-3" controlId="playedOn">
-            <Form.Label>Date</Form.Label>
-            <Form.Control type="date" {...register('playedOn', { required: true })} />
-            <Form.Text className="text-muted" />
-          </Form.Group>
-          <Controller
-            control={control}
-            name="players"
-            rules={{
-              required: "Please, select at least one Players input value"
-            }}
-            render={({ field, fieldState }) => (
-              <div className="mb-3">
-                <label htmlFor="game" className="form-label">
-                  Players
-                </label>
-                <Typeahead
-                  {...field}
-                  id="game"
-                  multiple
-                  clearButton
-                  className={fieldState.invalid ? "is-invalid" : ""}
-                  aria-describedby="gameError"
-                  options={addRoundData ? addRoundData.group.players.map(value => value.username) : []}
-                />
-                <p id="gameError" className="invalid-feedback">
-                  {fieldState.error?.message}
-                </p>
-
-                <Form.Group className="mb-3" controlId="scoresRanks">
-                  {field.value?.map((value: any) => {
-                    return (
-                      <Form.Group as={Row} className="mb-3" controlId={"scoresRanks" + value}>
-                        <Form.Label column sm="8">
-                          {`${value}'s Rank`}
-                        </Form.Label>
-                        <Col sm="4">
-                          <Form.Control type="text" {...register('rank-' + value)} />
-                        </Col>
-
-                        <Form.Label column sm="8">
-                          {`${value}'s Score`}
-                        </Form.Label>
-                        <Col sm="4">
-                          <Form.Control type="text" {...register('score-' + value)} />
-                        </Col>
-                      </Form.Group>
-                    )
-                  })}
-                  <Form.Text className="text-muted" />
-                </Form.Group>
-              </div>
-            )}
-          />
+          <RoundForm control={control} register={register} inputOptions={addRoundData} />
           <Button variant="primary" type="submit">
             Submit
           </Button>
