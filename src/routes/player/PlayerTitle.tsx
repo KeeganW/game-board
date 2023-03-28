@@ -2,7 +2,7 @@ import React from 'react'
 import { Col, Container, Row } from 'react-bootstrap'
 import {
   capitalizeString,
-} from 'src/helpers'
+} from 'src/utils/helpers'
 import { PlayerObjectFull } from 'src/types'
 
 export const PlayerTitle: React.FC<{

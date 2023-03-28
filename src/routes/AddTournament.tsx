@@ -3,9 +3,9 @@ import { Button, Col, Form, Row, Stack } from 'react-bootstrap'
 import { useForm, Controller, ControllerFieldState } from 'react-hook-form'
 import axios from 'src/axiosAuth'
 import { Navigate } from 'react-router-dom'
-import { useUpdatePlayerInfo } from 'src/helpers'
+import { useUpdatePlayerInfo } from 'src/utils/hooks'
 import { Typeahead } from 'react-bootstrap-typeahead'
-import { AddTournamentInfo } from '../types'
+import { AddTournamentInfo } from 'src/types'
 
 function NewType(props: { field: any, fieldState: ControllerFieldState }) {
   const {field, fieldState} = props

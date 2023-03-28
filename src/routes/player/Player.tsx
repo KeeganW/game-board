@@ -1,8 +1,14 @@
 import React from 'react'
 import {
-  CenteredPage, Loading, useGetPlayer, useGetPlayerStats, useParamsPk,
-  useUpdatePlayerInfo
-} from 'src/helpers'
+  CenteredPage,
+  Loading,
+  useParamsPk,
+} from 'src/utils/helpers'
+import {
+  useGetPlayer,
+  useGetPlayerStats,
+  useUpdatePlayerInfo,
+} from 'src/utils/hooks'
 import { PlayerTitle } from 'src/routes/player/PlayerTitle'
 import { PlayerQuickLook } from 'src/routes/player/PlayerQuickLook'
 import { PlayerRecentGames } from 'src/routes/player/PlayerRecentGames'

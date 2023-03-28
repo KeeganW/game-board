@@ -3,7 +3,7 @@ import { Stack } from 'react-bootstrap'
 import axios from 'src/axiosAuth'
 import { useParams } from 'react-router-dom'
 import { AuthContext } from 'src/Context'
-import { useUpdatePlayerInfo } from '../helpers'
+import { useUpdatePlayerInfo } from 'src/utils/hooks'
 
 export const Group: React.FC = () => {
   useUpdatePlayerInfo()

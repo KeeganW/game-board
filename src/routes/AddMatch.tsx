@@ -3,7 +3,7 @@ import { Button, Form, Stack } from 'react-bootstrap'
 import { useForm, Controller } from 'react-hook-form'
 import axios from 'src/axiosAuth'
 import { Navigate, useParams } from 'react-router-dom'
-import { useUpdatePlayerInfo } from 'src/helpers'
+import { useUpdatePlayerInfo } from 'src/utils/hooks'
 import { Typeahead } from 'react-bootstrap-typeahead'
 import { RoundObject } from 'src/types'
 

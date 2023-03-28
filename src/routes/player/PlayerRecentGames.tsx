@@ -1,7 +1,7 @@
 import React from 'react'
 import { Col, Container, Row } from 'react-bootstrap'
 import { PlayerRankObject, PlayerStats, RoundObject } from 'src/types'
-import { ordinalSuffix } from 'src/helpers'
+import { ordinalSuffix } from 'src/utils/helpers'
 
 export const PlayerRecentGames: React.FC<{
     playerStatsInfo: PlayerStats,

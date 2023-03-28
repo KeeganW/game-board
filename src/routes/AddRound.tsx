@@ -1,12 +1,11 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button, Col, Form, Row, Stack } from 'react-bootstrap'
-import { useForm, Controller, ControllerRenderProps, ControllerFieldState } from 'react-hook-form'
+import { useForm, Controller, ControllerFieldState } from 'react-hook-form'
 import axios from 'src/axiosAuth'
 import { Navigate } from 'react-router-dom'
-import { AuthContext } from 'src/Context'
-import { useUpdatePlayerInfo } from 'src/helpers'
+import { useUpdatePlayerInfo } from 'src/utils/hooks'
 import { Typeahead } from 'react-bootstrap-typeahead'
-import { AddRoundInfo } from '../types'
+import { AddRoundInfo } from 'src/types'
 
 function NewType(props: { field: any, fieldState: ControllerFieldState }) {
   const {field, fieldState} = props

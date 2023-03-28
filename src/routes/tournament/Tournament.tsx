@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import axios from 'src/axiosAuth'
-import { Link, useParams } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { AuthContext } from 'src/Context'
 import {
   BracketMatchesObject,
@@ -8,9 +8,15 @@ import {
   TournamentObject,
 } from 'src/types'
 import {
-  BasicList, BasicResponse, Loading, useUpdatePlayerInfo,
-} from 'src/helpers'
-import { Col, Container, ListGroupItem, Row, Stack } from 'react-bootstrap'
+  BasicList,
+  BasicResponse,
+  Loading,
+  useParamsPk,
+} from 'src/utils/helpers'
+import {
+  useUpdatePlayerInfo,
+} from 'src/utils/hooks'
+import { Col, Container, Row } from 'react-bootstrap'
 import { calculateBracket } from 'src/bracketLayout'
 
 export const convertStatsToView = (tournamentStats: Object) => {
@@ -122,17 +128,14 @@ export const convertBracketToView = (bracket: number[][][], tournament: Tourname
 
 export const Tournament: React.FC = () => {
   useUpdatePlayerInfo()
+  const tournamentPk = useParamsPk()
+
   const { playerPk } = useContext(AuthContext)
   const [tournamentArray, setTournamentArray] = useState<TournamentObject[] | undefined>(undefined)
   const [tournament, setTournament] = useState<TournamentObject | undefined>(undefined)
   const [tournamentStats, setTournamentStats] = useState<Object | undefined>(undefined)
   const [tournamentPlayerStats, setTournamentPlayerStats] = useState<Object | undefined>(undefined)
   const [tournamentPlayerInfo, setTournamentPlayerInfo] = useState<Object | undefined>(undefined)
-
-  // Get tournament info if provided
-  const params = useParams()
-  const { pk } = params
-  const tournamentPk = pk || ''
 
   // We need to get ALL the data at once, so get tournament > bracket > matches
   useEffect(() => {
