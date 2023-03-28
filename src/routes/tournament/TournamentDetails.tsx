@@ -1,38 +1,33 @@
-import React, { useContext, useEffect, useState } from 'react'
-import axios from 'src/axiosAuth'
-import { Link, Navigate } from 'react-router-dom'
-import { AuthContext } from 'src/Context'
+import React from 'react'
+import { Link } from 'react-router-dom'
 import {
   BracketMatchesObject,
   PlayerRankObject, TeamObject,
   TournamentObject,
 } from 'src/types'
 import {
-  BasicList,
-  BasicResponse, CenteredPage,
   Loading,
   useParamsPk,
 } from 'src/utils/helpers'
 import {
-  useGetTournament,
-  useUpdatePlayerInfo,
+  useGetTournamentInfo,
+  useGetTournamentStats,
 } from 'src/utils/hooks'
 import { Col, Container, Row } from 'react-bootstrap'
 import { calculateBracket } from 'src/bracketLayout'
-import { TournamentDetails } from './TournamentDetails'
 
 export const convertStatsToView = (tournamentStats: Object) => {
   const results = Object.entries(tournamentStats).map((value: any, index: number) => {
-    if (value[0] === 'raw_scores_by_team') {
+    if (value[0] === 'rawScoresByTeam') {
       const scoring = Object.entries(value[1]).map((scoringValue: any, scoringIndex: number) => {
         return (
-          <div key={'raw_scores_by_team' + scoringValue[0]}>
+          <div key={'rawScoresByTeam' + scoringValue[0]}>
             {scoringValue[0]}{': '}{scoringValue[1]}
           </div>
         )
       })
       return (
-        <Row key={'raw_scores_by_team'} className="text-center">
+        <Row key={'rawScoresByTeam'} className="text-center">
           <h3>
             Raw Scoring
           </h3>
@@ -40,16 +35,16 @@ export const convertStatsToView = (tournamentStats: Object) => {
         </Row>
       )
     }
-    if (value[0] === 'scores_by_team') {
+    if (value[0] === 'scoresByTeam') {
       const scoring = Object.entries(value[1]).map((scoringValue: any, scoringIndex: number) => {
         return (
-          <div key={'scores_by_team' + scoringValue[0]}>
+          <div key={'scoresByTeam' + scoringValue[0]}>
             {scoringValue[0]}{': '}{scoringValue[1]}
           </div>
         )
       })
       return (
-        <Row key={'scores_by_team'} className="text-center">
+        <Row key={'scoresByTeam'} className="text-center">
           <h3>
             Scoring
           </h3>
@@ -128,47 +123,58 @@ export const convertBracketToView = (bracket: number[][][], tournament: Tourname
   )
 }
 
-export const Tournament: React.FC = () => {
-  useUpdatePlayerInfo()
+export const TournamentDetails: React.FC = () => {
   const tournamentPk = useParamsPk()
 
-  const tournament = useGetTournament(tournamentPk)
+  const tournamentInfoResponse = useGetTournamentInfo(tournamentPk)
+  const tournamentStatsResponse = useGetTournamentStats(tournamentPk)
 
   if (
-    !tournament.response ||
-    !tournament.response.data ||
-    tournament.loading
+    !tournamentInfoResponse.response ||
+    !tournamentInfoResponse.response.data ||
+    tournamentInfoResponse.loading ||
+    !tournamentStatsResponse.response ||
+    !tournamentStatsResponse.response.data ||
+    tournamentStatsResponse.loading
   ) {
     return (
-      <CenteredPage>
-        <Loading/>
-      </CenteredPage>
+      <Loading/>
     )
-  }
-  // Catch weird instances where we need to log out
-  if (tournament.response.status === 401) {
-    return <Navigate replace to="/logout/"/>
   }
 
-  const tournamentInfo = tournament.response.data
+  const tournamentInfo = tournamentInfoResponse.response.data?.tournament
+  const tournamentStats = tournamentStatsResponse.response.data
 
-  if (!tournamentPk) {
-    return (
-      <CenteredPage>
-        <BasicList
-          listObject={[
-            ...(tournamentInfo || []),
-            // Add this in, so that we can also add a new tournament if we want here.
-            {pk: '/add_tournament', name: 'Add Tournament'},
-          ]}
-        />
-      </CenteredPage>
-    )
-  } else {
-    return (
-      <CenteredPage>
-        <TournamentDetails />
-      </CenteredPage>
-    )
-  }
+  const thisBracket = calculateBracket(10, tournamentInfo ? tournamentInfo.bracket.teams.length : 6, 4)
+  const convertedBracket = !tournamentInfo ? <Loading /> : convertBracketToView(thisBracket, tournamentInfo)
+  const convertedStats = !tournamentStats ? <Loading /> : convertStatsToView(tournamentStats)
+
+  return (
+    <Container>
+      <Row className="mb-4">
+        <Col>
+          {!tournamentInfo && <Loading />}
+          <h1 className="text-center">
+            {tournamentInfo && tournamentInfo.name}
+          </h1>
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <Row className="mb-4">
+            <h2 className="text-center">
+              Current Standings
+            </h2>
+            {convertedStats}
+          </Row>
+          <Row className="mb-4">
+            <h2 className="text-center">
+              Full Bracket
+            </h2>
+            {convertedBracket}
+          </Row>
+        </Col>
+      </Row>
+    </Container>
+  )
 }

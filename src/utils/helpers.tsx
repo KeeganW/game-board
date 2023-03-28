@@ -27,7 +27,7 @@ export const BasicList: React.FC<{
   listObject,
 }) => {
   const links = listObject?.map((value) => (
-    <ListGroupItem as={Link} to={`${value.pk}`} key={value}>{value.name}</ListGroupItem>
+    <ListGroupItem as={Link} to={`${value.pk}`} key={value.pk}>{value.name}</ListGroupItem>
   ))
   return (
     <BasicResponse>

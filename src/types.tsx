@@ -98,6 +98,15 @@ export type PlayerStats = {
   lastGamesPlayed: RoundObject[]
 } & DetailResponse
 
+type TeamScores = {
+  [team: string]: number
+}
+
+export type TournamentStats = {
+  rawScoresByTeam: TeamScores
+  scoresByTeam: TeamScores
+} & DetailResponse
+
 export type PlayerInfo = {
   playerPk: number
   groupPk: number

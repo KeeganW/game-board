@@ -1,7 +1,13 @@
 import React, { useContext } from 'react'
 import { AuthContext } from 'src/Context'
 import axios from 'src/axiosAuth'
-import { PlayerInfo, PlayerObjectFull, PlayerStats } from 'src/types'
+import {
+  FetchResponse,
+  PlayerInfo,
+  PlayerObjectFull,
+  PlayerStats,
+  TournamentObject, TournamentStats
+} from 'src/types'
 import useAxios from 'src/useAxios'
 
 export function useUpdatePlayerInfo() {
@@ -20,37 +26,49 @@ export function useUpdatePlayerInfo() {
   }
 }
 
-export function useGetPlayer(playerPk: number) {
-  const url = `/player/${playerPk}`
+/**
+ * A generic get hook which calls useAxios, and then formats the response to be a specific type.
+ *
+ * @param url The url to call with the get hook.
+ */
+function useGetResponse<Type>(url: string): FetchResponse {
   const hookResponse =  useAxios({
     method: "GET",
     url: url,
   })
-  // Specifically set the data type to be PlayerObjectFull
+  // Specifically set the data type to be Type
   return {
     ...hookResponse,
     response: hookResponse.response ? {
       ...hookResponse.response,
       data: hookResponse.response.data
-        ? hookResponse.response.data as PlayerObjectFull
+        ? hookResponse.response.data as Type
         : hookResponse.response.data,
     } : hookResponse.response,
   }
 }
 
-export function useGetPlayerStats(playerPk: number) {
-  const response =  useAxios({
-    method: "GET",
-    url: `/player_stats/${playerPk}`,
-  })
-  // Specifically set the data type to be PlayerStats
-  return {
-    ...response,
-    response: response.response ? {
-      ...response.response,
-      data: response.response.data
-        ? response.response.data as PlayerStats
-        : response.response.data,
-    } : response.response,
-  }
+export function useGetPlayer(playerPk: string | number): FetchResponse {
+  const url = `/player/${playerPk}`
+  return useGetResponse<PlayerObjectFull>(url)
+}
+
+export function useGetTournament(tournamentPk: string | number): FetchResponse {
+  const url = `/tournament/${tournamentPk}`
+  return useGetResponse<TournamentObject>(url)
+}
+
+export function useGetPlayerStats(playerPk: string | number): FetchResponse {
+  const url = `/player_stats/${playerPk}`
+  return useGetResponse<PlayerStats>(url)
+}
+
+export function useGetTournamentStats(tournamentPk: string | number): FetchResponse {
+  const url = `/tournament_stats/${tournamentPk}`
+  return useGetResponse<TournamentStats>(url)
+}
+
+export function useGetTournamentInfo(tournamentPk: string | number): FetchResponse {
+  const url = `/tournament_info/${tournamentPk}`
+  return useGetResponse<TournamentObject>(url)
 }
