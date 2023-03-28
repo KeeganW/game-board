@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
+import { FetchResponse } from './types'
 
 /*
 Code borrowed from...
@@ -43,7 +44,7 @@ const useAxios = (axiosParams: AxiosRequestConfig) => {
     sendData()
   }
 
-  return { response, error, loading, request, sendData }
+  return { response, error, loading, request, sendData } as FetchResponse
 }
 
 export default useAxios;

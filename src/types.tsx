@@ -1,3 +1,12 @@
+import { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios'
+
+export type FetchResponse = {
+  response: AxiosResponse
+  error: AxiosError
+  loading: boolean
+  request: AxiosRequestConfig
+  sendData: () => undefined
+}
 
 export type DetailResponse = {
   detail: string
@@ -84,7 +93,6 @@ export type TournamentObject = {
 }
 
 export type PlayerStats = {
-  playerPk: number
   numberGamesPlayed: number
   favoriteGame: GameObject
   lastGamesPlayed: RoundObject[]

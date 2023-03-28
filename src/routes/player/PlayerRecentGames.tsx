@@ -1,33 +1,15 @@
 import React from 'react'
 import { Col, Container, Row } from 'react-bootstrap'
-import { Navigate } from 'react-router-dom'
-import {
-  Loading,
-  useGetPlayerStats,
-  useParamsPk,
-} from 'src/helpers'
-import { PlayerRankObject, RoundObject } from 'src/types'
+import { PlayerRankObject, PlayerStats, RoundObject } from 'src/types'
+import { ordinalSuffix } from 'src/helpers'
 
-export const PlayerRecentGames: React.FC = () => {
-  const paramsPk = useParamsPk()
-  const playerStats = useGetPlayerStats(parseInt(paramsPk))
-
-  // Only show the page if things are still loading
-  if (
-    !playerStats.response ||
-    !playerStats.response.data ||
-    playerStats.loading
-  ) {
-    return (
-      <Loading/>
-    )
-  }
-  // Catch weird instances where we need to log out
-  if (playerStats.response.status === 401) {
-    return <Navigate replace to="/logout/"/>
-  }
-
-  const playerStatsInfo = playerStats.response.data
+export const PlayerRecentGames: React.FC<{
+    playerStatsInfo: PlayerStats,
+    playerPk: number,
+}> = ({
+  playerStatsInfo,
+  playerPk,
+}) => {
 
   return (
     <Container>
@@ -49,7 +31,7 @@ export const PlayerRecentGames: React.FC = () => {
                   </Row>
                   <Row>
                     <Col>
-                      {round.players.filter((value: PlayerRankObject) => value.player.pk === playerStatsInfo.playerPk)?.[0]?.rank}
+                      Placed: {ordinalSuffix(round.players.filter((value: PlayerRankObject) => value.player.pk === playerPk)?.[0]?.rank)}
                     </Col>
                   </Row>
                 </Col>
