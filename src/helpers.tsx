@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { ListGroup, ListGroupItem, Spinner, Stack } from 'react-bootstrap'
-import { Link } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { AuthContext } from 'src/Context'
 import axios from 'src/axiosAuth'
 import { PlayerInfo, PlayerObjectFull, PlayerStats } from 'src/types'
@@ -106,4 +106,10 @@ export function useGetPlayerStats(playerPk: number) {
 export function capitalizeString(word: string) {
   if (!word) return word;
   return word[0].toUpperCase() + word.slice(1).toLowerCase();
+}
+
+export function useParamsPk() {
+  const params = useParams()
+  const { pk } = params
+  return pk || ''
 }

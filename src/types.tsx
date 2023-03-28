@@ -84,6 +84,7 @@ export type TournamentObject = {
 }
 
 export type PlayerStats = {
+  playerPk: number
   numberGamesPlayed: number
   favoriteGame: GameObject
   lastGamesPlayed: RoundObject[]
