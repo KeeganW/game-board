@@ -14,18 +14,17 @@ import { Col, Container, ListGroupItem, Row, Stack } from 'react-bootstrap'
 import { calculateBracket } from 'src/bracketLayout'
 
 export const convertStatsToView = (tournamentStats: Object) => {
-  console.log(tournamentStats)
   const results = Object.entries(tournamentStats).map((value: any, index: number) => {
-    if (value[0] === 'raw_scoring') {
+    if (value[0] === 'raw_scores_by_team') {
       const scoring = Object.entries(value[1]).map((scoringValue: any, scoringIndex: number) => {
         return (
-          <div key={'raw_scoring' + scoringValue[0]}>
+          <div key={'raw_scores_by_team' + scoringValue[0]}>
             {scoringValue[0]}{': '}{scoringValue[1]}
           </div>
         )
       })
       return (
-        <Row key={'raw_scoring'} className="text-center">
+        <Row key={'raw_scores_by_team'} className="text-center">
           <h3>
             Raw Scoring
           </h3>
@@ -33,18 +32,18 @@ export const convertStatsToView = (tournamentStats: Object) => {
         </Row>
       )
     }
-    if (value[0] === 'scoring') {
+    if (value[0] === 'scores_by_team') {
       const scoring = Object.entries(value[1]).map((scoringValue: any, scoringIndex: number) => {
         return (
-          <div key={'scoring' + scoringValue[0]}>
+          <div key={'scores_by_team' + scoringValue[0]}>
             {scoringValue[0]}{': '}{scoringValue[1]}
           </div>
         )
       })
       return (
-        <Row key={'rawscoring'} className="text-center">
+        <Row key={'scores_by_team'} className="text-center">
           <h3>
-            Raw Scoring
+            Scoring
           </h3>
           {scoring}
         </Row>
@@ -127,6 +126,8 @@ export const Tournament: React.FC = () => {
   const [tournamentArray, setTournamentArray] = useState<TournamentObject[] | undefined>(undefined)
   const [tournament, setTournament] = useState<TournamentObject | undefined>(undefined)
   const [tournamentStats, setTournamentStats] = useState<Object | undefined>(undefined)
+  const [tournamentPlayerStats, setTournamentPlayerStats] = useState<Object | undefined>(undefined)
+  const [tournamentPlayerInfo, setTournamentPlayerInfo] = useState<Object | undefined>(undefined)
 
   // Get tournament info if provided
   const params = useParams()
@@ -143,6 +144,12 @@ export const Tournament: React.FC = () => {
       })
       axios.get(`http://localhost:8000/tournament_stats/${tournamentPk}`).then((tournamentStatsRes) => {
         setTournamentStats(tournamentStatsRes.data)
+      })
+      axios.get(`http://localhost:8000/tournament_player_stats/${tournamentPk}`).then((tournamentPlayerStatsRes) => {
+        setTournamentPlayerStats(tournamentPlayerStatsRes.data)
+      })
+      axios.get(`http://localhost:8000/tournament_player_info/${tournamentPk}`).then((tournamentPlayerInfoRes) => {
+        setTournamentPlayerInfo(tournamentPlayerInfoRes.data)
       })
     } else {
       axios.get(`http://localhost:8000/tournament/${tournamentPk}`).then((tournamentRes) => {
