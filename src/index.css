@@ -13,3 +13,9 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+#round .dropdown-item{
+  height: 57px;
+  white-space: normal;
+  text-overflow: ellipsis;
+}

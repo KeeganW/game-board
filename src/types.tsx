@@ -51,12 +51,28 @@ export type PlayerRankObject = {
   handicap: number
 }
 
+export type PlayerRankObjectLite = {
+  pk: number
+  player: number
+  score: number
+  rank: number
+  handicap: number
+}
+
 export type RoundObject = {
   pk: number
   game: GameObject
   date: string
-  players: PlayerRankObject[]
+  playerRanks: PlayerRankObject[]
   group: GroupObject
+}
+
+export type RoundObjectLite = {
+  pk: number
+  game: number
+  date: string
+  playerRanks: number[]
+  group: number
 }
 
 export type BracketMatchesObject = {

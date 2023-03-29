@@ -31,7 +31,7 @@ export const PlayerRecentGames: React.FC<{
                   </Row>
                   <Row>
                     <Col>
-                      Placed: {ordinalSuffix(round.players.filter((value: PlayerRankObject) => value.player.pk === playerPk)?.[0]?.rank)}
+                      Placed: {ordinalSuffix(round.playerRanks.filter((value: PlayerRankObject) => value.player.pk === playerPk)?.[0]?.rank)}
                     </Col>
                   </Row>
                 </Col>

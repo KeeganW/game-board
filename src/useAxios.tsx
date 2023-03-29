@@ -41,6 +41,7 @@ const useAxios = (axiosParams: AxiosRequestConfig) => {
   // Sometimes we update the hook, with a new set of params (in this case url), but a new request
   // isn't sent. In this case, we manually catch that and send a new data request.
   if (!loading && request && request.url && axiosParams.url && request.url !== axiosParams.url) {
+    setLoading(true)
     sendData()
   }
 

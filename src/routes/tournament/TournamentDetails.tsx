@@ -75,7 +75,8 @@ export const convertBracketToView = (bracket: number[][][], tournament: Tourname
       const tournamentGame = tournament.bracket.matches.find((value: BracketMatchesObject) => value.match === gameNumber)
       if (tournamentGame) {
         const { round } = tournamentGame
-        const playerRanks = round.players.sort((a: PlayerRankObject, b: PlayerRankObject) => a.rank - b.rank).map((player: PlayerRankObject) => (
+        console.log(round)
+        const playerRanks = round.playerRanks?.sort((a: PlayerRankObject, b: PlayerRankObject) => a.rank - b.rank).map((player: PlayerRankObject) => (
           <div key={tournamentGame.match + player.player.username}>
             {player.rank}
             {': '}
@@ -151,6 +152,7 @@ export const TournamentDetails: React.FC = () => {
     4,
     10
   )
+  console.log(tournamentInfo)
   const convertedBracket = !tournamentInfo ? <Loading /> : convertBracketToView(thisBracket, tournamentInfo)
   const convertedStats = !tournamentStats ? <Loading /> : convertStatsToView(tournamentStats)
 

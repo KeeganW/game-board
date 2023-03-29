@@ -16,12 +16,12 @@ export const Tournament: React.FC = () => {
   useUpdatePlayerInfo()
   const tournamentPk = useParamsPk()
 
-  const tournament = useGetTournament(tournamentPk)
+  const allTournamentsResponse = useGetTournament()
 
   if (
-    !tournament.response ||
-    !tournament.response.data ||
-    tournament.loading
+    !allTournamentsResponse.response ||
+    !allTournamentsResponse.response.data ||
+    allTournamentsResponse.loading
   ) {
     return (
       <CenteredPage>
@@ -30,18 +30,18 @@ export const Tournament: React.FC = () => {
     )
   }
   // Catch weird instances where we need to log out
-  if (tournament.response.status === 401) {
+  if (allTournamentsResponse.response.status === 401) {
     return <Navigate replace to="/logout/"/>
   }
 
-  const tournamentInfo = tournament.response.data
+  const allTournaments = allTournamentsResponse.response.data
 
   if (!tournamentPk) {
     return (
       <CenteredPage>
         <BasicList
           listObject={[
-            ...(tournamentInfo || []),
+            ...(allTournaments || []),
             // Add this in, so that we can also add a new tournament if we want here.
             {pk: '/add_tournament', name: 'Add Tournament'},
           ]}

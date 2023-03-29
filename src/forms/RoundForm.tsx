@@ -4,15 +4,18 @@ import { Typeahead } from 'react-bootstrap-typeahead'
 import { Col, Form, Row } from 'react-bootstrap'
 import { Control } from 'react-hook-form/dist/types'
 import { GameObject, PlayerObjectLite } from '../types'
+import moment from 'moment'
 
 export const RoundForm: React.FC<{
   control: Control<any>
   register: UseFormRegister<any>
-  inputOptions?: any
+  gameOptions?: any
+  playerOptions?: any
 }> = ({
   control,
   register,
-  inputOptions,
+  gameOptions,
+  playerOptions,
 }) => {
 
   return (
@@ -31,11 +34,10 @@ export const RoundForm: React.FC<{
             <Typeahead
               {...field}
               id="game"
-              // multiple
               clearButton
               className={fieldState.invalid ? "is-invalid" : ""}
               aria-describedby="gameError"
-              options={inputOptions?.games.map((value: GameObject) => value.name) || []}
+              options={gameOptions?.map((value: GameObject) => value.name) || []}
             />
             <p id="gameError" className="invalid-feedback">
               {fieldState.error?.message}
@@ -45,7 +47,7 @@ export const RoundForm: React.FC<{
       />
       <Form.Group className="mb-3" controlId="playedOn">
         <Form.Label>Date</Form.Label>
-        <Form.Control type="date" {...register('playedOn', { required: true })} />
+        <Form.Control type="date" {...register('playedOn', { required: true, value: moment().format('YYYY-MM-DD') })}  />
         <Form.Text className="text-muted" />
       </Form.Group>
       <Controller
@@ -65,10 +67,10 @@ export const RoundForm: React.FC<{
               multiple
               clearButton
               className={fieldState.invalid ? "is-invalid" : ""}
-              aria-describedby="gameError"
-              options={inputOptions?.group.players.map((value: PlayerObjectLite) => value.username) || []}
+              aria-describedby="playerError"
+              options={playerOptions?.map((value: PlayerObjectLite) => value.username) || []}
             />
-            <p id="gameError" className="invalid-feedback">
+            <p id="playerError" className="invalid-feedback">
               {fieldState.error?.message}
             </p>
 
