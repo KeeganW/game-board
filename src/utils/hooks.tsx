@@ -2,7 +2,7 @@ import React, { useContext } from 'react'
 import { AuthContext } from 'src/Context'
 import axios from 'src/axiosAuth'
 import {
-  FetchResponse, GameObject,
+  FetchResponse, GameObject, GroupObject, GroupObjectLite,
   PlayerInfo,
   PlayerObjectFull, PlayerRankObject,
   PlayerStats, RoundObject,
@@ -46,6 +46,11 @@ function useGetResponse<Type>(url: string): FetchResponse {
         : hookResponse.response.data,
     } : hookResponse.response,
   }
+}
+
+export function useGetGroup(groupPk?: string | number): FetchResponse {
+  const url = `/group/${groupPk || ''}`
+  return useGetResponse<GroupObjectLite>(url)
 }
 
 export function useGetPlayer(playerPk?: string | number): FetchResponse {

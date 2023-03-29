@@ -1,32 +1,52 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { Stack } from 'react-bootstrap'
 import axios from 'src/axiosAuth'
-import { useParams } from 'react-router-dom'
+import { Navigate, useParams } from 'react-router-dom'
 import { AuthContext } from 'src/Context'
-import { useUpdatePlayerInfo } from 'src/utils/hooks'
+import { useGetGroup, useGetPlayer, useGetPlayerStats, useUpdatePlayerInfo } from 'src/utils/hooks'
+import {
+  BasicList,
+  BasicResponse,
+  capitalizeString,
+  CenteredPage,
+  Loading,
+  useParamsPk
+} from '../utils/helpers'
 
 export const Group: React.FC = () => {
   useUpdatePlayerInfo()
-  const { playerPk } = useContext(AuthContext)
-  const [extraInfo, setExtraInfo] = useState(undefined)
+  const paramsPk = useParamsPk()
+  const groupResponse = useGetGroup(paramsPk)
+  const playerResponse = useGetPlayer()
 
-  // Get player info if provided
-  const params = useParams()
-  const { pk } = params
-  const groupPk = pk || ''
-  useEffect(() => {
-    // TODO on 401, redirect
-    axios.get(`http://localhost:8000/group/${groupPk}`).then((res) => {
-      setExtraInfo(res.data)
-      console.log(res.data)
-    })
-  }, [groupPk])
+  // Only show the page if things are still loading
+  if (
+    !groupResponse.response ||
+    !groupResponse.response.data ||
+    groupResponse.loading ||
+    !playerResponse.response ||
+    !playerResponse.response.data ||
+    playerResponse.loading
+  ) {
+    return (
+      <CenteredPage>
+        <Loading/>
+      </CenteredPage>
+    )
+  }
+  // Catch weird instances where we need to log out
+  if (groupResponse.response.status === 401) {
+    return <Navigate replace to="/logout/"/>
+  }
+
+  const group = groupResponse.response.data
+  const players = playerResponse.response.data
 
   return (
-    <Stack className="mx-auto">
-      <main className="p-3 mx-auto text-center">
-        {playerPk && groupPk && extraInfo ? `Group name: ${extraInfo['name']}` : 'Group info is limited to logged in users.'}
-      </main>
-    </Stack>
+    <BasicResponse>
+      <h1>{group.name}</h1>
+      <h4>Players</h4>
+      <BasicList listObject={players} prefix={'/player/'} alternateDisplay={(player: any) => `${capitalizeString(player.firstName)} ${capitalizeString(player.lastName)} (${player.username})`} />
+    </BasicResponse>
   )
 }

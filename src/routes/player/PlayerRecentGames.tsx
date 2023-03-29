@@ -22,6 +22,7 @@ export const PlayerRecentGames: React.FC<{
           </Row>
           <Row>
             {playerStatsInfo.lastGamesPlayed.map((round: RoundObject) => {
+              console.log(round)
               return (
                 <Col key={`lastGamesPlayed${round.pk}`}>
                   <Row>

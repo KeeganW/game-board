@@ -22,12 +22,16 @@ export const Loading: React.FC = () => (
 export const BasicList: React.FC<{
   children?: any
   listObject: any[] | undefined
+  prefix?: string
+  alternateDisplay?: (value: any) => any
 }> = ({
   children,
   listObject,
+  prefix,
+  alternateDisplay,
 }) => {
   const links = listObject?.map((value) => (
-    <ListGroupItem as={Link} to={`${value.pk}`} key={value.pk}>{value.name}</ListGroupItem>
+    <ListGroupItem as={Link} to={`${prefix || ''}${value.pk}`} key={value.pk}>{alternateDisplay ? alternateDisplay(value) : value.name}</ListGroupItem>
   ))
   return (
     <BasicResponse>

@@ -43,6 +43,14 @@ export type GroupObject = {
   groupPicture: string
 }
 
+export type GroupObjectLite = {
+  pk: number
+  name: string
+  players: number[]
+  admins: number[]
+  groupPicture: string
+}
+
 export type PlayerRankObject = {
   pk: number
   player: PlayerObjectLite
