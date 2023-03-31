@@ -26,6 +26,11 @@ export function useUpdatePlayerInfo() {
   }
 }
 
+export function useLogout() {
+  const url = `/logout/`
+  return useGetResponse<any>(url)
+}
+
 /**
  * A generic get hook which calls useAxios, and then formats the response to be a specific type.
  *

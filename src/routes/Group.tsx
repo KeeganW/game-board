@@ -1,17 +1,13 @@
-import React, { useContext, useEffect, useState } from 'react'
-import { Stack } from 'react-bootstrap'
-import axios from 'src/axiosAuth'
-import { Navigate, useParams } from 'react-router-dom'
-import { AuthContext } from 'src/Context'
-import { useGetGroup, useGetPlayer, useGetPlayerStats, useUpdatePlayerInfo } from 'src/utils/hooks'
+import React from 'react'
+import { Navigate } from 'react-router-dom'
+import { useGetGroup, useGetPlayer, useUpdatePlayerInfo } from 'src/utils/hooks'
 import {
   BasicList,
-  BasicResponse,
   capitalizeString,
   CenteredPage,
   Loading,
   useParamsPk
-} from '../utils/helpers'
+} from 'src/utils/helpers'
 
 export const Group: React.FC = () => {
   useUpdatePlayerInfo()
@@ -43,10 +39,10 @@ export const Group: React.FC = () => {
   const players = playerResponse.response.data
 
   return (
-    <BasicResponse>
+    <CenteredPage>
       <h1>{group.name}</h1>
       <h4>Players</h4>
       <BasicList listObject={players} prefix={'/player/'} alternateDisplay={(player: any) => `${capitalizeString(player.firstName)} ${capitalizeString(player.lastName)} (${player.username})`} />
-    </BasicResponse>
+    </CenteredPage>
   )
 }

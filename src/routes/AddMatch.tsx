@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Button, Col, Form, Row, Stack } from 'react-bootstrap'
+import { Button, Col, Form, Row } from 'react-bootstrap'
 import { useForm, Controller } from 'react-hook-form'
 import axios from 'src/axiosAuth'
 import { Navigate, useParams } from 'react-router-dom'
@@ -9,11 +9,10 @@ import {
   GameObject,
   PlayerObjectLite,
   PlayerRankObjectLite,
-  RoundObject,
   RoundObjectLite
 } from 'src/types'
-import { RoundForm } from '../forms/RoundForm'
-import { CenteredPage, Loading } from '../utils/helpers'
+import { RoundForm } from 'src/forms/RoundForm'
+import { CenteredPage, Loading } from 'src/utils/helpers'
 
 
 export const AddMatch: React.FC = () => {
@@ -95,86 +94,84 @@ export const AddMatch: React.FC = () => {
     )
   }
   return (
-    <Stack className="mx-auto">
-      <main className="p-3 mx-auto text-center" style={{ width: '300px' }}>
-        <Form onSubmit={handleSubmit(handleOnSubmit)}>
-          <Row>
-            <Col>
-              <Form.Group className="mb-3" controlId="match">
-                <Form.Label>Match</Form.Label>
-                <Form.Control type="text" {...register('match', { required: true, value: match })} />
-                <Form.Text className="text-muted" />
-              </Form.Group>
+    <CenteredPage pageWidth={300}>
+      <Form onSubmit={handleSubmit(handleOnSubmit)}>
+        <Row>
+          <Col>
+            <Form.Group className="mb-3" controlId="match">
+              <Form.Label>Match</Form.Label>
+              <Form.Control type="text" {...register('match', { required: true, value: match })} />
+              <Form.Text className="text-muted" />
+            </Form.Group>
 
-              <Form.Control type="hidden" {...register('tournament', { required: true, value: tournamentPk })} />
-            </Col>
-          </Row>
-          <Button variant="secondary" type="button" onClick={() => setAddNewRound(!addNewRound)}>
-            {addNewRound ? 'Add Match By Round' : 'Add New Round for Match'}
-          </Button>
-          <Row>
-            {
-              !addNewRound &&
-                <Col>
-                  <Controller
-                    control={control}
-                    name="round"
-                    rules={{
-                      required: "Please, select at least one Round input value"
-                    }}
-                    render={({ field, fieldState }) => (
-                      <div className="mb-3">
-                        <label htmlFor="round" className="form-label">
-                          Round
-                        </label>
-                        <Typeahead
-                          {...field}
-                          id="round"
-                          clearButton
-                          className={fieldState.invalid ? "is-invalid" : ""}
-                          aria-describedby="gameError"
-                          options={addRoundData?.map((round: RoundObjectLite) => {
-                            // TODO: move this offline...
-                            const game = games.filter((game: GameObject) => round.game === game.pk)?.[0]
-                            // Need to get a list of player usernames, by mapping round player ranks -> player rank player -> players username
-                            const playerList = round.playerRanks.map((playerRankPk: number) => {
-                              // Get the player rank that matches this one
-                              const playerRank = playerRanks.filter((playerRank: PlayerRankObjectLite) => playerRank.pk === playerRankPk)?.[0]
-                              if (playerRank) {
-                                // PlayerRank exists, so lets map it to a player.
-                                return players.filter((player: PlayerObjectLite) => playerRank.player === player.pk)?.[0]?.username || 'unknown'
-                              } else {
-                                return 'unknown'
-                              }
-                            })
-                            return {label: `${game.name} - ${round.date}: \n${playerList.join(', ')}`, value: String(round.pk)}
-                          }).reverse() || []}
-                        />
-                        <p id="gameError" className="invalid-feedback">
-                          {fieldState.error?.message}
-                        </p>
-                      </div>
-                    )}
-                  />
-                </Col>
-            }
+            <Form.Control type="hidden" {...register('tournament', { required: true, value: tournamentPk })} />
+          </Col>
+        </Row>
+        <Button variant="secondary" type="button" onClick={() => setAddNewRound(!addNewRound)}>
+          {addNewRound ? 'Add Match By Round' : 'Add New Round for Match'}
+        </Button>
+        <Row>
+          {
+            !addNewRound &&
+              <Col>
+                <Controller
+                  control={control}
+                  name="round"
+                  rules={{
+                    required: "Please, select at least one Round input value"
+                  }}
+                  render={({ field, fieldState }) => (
+                    <div className="mb-3">
+                      <label htmlFor="round" className="form-label">
+                        Round
+                      </label>
+                      <Typeahead
+                        {...field}
+                        id="round"
+                        clearButton
+                        className={fieldState.invalid ? "is-invalid" : ""}
+                        aria-describedby="gameError"
+                        options={addRoundData?.map((round: RoundObjectLite) => {
+                          // TODO: move this offline...
+                          const game = games.filter((game: GameObject) => round.game === game.pk)?.[0]
+                          // Need to get a list of player usernames, by mapping round player ranks -> player rank player -> players username
+                          const playerList = round.playerRanks.map((playerRankPk: number) => {
+                            // Get the player rank that matches this one
+                            const playerRank = playerRanks.filter((playerRank: PlayerRankObjectLite) => playerRank.pk === playerRankPk)?.[0]
+                            if (playerRank) {
+                              // PlayerRank exists, so lets map it to a player.
+                              return players.filter((player: PlayerObjectLite) => playerRank.player === player.pk)?.[0]?.username || 'unknown'
+                            } else {
+                              return 'unknown'
+                            }
+                          })
+                          return {label: `${game.name} - ${round.date}: \n${playerList.join(', ')}`, value: String(round.pk)}
+                        }).reverse() || []}
+                      />
+                      <p id="gameError" className="invalid-feedback">
+                        {fieldState.error?.message}
+                      </p>
+                    </div>
+                  )}
+                />
+              </Col>
+          }
 
-            {
-              addNewRound &&
-                <Col>
-                  <RoundForm control={control} register={register} gameOptions={games} playerOptions={players} />
-                </Col>
-            }
-          </Row>
+          {
+            addNewRound &&
+              <Col>
+                <RoundForm control={control} register={register} gameOptions={games} playerOptions={players} />
+              </Col>
+          }
+        </Row>
 
 
-          <Button variant="primary" type="submit">
-            Submit
-          </Button>
-        </Form>
-        {/* If login button stops working randomly, it probably has to do with this statement */}
-        {matchAdded && (matchAdded >= 0 && (matchAdded >= 0 ? <Navigate replace to={`/tournament/${matchAdded}`} /> : <Navigate replace to="/tournament/" />))}
-      </main>
-    </Stack>
+        <Button variant="primary" type="submit">
+          Submit
+        </Button>
+      </Form>
+      {/* If login button stops working randomly, it probably has to do with this statement */}
+      {matchAdded && (matchAdded >= 0 && (matchAdded >= 0 ? <Navigate replace to={`/tournament/${matchAdded}`} /> : <Navigate replace to="/tournament/" />))}
+    </CenteredPage>
   )
 }

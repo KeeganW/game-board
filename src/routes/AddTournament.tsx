@@ -1,18 +1,13 @@
 import React, { useEffect, useState } from 'react'
-import { Button, Col, Form, Row, Stack } from 'react-bootstrap'
-import { useForm, Controller, ControllerFieldState } from 'react-hook-form'
+import { Button, Form } from 'react-bootstrap'
+import { useForm, Controller } from 'react-hook-form'
 import axios from 'src/axiosAuth'
 import { Navigate } from 'react-router-dom'
 import { useUpdatePlayerInfo } from 'src/utils/hooks'
 import { Typeahead } from 'react-bootstrap-typeahead'
 import { AddTournamentInfo } from 'src/types'
+import { CenteredPage } from 'src/utils/helpers'
 
-function NewType(props: { field: any, fieldState: ControllerFieldState }) {
-  const {field, fieldState} = props
-  console.log(field)
-  console.log(fieldState)
-  return null
-}
 
 export const AddTournament: React.FC = () => {
   useUpdatePlayerInfo()
@@ -28,7 +23,7 @@ export const AddTournament: React.FC = () => {
   }, [])
 
   const handleOnSubmit = (data: any) => {
-    // TODO: validate data
+    // TODO: validate data, turn into a hook
     // Get our objects
     axios.get('http://localhost:8000/set-csrf/').then((res) => {
       axios.post('http://localhost:8000/add_tournament/', data, {
@@ -48,48 +43,46 @@ export const AddTournament: React.FC = () => {
   }
 
   return (
-    <Stack className="mx-auto">
-      <main className="p-3 mx-auto text-center" style={{ width: '300px' }}>
-        <h3>Add Tournament</h3>
-        <Form onSubmit={handleSubmit(handleOnSubmit)}>
-          <Form.Group className="mb-3" controlId="tournamentName">
-            <Form.Label>Name</Form.Label>
-            <Form.Control type="text" {...register('tournamentName', { required: true })} />
-            <Form.Text className="text-muted" />
-          </Form.Group>
-          <Controller
-            control={control}
-            name="teams"
-            rules={{
-              required: "Please, select at least two Teams to include in this tournament"
-            }}
-            render={({ field, fieldState }) => (
-              <div className="mb-3">
-                <label htmlFor="teams" className="form-label">
-                  Teams
-                </label>
-                <Typeahead
-                  {...field}
-                  id="team"
-                  multiple
-                  clearButton
-                  className={fieldState.invalid ? "is-invalid" : ""}
-                  aria-describedby="teamsError"
-                  options={addTournamentData ? addTournamentData.teams.map(value => value.name) : []}
-                />
-                <p id="teamsError" className="invalid-feedback">
-                  {fieldState.error?.message}
-                </p>
-              </div>
-            )}
-          />
-          <Button variant="primary" type="submit">
-            Submit
-          </Button>
-        </Form>
-        {/* If login button stops working randomly, it probably has to do with this statement */}
-        {tournamentAdded && (tournamentAdded >= 0 && (tournamentAdded >= 0 ? <Navigate replace to={`/tournament/${tournamentAdded}`} /> : <Navigate replace to="/tournament/" />))}
-      </main>
-    </Stack>
+    <CenteredPage pageWidth={300}>
+      <h3>Add Tournament</h3>
+      <Form onSubmit={handleSubmit(handleOnSubmit)}>
+        <Form.Group className="mb-3" controlId="tournamentName">
+          <Form.Label>Name</Form.Label>
+          <Form.Control type="text" {...register('tournamentName', { required: true })} />
+          <Form.Text className="text-muted" />
+        </Form.Group>
+        <Controller
+          control={control}
+          name="teams"
+          rules={{
+            required: "Please, select at least two Teams to include in this tournament"
+          }}
+          render={({ field, fieldState }) => (
+            <div className="mb-3">
+              <label htmlFor="teams" className="form-label">
+                Teams
+              </label>
+              <Typeahead
+                {...field}
+                id="team"
+                multiple
+                clearButton
+                className={fieldState.invalid ? "is-invalid" : ""}
+                aria-describedby="teamsError"
+                options={addTournamentData ? addTournamentData.teams.map(value => value.name) : []}
+              />
+              <p id="teamsError" className="invalid-feedback">
+                {fieldState.error?.message}
+              </p>
+            </div>
+          )}
+        />
+        <Button variant="primary" type="submit">
+          Submit
+        </Button>
+      </Form>
+      {/* If login button stops working randomly, it probably has to do with this statement */}
+      {tournamentAdded && (tournamentAdded >= 0 && (tournamentAdded >= 0 ? <Navigate replace to={`/tournament/${tournamentAdded}`} /> : <Navigate replace to="/tournament/" />))}
+    </CenteredPage>
   )
 }

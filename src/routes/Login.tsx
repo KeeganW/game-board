@@ -1,9 +1,10 @@
 import React, { useContext } from 'react'
-import { Button, Form, Stack } from 'react-bootstrap'
+import { Button, Form } from 'react-bootstrap'
 import { useForm } from 'react-hook-form'
 import axios from 'src/axiosAuth'
 import { Navigate } from 'react-router-dom'
 import { AuthContext } from 'src/Context'
+import { CenteredPage } from 'src/utils/helpers'
 
 export const Login: React.FC = () => {
   const { register, handleSubmit, formState: { errors } } = useForm()
@@ -14,7 +15,7 @@ export const Login: React.FC = () => {
   // Good resource
   // https://medium.com/swlh/django-rest-framework-and-spa-session-authentication-with-docker-and-nginx-aa64871f29cd
   const handleOnSubmit = (data: any) => {
-    // TODO: validate data
+    // TODO: validate data, convert this into a hook
     // Get our objects
     axios.get('http://localhost:8000/set-csrf/').then((res) => {
       axios.post('http://localhost:8000/login/', data, {
@@ -38,26 +39,24 @@ export const Login: React.FC = () => {
   }
 
   return (
-    <Stack className="mx-auto">
-      <main className="p-3 mx-auto text-center" style={{ width: '300px' }}>
-        <Form onSubmit={handleSubmit(handleOnSubmit)}>
-          <Form.Group className="mb-3" controlId="formBasicEmail">
-            <Form.Label>Username</Form.Label>
-            <Form.Control type="username" placeholder="Enter username" {...register('username', { required: true })} />
-            <Form.Text className="text-muted" />
-          </Form.Group>
+    <CenteredPage pageWidth={300}>
+      <Form onSubmit={handleSubmit(handleOnSubmit)}>
+        <Form.Group className="mb-3" controlId="formBasicEmail">
+          <Form.Label>Username</Form.Label>
+          <Form.Control type="username" placeholder="Enter username" {...register('username', { required: true })} />
+          <Form.Text className="text-muted" />
+        </Form.Group>
 
-          <Form.Group className="mb-3" controlId="formBasicPassword">
-            <Form.Label>Password</Form.Label>
-            <Form.Control type="password" placeholder="Password" {...register('password', { required: true })} />
-          </Form.Group>
-          <Button variant="primary" type="submit">
-            Submit
-          </Button>
-        </Form>
-        {/* If login button stops working randomly, it probably has to do with this statement */}
-        {authenticated && (playerPk >= 0 && (playerPk >= 0 ? <Navigate replace to={`/player/${playerPk}`} /> : <Navigate replace to="/player/" />))}
-      </main>
-    </Stack>
+        <Form.Group className="mb-3" controlId="formBasicPassword">
+          <Form.Label>Password</Form.Label>
+          <Form.Control type="password" placeholder="Password" {...register('password', { required: true })} />
+        </Form.Group>
+        <Button variant="primary" type="submit">
+          Submit
+        </Button>
+      </Form>
+      {/* Once logged in, go to the logged in player's page. */}
+      {authenticated && (playerPk >= 0 && (playerPk >= 0 ? <Navigate replace to={`/player/${playerPk}`} /> : <Navigate replace to="/player/" />))}
+    </CenteredPage>
   )
 }
