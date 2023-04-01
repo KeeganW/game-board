@@ -1,15 +1,9 @@
 import React from 'react'
 import { Navigate } from 'react-router-dom'
 import {
-  BasicList,
-  CenteredPage,
-  Loading,
-  useParamsPk,
+  BasicList, CenteredPage, Loading, useParamsPk,
 } from 'src/utils/helpers'
-import {
-  useGetTournament,
-  useUpdatePlayerInfo,
-} from 'src/utils/hooks'
+import { useGetTournament, useUpdatePlayerInfo } from 'src/utils/hooks'
 import { TournamentDetails } from './TournamentDetails'
 
 export const Tournament: React.FC = () => {
@@ -19,19 +13,19 @@ export const Tournament: React.FC = () => {
   const allTournamentsResponse = useGetTournament()
 
   if (
-    !allTournamentsResponse.response ||
-    !allTournamentsResponse.response.data ||
-    allTournamentsResponse.loading
+    !allTournamentsResponse.response
+    || !allTournamentsResponse.response.data
+    || allTournamentsResponse.loading
   ) {
     return (
       <CenteredPage>
-        <Loading/>
+        <Loading />
       </CenteredPage>
     )
   }
   // Catch weird instances where we need to log out
   if (allTournamentsResponse.response.status === 401) {
-    return <Navigate replace to="/logout/"/>
+    return <Navigate replace to="/logout/" />
   }
 
   const allTournaments = allTournamentsResponse.response.data
@@ -43,16 +37,15 @@ export const Tournament: React.FC = () => {
           listObject={[
             ...(allTournaments || []),
             // Add this in, so that we can also add a new tournament if we want here.
-            {pk: '/add_tournament', name: 'Add Tournament'},
+            { pk: '/add_tournament', name: 'Add Tournament' },
           ]}
         />
       </CenteredPage>
     )
-  } else {
-    return (
-      <CenteredPage>
-        <TournamentDetails />
-      </CenteredPage>
-    )
   }
+  return (
+    <CenteredPage>
+      <TournamentDetails />
+    </CenteredPage>
+  )
 }

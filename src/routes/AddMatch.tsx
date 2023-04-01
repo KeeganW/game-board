@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from 'react'
-import { Button, Col, Form, Row } from 'react-bootstrap'
+import {
+  Button, Col, Form, Row,
+} from 'react-bootstrap'
 import { useForm, Controller } from 'react-hook-form'
 import axios from 'src/axiosAuth'
 import { Navigate, useParams } from 'react-router-dom'
-import { useGetGame, useGetPlayer, useGetPlayerRank, useUpdatePlayerInfo } from 'src/utils/hooks'
+import {
+  useGetGame, useGetPlayer, useGetPlayerRank, useUpdatePlayerInfo,
+} from 'src/utils/hooks'
 import { Typeahead } from 'react-bootstrap-typeahead'
 import {
-  GameObject,
-  PlayerObjectLite,
-  PlayerRankObjectLite,
-  RoundObjectLite
+  GameObject, PlayerObjectLite, PlayerRankObjectLite, RoundObjectLite,
 } from 'src/types'
 import { RoundForm } from 'src/forms/RoundForm'
 import { CenteredPage, Loading } from 'src/utils/helpers'
-
 
 export const AddMatch: React.FC = () => {
   useUpdatePlayerInfo()
@@ -22,7 +22,7 @@ export const AddMatch: React.FC = () => {
   const gamesResponse = useGetGame()
   const playerRanksResponse = useGetPlayerRank()
 
-  const { register, handleSubmit, control, formState: { errors } } = useForm()
+  const { register, handleSubmit, control } = useForm()
   const [addRoundData, setAddRoundData] = useState<RoundObjectLite[] | undefined>(undefined)
   const [addNewRound, setAddNewRound] = useState<boolean>(false)
   const [matchAdded, setMatchAdded] = useState<number>(-1)
@@ -34,31 +34,31 @@ export const AddMatch: React.FC = () => {
   const matchNumber = match || ''
 
   useEffect(() => {
-    axios.get(`http://localhost:8000/round/`).then((res) => {
+    axios.get('http://localhost:8000/round/').then((res) => {
       setAddRoundData(res.data as RoundObjectLite[])
     })
   }, [paramsPk, matchNumber])
 
   if (
-    !playersResponse.response ||
-    !playersResponse.response.data ||
-    playersResponse.loading ||
-    !gamesResponse.response ||
-    !gamesResponse.response.data ||
-    gamesResponse.loading ||
-    !playerRanksResponse.response ||
-    !playerRanksResponse.response.data ||
-    playerRanksResponse.loading
+    !playersResponse.response
+    || !playersResponse.response.data
+    || playersResponse.loading
+    || !gamesResponse.response
+    || !gamesResponse.response.data
+    || gamesResponse.loading
+    || !playerRanksResponse.response
+    || !playerRanksResponse.response.data
+    || playerRanksResponse.loading
   ) {
     return (
       <CenteredPage>
-        <Loading/>
+        <Loading />
       </CenteredPage>
     )
   }
   // Catch weird instances where we need to log out
   if (playersResponse.response.status === 401) {
-    return <Navigate replace to="/logout/"/>
+    return <Navigate replace to="/logout/" />
   }
 
   const players = playersResponse.response.data
@@ -70,28 +70,30 @@ export const AddMatch: React.FC = () => {
   const handleOnSubmit = (data: any) => {
     // TODO: validate data
     // Get our objects
-    axios.get('http://localhost:8000/set-csrf/').then((res) => {
-      axios.post('http://localhost:8000/add_match/', data, {
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-        },
-      }).then((res) => {
-        setMatchAdded(res.data.pk)
-      }).catch((res) => {
-        // TODO handle incorrect credentials
+    axios
+      .get('http://localhost:8000/set-csrf/')
+      .then((res) => {
+        axios
+          .post('http://localhost:8000/add_match/', data, {
+            headers: {
+              'Content-Type': 'application/json',
+              Accept: 'application/json',
+            },
+          })
+          .then((res) => {
+            setMatchAdded(res.data.pk)
+          })
+          .catch((res) => {
+            // TODO handle incorrect credentials
+          })
       })
-    }).catch((res) => {
-      // TODO handle error of unable to get csrf token
-    })
+      .catch((res) => {
+        // TODO handle error of unable to get csrf token
+      })
   }
 
   if (!paramsPk) {
-    return (
-      <div>
-        Please find this page through your associated tournament.
-      </div>
-    )
+    return <div>Please find this page through your associated tournament.</div>
   }
   return (
     <CenteredPage pageWidth={300}>
@@ -104,74 +106,99 @@ export const AddMatch: React.FC = () => {
               <Form.Text className="text-muted" />
             </Form.Group>
 
-            <Form.Control type="hidden" {...register('tournament', { required: true, value: tournamentPk })} />
+            <Form.Control
+              type="hidden"
+              {...register('tournament', { required: true, value: tournamentPk })}
+            />
           </Col>
         </Row>
         <Button variant="secondary" type="button" onClick={() => setAddNewRound(!addNewRound)}>
           {addNewRound ? 'Add Match By Round' : 'Add New Round for Match'}
         </Button>
         <Row>
-          {
-            !addNewRound &&
-              <Col>
-                <Controller
-                  control={control}
-                  name="round"
-                  rules={{
-                    required: "Please, select at least one Round input value"
-                  }}
-                  render={({ field, fieldState }) => (
-                    <div className="mb-3">
-                      <label htmlFor="round" className="form-label">
-                        Round
-                      </label>
-                      <Typeahead
-                        {...field}
-                        id="round"
-                        clearButton
-                        className={fieldState.invalid ? "is-invalid" : ""}
-                        aria-describedby="gameError"
-                        options={addRoundData?.map((round: RoundObjectLite) => {
-                          // TODO: move this offline...
-                          const game = games.filter((game: GameObject) => round.game === game.pk)?.[0]
-                          // Need to get a list of player usernames, by mapping round player ranks -> player rank player -> players username
-                          const playerList = round.playerRanks.map((playerRankPk: number) => {
-                            // Get the player rank that matches this one
-                            const playerRank = playerRanks.filter((playerRank: PlayerRankObjectLite) => playerRank.pk === playerRankPk)?.[0]
-                            if (playerRank) {
-                              // PlayerRank exists, so lets map it to a player.
-                              return players.filter((player: PlayerObjectLite) => playerRank.player === player.pk)?.[0]?.username || 'unknown'
-                            } else {
+          {!addNewRound && (
+            <Col>
+              <Controller
+                control={control}
+                name="round"
+                rules={{
+                  required: 'Please, select at least one Round input value',
+                }}
+                render={({ field, fieldState }) => (
+                  <div className="mb-3">
+                    <label htmlFor="round" className="form-label">
+                      Round
+                    </label>
+                    <Typeahead
+                      {...field}
+                      id="round"
+                      clearButton
+                      className={fieldState.invalid ? 'is-invalid' : ''}
+                      aria-describedby="gameError"
+                      options={
+                        addRoundData
+                          ?.map((round: RoundObjectLite) => {
+                            // TODO: move this offline...
+                            const game = games.filter(
+                              (thisGame: GameObject) => round.game === thisGame.pk,
+                            )?.[0]
+                            // Need to get a list of player usernames, by mapping round player ranks -> player rank player -> players username
+                            const playerList = round.playerRanks.map((playerRankPk: number) => {
+                              // Get the player rank that matches this one
+                              const playerRank = playerRanks.filter(
+                                (thisPlayerRank: PlayerRankObjectLite) => thisPlayerRank.pk === playerRankPk,
+                              )?.[0]
+                              if (playerRank) {
+                                // PlayerRank exists, so lets map it to a player.
+                                return (
+                                  players.filter(
+                                    (player: PlayerObjectLite) => playerRank.player === player.pk,
+                                  )?.[0]?.username || 'unknown'
+                                )
+                              }
                               return 'unknown'
+                            })
+                            return {
+                              label: `${game.name} - ${round.date}: \n${playerList.join(', ')}`,
+                              value: String(round.pk),
                             }
                           })
-                          return {label: `${game.name} - ${round.date}: \n${playerList.join(', ')}`, value: String(round.pk)}
-                        }).reverse() || []}
-                      />
-                      <p id="gameError" className="invalid-feedback">
-                        {fieldState.error?.message}
-                      </p>
-                    </div>
-                  )}
-                />
-              </Col>
-          }
+                          .reverse() || []
+                      }
+                    />
+                    <p id="gameError" className="invalid-feedback">
+                      {fieldState.error?.message}
+                    </p>
+                  </div>
+                )}
+              />
+            </Col>
+          )}
 
-          {
-            addNewRound &&
-              <Col>
-                <RoundForm control={control} register={register} gameOptions={games} playerOptions={players} />
-              </Col>
-          }
+          {addNewRound && (
+            <Col>
+              <RoundForm
+                control={control}
+                register={register}
+                gameOptions={games}
+                playerOptions={players}
+              />
+            </Col>
+          )}
         </Row>
-
 
         <Button variant="primary" type="submit">
           Submit
         </Button>
       </Form>
       {/* If login button stops working randomly, it probably has to do with this statement */}
-      {matchAdded && (matchAdded >= 0 && (matchAdded >= 0 ? <Navigate replace to={`/tournament/${matchAdded}`} /> : <Navigate replace to="/tournament/" />))}
+      {matchAdded
+        && matchAdded >= 0
+        && (matchAdded >= 0 ? (
+          <Navigate replace to={`/tournament/${matchAdded}`} />
+        ) : (
+          <Navigate replace to="/tournament/" />
+        ))}
     </CenteredPage>
   )
 }

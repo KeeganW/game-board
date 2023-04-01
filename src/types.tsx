@@ -17,17 +17,6 @@ export type PlayerObjectLite = {
   username: string
 }
 
-export type PlayerObjectFull = {
-  pk: number
-  username: string
-  firstName: string
-  lastName: string
-  dateOfBirth: string
-  profileImage: string
-  favoriteGame: GameObject
-  primaryGroup: GroupObject
-}
-
 export type GameObject = {
   pk: number
   name: string
@@ -41,6 +30,17 @@ export type GroupObject = {
   players: PlayerObjectLite[]
   admins: PlayerObjectLite[]
   groupPicture: string
+}
+
+export type PlayerObjectFull = {
+  pk: number
+  username: string
+  firstName: string
+  lastName: string
+  dateOfBirth: string
+  profileImage: string
+  favoriteGame: GameObject
+  primaryGroup: GroupObject
 }
 
 export type GroupObjectLite = {

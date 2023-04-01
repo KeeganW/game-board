@@ -31,9 +31,8 @@ export const calculateBracketRound = (
       // Move forward one position if we are trying to place at our home game
       if (currentPlacementForTeam === currentTeam) {
         currentPlacementForTeam += 1
-      }
-      // If we are over the limit, wrap
-      else if (currentPlacementForTeam >= numberOfTeams) {
+      } else if (currentPlacementForTeam >= numberOfTeams) {
+        // If we are over the limit, wrap
         currentPlacementForTeam = 0
       } else {
         // We are good to place here, so add it

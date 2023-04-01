@@ -19,7 +19,7 @@ export const Logout: React.FC = () => {
   return (
     <CenteredPage>
       Logging you out... Your browser should redirect you automatically.
-      {!authenticated && (playerPk == -1 && (<Navigate replace to="/" />))}
+      {!authenticated && playerPk === -1 && <Navigate replace to="/" />}
     </CenteredPage>
   )
 }

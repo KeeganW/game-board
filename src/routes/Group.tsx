@@ -2,11 +2,7 @@ import React from 'react'
 import { Navigate } from 'react-router-dom'
 import { useGetGroup, useGetPlayer, useUpdatePlayerInfo } from 'src/utils/hooks'
 import {
-  BasicList,
-  capitalizeString,
-  CenteredPage,
-  Loading,
-  useParamsPk
+  BasicList, capitalizeString, CenteredPage, Loading, useParamsPk,
 } from 'src/utils/helpers'
 
 export const Group: React.FC = () => {
@@ -17,22 +13,22 @@ export const Group: React.FC = () => {
 
   // Only show the page if things are still loading
   if (
-    !groupResponse.response ||
-    !groupResponse.response.data ||
-    groupResponse.loading ||
-    !playerResponse.response ||
-    !playerResponse.response.data ||
-    playerResponse.loading
+    !groupResponse.response
+    || !groupResponse.response.data
+    || groupResponse.loading
+    || !playerResponse.response
+    || !playerResponse.response.data
+    || playerResponse.loading
   ) {
     return (
       <CenteredPage>
-        <Loading/>
+        <Loading />
       </CenteredPage>
     )
   }
   // Catch weird instances where we need to log out
   if (groupResponse.response.status === 401) {
-    return <Navigate replace to="/logout/"/>
+    return <Navigate replace to="/logout/" />
   }
 
   const group = groupResponse.response.data
@@ -42,7 +38,13 @@ export const Group: React.FC = () => {
     <CenteredPage>
       <h1>{group.name}</h1>
       <h4>Players</h4>
-      <BasicList listObject={players} prefix={'/player/'} alternateDisplay={(player: any) => `${capitalizeString(player.firstName)} ${capitalizeString(player.lastName)} (${player.username})`} />
+      <BasicList
+        listObject={players}
+        prefix="/player/"
+        alternateDisplay={(player: any) => `${capitalizeString(player.firstName)} ${capitalizeString(player.lastName)} (${
+          player.username
+        })`}
+      />
     </CenteredPage>
   )
 }

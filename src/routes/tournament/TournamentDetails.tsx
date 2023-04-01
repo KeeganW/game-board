@@ -1,94 +1,81 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import {
-  BracketMatchesObject,
-  PlayerRankObject, TeamObject,
-  TournamentObject,
+  BracketMatchesObject, PlayerRankObject, TeamObject, TournamentObject,
 } from 'src/types'
-import {
-  Loading,
-  useParamsPk,
-} from 'src/utils/helpers'
-import {
-  useGetTournamentInfo,
-  useGetTournamentStats,
-} from 'src/utils/hooks'
+import { Loading, useParamsPk } from 'src/utils/helpers'
+import { useGetTournamentInfo, useGetTournamentStats } from 'src/utils/hooks'
 import { Col, Container, Row } from 'react-bootstrap'
 import { calculateBracket } from 'src/bracketLayout'
 
 export const convertStatsToView = (tournamentStats: Object) => {
   const results = Object.entries(tournamentStats).map((value: any, index: number) => {
     if (value[0] === 'rawScoresByTeam') {
-      const scoring = Object.entries(value[1]).map((scoringValue: any, scoringIndex: number) => {
-        return (
-          <div key={'rawScoresByTeam' + scoringValue[0]}>
-            {scoringValue[0]}{': '}{scoringValue[1]}
-          </div>
-        )
-      })
+      const scoring = Object.entries(value[1]).map((scoringValue: any, scoringIndex: number) => (
+        <div key={`rawScoresByTeam${scoringValue[0]}`}>
+          {scoringValue[0]}
+          {': '}
+          {scoringValue[1]}
+        </div>
+      ))
       return (
-        <Row key={'rawScoresByTeam'} className="text-center">
-          <h3>
-            Raw Scoring
-          </h3>
+        <Row key="rawScoresByTeam" className="text-center">
+          <h3>Raw Scoring</h3>
           {scoring}
         </Row>
       )
     }
     if (value[0] === 'scoresByTeam') {
-      const scoring = Object.entries(value[1]).map((scoringValue: any, scoringIndex: number) => {
-        return (
-          <div key={'scoresByTeam' + scoringValue[0]}>
-            {scoringValue[0]}{': '}{scoringValue[1]}
-          </div>
-        )
-      })
+      const scoring = Object.entries(value[1]).map((scoringValue: any, scoringIndex: number) => (
+        <div key={`scoresByTeam${scoringValue[0]}`}>
+          {scoringValue[0]}
+          {': '}
+          {scoringValue[1]}
+        </div>
+      ))
       return (
-        <Row key={'scoresByTeam'} className="text-center">
-          <h3>
-            Scoring
-          </h3>
+        <Row key="scoresByTeam" className="text-center">
+          <h3>Scoring</h3>
           {scoring}
         </Row>
       )
     }
   })
-  return (
-    <Container>
-      {results}
-    </Container>
-  )
+  return <Container>{results}</Container>
 }
 export const convertBracketToView = (bracket: number[][][], tournament: TournamentObject) => {
-  const tournamentTeams = tournament.bracket.teams.sort((a: TeamObject, b: TeamObject) => a.pk - b.pk)
+  const tournamentTeams = tournament.bracket.teams.sort(
+    (a: TeamObject, b: TeamObject) => a.pk - b.pk,
+  )
   const results = bracket.map((week: number[][], weekIndex: number) => {
     const roundsForWeek = week.map((round: number[], roundIndex: number, fullArray: any) => {
       const rounds = round.map((team: number, teamIndex: number) => {
-        const real_team = tournamentTeams[team]
-        return real_team ? (
-          <div key={weekIndex + roundIndex + teamIndex}>
-            {real_team.name}
-          </div>
-        ) : (<div key={weekIndex + roundIndex + teamIndex}></div>)
+        const realTeam = tournamentTeams[team]
+        return realTeam ? (
+          <div key={weekIndex + roundIndex + teamIndex}>{realTeam.name}</div>
+        ) : (
+          <div key={weekIndex + roundIndex + teamIndex} />
+        )
       })
-      const gameNumber = (weekIndex * fullArray.length) + roundIndex + 1
-      const tournamentGame = tournament.bracket.matches.find((value: BracketMatchesObject) => value.match === gameNumber)
+      const gameNumber = weekIndex * fullArray.length + roundIndex + 1
+      const tournamentGame = tournament.bracket.matches.find(
+        (value: BracketMatchesObject) => value.match === gameNumber,
+      )
       if (tournamentGame) {
         const { round } = tournamentGame
-        console.log(round)
-        const playerRanks = round.playerRanks?.sort((a: PlayerRankObject, b: PlayerRankObject) => a.rank - b.rank).map((player: PlayerRankObject) => (
-          <div key={tournamentGame.match + player.player.username}>
-            {player.rank}
-            {': '}
-            {player.player.username}
-            {` - ${player.score}`}
-          </div>
-        ))
+        const playerRanks = round.playerRanks
+          ?.sort((a: PlayerRankObject, b: PlayerRankObject) => a.rank - b.rank)
+          .map((player: PlayerRankObject) => (
+            <div key={tournamentGame.match + player.player.username}>
+              {player.rank}
+              {': '}
+              {player.player.username}
+              {` - ${player.score}`}
+            </div>
+          ))
         return (
           <Col key={tournamentGame.match}>
-            <h5>
-              {round.game.name}
-            </h5>
+            <h5>{round.game.name}</h5>
             {playerRanks}
           </Col>
         )
@@ -96,9 +83,8 @@ export const convertBracketToView = (bracket: number[][][], tournament: Tourname
       return (
         <Col key={`game${gameNumber}`}>
           <h5>
-            <Link to={`/add_match/${tournament.pk}/${gameNumber}`} >
+            <Link to={`/add_match/${tournament.pk}/${gameNumber}`}>
               Game
-              {' '}
               {gameNumber}
             </Link>
           </h5>
@@ -110,18 +96,13 @@ export const convertBracketToView = (bracket: number[][][], tournament: Tourname
       <Row className="mb-3" key={weekIndex}>
         <h3 className="text-center">
           Week
-          {' '}
           {weekIndex + 1}
         </h3>
         {roundsForWeek}
       </Row>
     )
   })
-  return (
-    <Container>
-      {results}
-    </Container>
-  )
+  return <Container>{results}</Container>
 }
 
 export const TournamentDetails: React.FC = () => {
@@ -131,16 +112,14 @@ export const TournamentDetails: React.FC = () => {
   const tournamentStatsResponse = useGetTournamentStats(tournamentPk)
 
   if (
-    !tournamentInfoResponse.response ||
-    !tournamentInfoResponse.response.data ||
-    tournamentInfoResponse.loading ||
-    !tournamentStatsResponse.response ||
-    !tournamentStatsResponse.response.data ||
-    tournamentStatsResponse.loading
+    !tournamentInfoResponse.response
+    || !tournamentInfoResponse.response.data
+    || tournamentInfoResponse.loading
+    || !tournamentStatsResponse.response
+    || !tournamentStatsResponse.response.data
+    || tournamentStatsResponse.loading
   ) {
-    return (
-      <Loading/>
-    )
+    return <Loading />
   }
 
   const tournamentInfo = tournamentInfoResponse.response.data?.tournament
@@ -150,10 +129,13 @@ export const TournamentDetails: React.FC = () => {
     10,
     tournamentInfo ? tournamentInfo.bracket.teams.length : 6,
     4,
-    10
+    10,
   )
-  console.log(tournamentInfo)
-  const convertedBracket = !tournamentInfo ? <Loading /> : convertBracketToView(thisBracket, tournamentInfo)
+  const convertedBracket = !tournamentInfo ? (
+    <Loading />
+  ) : (
+    convertBracketToView(thisBracket, tournamentInfo)
+  )
   const convertedStats = !tournamentStats ? <Loading /> : convertStatsToView(tournamentStats)
 
   return (
@@ -161,23 +143,17 @@ export const TournamentDetails: React.FC = () => {
       <Row className="mb-4">
         <Col>
           {!tournamentInfo && <Loading />}
-          <h1 className="text-center">
-            {tournamentInfo && tournamentInfo.name}
-          </h1>
+          <h1 className="text-center">{tournamentInfo && tournamentInfo.name}</h1>
         </Col>
       </Row>
       <Row>
         <Col>
           <Row className="mb-4">
-            <h2 className="text-center">
-              Current Standings
-            </h2>
+            <h2 className="text-center">Current Standings</h2>
             {convertedStats}
           </Row>
           <Row className="mb-4">
-            <h2 className="text-center">
-              Full Bracket
-            </h2>
+            <h2 className="text-center">Full Bracket</h2>
             {convertedBracket}
           </Row>
         </Col>

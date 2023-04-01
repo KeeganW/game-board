@@ -7,9 +7,19 @@ import { AuthContext } from 'src/Context'
 import { CenteredPage } from 'src/utils/helpers'
 
 export const Login: React.FC = () => {
-  const { register, handleSubmit, formState: { errors } } = useForm()
   const {
-    authenticated, setAuthenticated, playerPk, setPlayerPk, setGroupPk, setGroupImageUrl, setGroupName,
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm()
+  const {
+    authenticated,
+    setAuthenticated,
+    playerPk,
+    setPlayerPk,
+    setGroupPk,
+    setGroupImageUrl,
+    setGroupName,
   } = useContext(AuthContext)
 
   // Good resource
@@ -17,25 +27,31 @@ export const Login: React.FC = () => {
   const handleOnSubmit = (data: any) => {
     // TODO: validate data, convert this into a hook
     // Get our objects
-    axios.get('http://localhost:8000/set-csrf/').then((res) => {
-      axios.post('http://localhost:8000/login/', data, {
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-        },
-      }).then((res) => {
-        // Player was logged in, we should have credentials, so redirect
-        setAuthenticated(true)
-        setPlayerPk(res.data.playerPk || -1)
-        setGroupPk(res.data.groupPk || -1)
-        setGroupName(res.data.groupName || '')
-        setGroupImageUrl(res.data.groupImageUrl || '')
-      }).catch((res) => {
-        // TODO handle incorrect credentials
+    axios
+      .get('http://localhost:8000/set-csrf/')
+      .then((res) => {
+        axios
+          .post('http://localhost:8000/login/', data, {
+            headers: {
+              'Content-Type': 'application/json',
+              Accept: 'application/json',
+            },
+          })
+          .then((res) => {
+            // Player was logged in, we should have credentials, so redirect
+            setAuthenticated(true)
+            setPlayerPk(res.data.playerPk || -1)
+            setGroupPk(res.data.groupPk || -1)
+            setGroupName(res.data.groupName || '')
+            setGroupImageUrl(res.data.groupImageUrl || '')
+          })
+          .catch((res) => {
+            // TODO handle incorrect credentials
+          })
       })
-    }).catch((res) => {
-      // TODO handle error of unable to get csrf token
-    })
+      .catch((res) => {
+        // TODO handle error of unable to get csrf token
+      })
   }
 
   return (
@@ -43,20 +59,34 @@ export const Login: React.FC = () => {
       <Form onSubmit={handleSubmit(handleOnSubmit)}>
         <Form.Group className="mb-3" controlId="formBasicEmail">
           <Form.Label>Username</Form.Label>
-          <Form.Control type="username" placeholder="Enter username" {...register('username', { required: true })} />
+          <Form.Control
+            type="username"
+            placeholder="Enter username"
+            {...register('username', { required: true })}
+          />
           <Form.Text className="text-muted" />
         </Form.Group>
 
         <Form.Group className="mb-3" controlId="formBasicPassword">
           <Form.Label>Password</Form.Label>
-          <Form.Control type="password" placeholder="Password" {...register('password', { required: true })} />
+          <Form.Control
+            type="password"
+            placeholder="Password"
+            {...register('password', { required: true })}
+          />
         </Form.Group>
         <Button variant="primary" type="submit">
           Submit
         </Button>
       </Form>
       {/* Once logged in, go to the logged in player's page. */}
-      {authenticated && (playerPk >= 0 && (playerPk >= 0 ? <Navigate replace to={`/player/${playerPk}`} /> : <Navigate replace to="/player/" />))}
+      {authenticated
+        && playerPk >= 0
+        && (playerPk >= 0 ? (
+          <Navigate replace to={`/player/${playerPk}`} />
+        ) : (
+          <Navigate replace to="/player/" />
+        ))}
     </CenteredPage>
   )
 }
