@@ -6,7 +6,6 @@ import {
 import { Loading, useParamsPk } from 'src/utils/helpers'
 import { useGetTournamentInfo, useGetTournamentStats } from 'src/utils/hooks'
 import { Col, Container, Row } from 'react-bootstrap'
-import { calculateBracket } from 'src/bracketLayout'
 
 export const convertStatsToView = (tournamentStats: Object) => {
   const results = Object.entries(tournamentStats).map((value: any, index: number) => {
@@ -43,25 +42,43 @@ export const convertStatsToView = (tournamentStats: Object) => {
   })
   return <Container>{results}</Container>
 }
-export const convertBracketToView = (bracket: number[][][], tournament: TournamentObject) => {
+export const convertBracketToView = (bracket: string[][][], tournament: TournamentObject) => {
+  // Find all team related information for quick access later
   const tournamentTeams = tournament.bracket.teams.sort(
-    (a: TeamObject, b: TeamObject) => a.pk - b.pk,
+    (a: TeamObject, b: TeamObject) => a.name.localeCompare(b.name),
   )
-  const results = bracket.map((week: number[][], weekIndex: number) => {
-    const roundsForWeek = week.map((round: number[], roundIndex: number, fullArray: any) => {
-      const rounds = round.map((team: number, teamIndex: number) => {
-        const realTeam = tournamentTeams[team]
+  const teamNamesToIndex = tournamentTeams.map(teamObject => teamObject.name)
+
+  // After looping through every week, add the number of rounds in that week to a total, so we can
+  //  keep track of the number of rounds, even when the number of rounds is inconsistent (like
+  //  team game weeks).
+  let totalRoundsSoFar: number = 0
+
+  // Loop through every part of the triple matrix in the bracket object
+  const results = bracket.map((week: string[][], weekIndex: number) => {
+    const roundsForWeek = week.map((round: string[], roundIndex: number, allRoundsInWeek: any) => {
+      const rounds = round.map((team: string, teamIndex: number) => {
+        // Get the team object for this team in this round.
+        const realTeam = tournamentTeams[teamNamesToIndex.indexOf(team)]
+        // Create a placeholder for this score, with the team name.
         return realTeam ? (
           <div key={weekIndex + roundIndex + teamIndex}>{realTeam.name}</div>
         ) : (
           <div key={weekIndex + roundIndex + teamIndex} />
         )
       })
-      const gameNumber = weekIndex * fullArray.length + roundIndex + 1
+
+      // Get the individual round's number, aka the index if you were to loop through the bracket
+      //  one round at a time, aka the match number
+      const roundNumber = totalRoundsSoFar + roundIndex + 1
+
+      // Get this specific round object from the tournament
       const tournamentGame = tournament.bracket.matches.find(
-        (value: BracketMatchesObject) => value.match === gameNumber,
+        (value: BracketMatchesObject) => value.match === roundNumber,
       )
+
       if (tournamentGame) {
+        // This game exists, so lets put it all together
         const { round } = tournamentGame
         const playerRanks = round.playerRanks
           ?.sort((a: PlayerRankObject, b: PlayerRankObject) => a.rank - b.rank)
@@ -69,7 +86,9 @@ export const convertBracketToView = (bracket: number[][][], tournament: Tourname
             <div key={tournamentGame.match + player.player.username}>
               {player.rank}
               {': '}
-              {player.player.username}
+              <Link to={`/player/${player.player.pk}`}>
+                {player.player.username}
+              </Link>
               {` - ${player.score}`}
             </div>
           ))
@@ -80,18 +99,30 @@ export const convertBracketToView = (bracket: number[][][], tournament: Tourname
           </Col>
         )
       }
+      // TODO: There will be an issue here. How do we add team games, if we have added other rounds
+      //  first? This code assumes the games are listed in order, but we also don't know how many
+      //  team games there are in the first vs second weeks... Need to add either add a fixed amount
+      //  or do something clever
       return (
-        <Col key={`game${gameNumber}`}>
+        <Col key={`game${roundNumber}`}>
           <h5>
-            <Link to={`/add_match/${tournament.pk}/${gameNumber}`}>
+            <Link to={`/add_match/${tournament.pk}/${roundNumber}`}>
               Game
-              {gameNumber}
+              {' '}
+              {roundNumber}
             </Link>
           </h5>
           {rounds}
         </Col>
       )
     })
+    // If we are in a team game week, we block off the number of matches to be the number of teams,
+    //  aka the maximum number of games in a week.
+    if (weekIndex === 0 || weekIndex === 7) {
+      totalRoundsSoFar += teamNamesToIndex.length
+    } else {
+      totalRoundsSoFar += week.length
+    }
     return (
       <Row className="mb-3" key={weekIndex}>
         <h3 className="text-center">
@@ -123,18 +154,14 @@ export const TournamentDetails: React.FC = () => {
   }
 
   const tournamentInfo = tournamentInfoResponse.response.data?.tournament
+  const tournamentInfoBracket = tournamentInfoResponse.response.data?.bracket
   const tournamentStats = tournamentStatsResponse.response.data
+  console.log(tournamentInfo, tournamentInfoBracket)
 
-  const thisBracket = calculateBracket(
-    10,
-    tournamentInfo ? tournamentInfo.bracket.teams.length : 6,
-    4,
-    10,
-  )
   const convertedBracket = !tournamentInfo ? (
     <Loading />
   ) : (
-    convertBracketToView(thisBracket, tournamentInfo)
+    convertBracketToView(tournamentInfoBracket, tournamentInfo)
   )
   const convertedStats = !tournamentStats ? <Loading /> : convertStatsToView(tournamentStats)
 
