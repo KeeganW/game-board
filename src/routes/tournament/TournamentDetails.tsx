@@ -127,6 +127,7 @@ export const convertBracketToView = (bracket: string[][][], tournament: Tourname
       <Row className="mb-3" key={weekIndex}>
         <h3 className="text-center">
           Week
+          {' '}
           {weekIndex + 1}
         </h3>
         {roundsForWeek}

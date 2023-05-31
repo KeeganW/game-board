@@ -110,6 +110,11 @@ export const AddMatch: React.FC = () => {
               type="hidden"
               {...register('tournament', { required: true, value: tournamentPk })}
             />
+
+            <Form.Group className="mb-3" controlId="teamGame">
+              <Form.Label>Team Game</Form.Label>
+              <Form.Check className="" id="teamGame" {...register('teamGame', {})}/>
+            </Form.Group>
           </Col>
         </Row>
         <Button variant="secondary" type="button" onClick={() => setAddNewRound(!addNewRound)}>
