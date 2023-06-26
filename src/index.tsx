@@ -8,6 +8,7 @@ import 'src/index.css'
 import { App } from 'src/App'
 import { NotFound } from 'src/routes/NotFound'
 import { Login } from 'src/routes/Login'
+import { Signup } from 'src/routes/Signup'
 import { Logout } from 'src/routes/Logout'
 import { Default } from 'src/routes/Default'
 import { Player } from 'src/routes/player/Player'
@@ -15,7 +16,7 @@ import { Group } from 'src/routes/Group'
 import { Tournament } from 'src/routes/tournament/Tournament'
 import { AddRound } from 'src/routes/AddRound'
 import { AddMatch } from 'src/routes/AddMatch'
-import { AddTournament } from './routes/AddTournament'
+import { AddTournament } from 'src/routes/AddTournament'
 
 // More route information can be found at https://reactrouter.com/docs/en/v6/getting-started/tutorial
 const rootElement = document.getElementById('root')
@@ -26,6 +27,7 @@ render(
         <Route path="/*" element={<NotFound />} />
         <Route path="/" element={<Default />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
         <Route path="/logout" element={<Logout />} />
         <Route path="/player" element={<Player />}>
           <Route path=":pk" element={<Player />} />

@@ -6,7 +6,7 @@ import { Navigate } from 'react-router-dom'
 import { AuthContext } from 'src/Context'
 import { CenteredPage } from 'src/utils/helpers'
 
-export const Login: React.FC = () => {
+export const Signup: React.FC = () => {
   const {
     register,
     handleSubmit,
@@ -28,10 +28,10 @@ export const Login: React.FC = () => {
     // TODO: validate data, convert this into a hook
     // Get our objects
     axios
-      .get('https://boardgametournaments.com/set-csrf/')
+      .get('http://localhost:8000/set-csrf/')
       .then((res) => {
         axios
-          .post('https://boardgametournaments.com/login/', data, {
+          .post('http://localhost:8000/signup/', data, {
             headers: {
               'Content-Type': 'application/json',
               Accept: 'application/json',
@@ -67,12 +67,51 @@ export const Login: React.FC = () => {
           <Form.Text className="text-muted" />
         </Form.Group>
 
+        <Form.Group className="mb-3" controlId="formFirstName">
+          <Form.Label>First Name</Form.Label>
+          <Form.Control
+            type="text"
+            placeholder="Enter First Name"
+            {...register('first_name', { required: true })}
+          />
+          <Form.Text className="text-muted" />
+        </Form.Group>
+
+        <Form.Group className="mb-3" controlId="formLastName">
+          <Form.Label>Last Name</Form.Label>
+          <Form.Control
+            type="text"
+            placeholder="Enter Last Name"
+            {...register('last_name', { required: true })}
+          />
+          <Form.Text className="text-muted" />
+        </Form.Group>
+
+        <Form.Group className="mb-3" controlId="formDateOfBirth">
+          <Form.Label>Date of Birth</Form.Label>
+          <Form.Control
+            type="date"
+            placeholder="Date of Birth"
+            {...register('date_of_birth', { required: true })}
+          />
+          <Form.Text className="text-muted" />
+        </Form.Group>
+
         <Form.Group className="mb-3" controlId="formBasicPassword">
           <Form.Label>Password</Form.Label>
           <Form.Control
             type="password"
             placeholder="Password"
             {...register('password', { required: true })}
+          />
+        </Form.Group>
+
+        <Form.Group className="mb-3" controlId="formConfirmPassword">
+          <Form.Label>Confirm Password</Form.Label>
+          <Form.Control
+            type="password"
+            placeholder="Confirm Password"
+            {...register('confirm_password', { required: true })}
           />
         </Form.Group>
         <Button variant="primary" type="submit">
