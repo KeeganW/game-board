@@ -10,7 +10,6 @@ export const Signup: React.FC = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
   } = useForm()
   const {
     authenticated,
@@ -29,7 +28,7 @@ export const Signup: React.FC = () => {
     // Get our objects
     axios
       .get('http://localhost:8000/set-csrf/')
-      .then((res) => {
+      .then(() => {
         axios
           .post('http://localhost:8000/signup/', data, {
             headers: {
@@ -45,11 +44,11 @@ export const Signup: React.FC = () => {
             setGroupName(res.data.groupName || '')
             setGroupImageUrl(res.data.groupImageUrl || '')
           })
-          .catch((res) => {
+          .catch(() => {
             // TODO handle incorrect credentials
           })
       })
-      .catch((res) => {
+      .catch(() => {
         // TODO handle error of unable to get csrf token
       })
   }

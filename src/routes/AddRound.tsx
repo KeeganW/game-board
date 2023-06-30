@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Button, Form } from 'react-bootstrap'
-import { useForm, ControllerFieldState } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import axios from 'src/axiosAuth'
 import { Navigate } from 'react-router-dom'
 import { useGetGame, useGetPlayer, useUpdatePlayerInfo } from 'src/utils/hooks'
@@ -14,7 +14,6 @@ export const AddRound: React.FC = () => {
     register,
     handleSubmit,
     control,
-    formState: { errors },
   } = useForm()
   const [roundAdded, setRoundAdded] = useState<number>(-1)
 
@@ -49,7 +48,7 @@ export const AddRound: React.FC = () => {
     // Get our objects
     axios
       .get('http://localhost:8000/set-csrf/')
-      .then((res) => {
+      .then(() => {
         axios
           .post('http://localhost:8000/add_round/', data, {
             headers: {
@@ -61,11 +60,11 @@ export const AddRound: React.FC = () => {
             // Player was logged in, we should have credentials, so redirect
             setRoundAdded(res.data.pk)
           })
-          .catch((res) => {
+          .catch(() => {
             // TODO handle incorrect credentials
           })
       })
-      .catch((res) => {
+      .catch(() => {
         // TODO handle error of unable to get csrf token
       })
   }

@@ -1,6 +1,7 @@
 import { createContext } from 'react'
 
 export const AuthContext = createContext({
+  /* eslint-disable */
   authenticated: false,
   setAuthenticated: (auth: boolean) => {},
   playerPk: -1,
@@ -11,4 +12,5 @@ export const AuthContext = createContext({
   setGroupName: (groupName: string) => {},
   groupImageUrl: '',
   setGroupImageUrl: (groupImageUrl: string) => {},
+  /* eslint-enable */
 })

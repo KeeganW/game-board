@@ -3,7 +3,7 @@ import { Outlet, Link } from 'react-router-dom'
 import { Container, Nav, Navbar } from 'react-bootstrap'
 import { AuthContext } from 'src/Context'
 
-export function App() {
+export const App = () => {
   const [authenticated, setAuthenticated] = useState(false)
   const [playerPk, setPlayerPk] = useState(-1)
   const [groupPk, setGroupPk] = useState(-1)
@@ -13,6 +13,8 @@ export function App() {
   return (
     <Container fluid>
       <AuthContext.Provider
+        // TODO(keegan): fix this memo issue
+        // eslint-disable-next-line react/jsx-no-constructed-context-values
         value={{
           authenticated,
           setAuthenticated,

@@ -27,7 +27,7 @@ export const AddTournament: React.FC = () => {
     // Get our objects
     axios
       .get('http://localhost:8000/set-csrf/')
-      .then((res) => {
+      .then(() => {
         axios
           .post('http://localhost:8000/add_tournament/', data, {
             headers: {
@@ -39,11 +39,11 @@ export const AddTournament: React.FC = () => {
             // Player was logged in, we should have credentials, so redirect
             setTournamentAdded(res.data.pk)
           })
-          .catch((res) => {
+          .catch(() => {
             // TODO handle incorrect credentials
           })
       })
-      .catch((res) => {
+      .catch(() => {
         // TODO handle error of unable to get csrf token
       })
   }
@@ -65,7 +65,8 @@ export const AddTournament: React.FC = () => {
           }}
           render={({ field, fieldState }) => (
             <div className="mb-3">
-              <label htmlFor="teams" className="form-label">
+              {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
+              <label htmlFor="team" className="form-label">
                 Teams
               </label>
               <Typeahead

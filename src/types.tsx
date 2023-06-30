@@ -98,13 +98,13 @@ export type TeamObject = {
   players: PlayerObjectLite[]
 }
 
-export enum BracketTypes {
-  ROUND_ROBIN = 'Round Robin',
-}
+// export enum BracketTypes {
+//   ROUND_ROBIN = 'Round Robin',
+// }
 
 export type BracketObject = {
   pk: number
-  type: BracketTypes
+  // type: BracketTypes
   matches: BracketMatchesObject[]
   teams: TeamObject[]
 }

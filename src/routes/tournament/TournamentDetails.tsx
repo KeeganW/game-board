@@ -8,9 +8,9 @@ import { useGetTournamentInfo, useGetTournamentStats } from 'src/utils/hooks'
 import { Col, Container, Row } from 'react-bootstrap'
 
 export const convertStatsToView = (tournamentStats: Object) => {
-  const results = Object.entries(tournamentStats).map((value: any, index: number) => {
+  const results = Object.entries(tournamentStats).map((value: any) => {
     if (value[0] === 'rawScoresByTeam') {
-      const scoring = Object.entries(value[1]).map((scoringValue: any, scoringIndex: number) => (
+      const scoring = Object.entries(value[1]).map((scoringValue: any) => (
         <div key={`rawScoresByTeam${scoringValue[0]}`}>
           {scoringValue[0]}
           {': '}
@@ -25,7 +25,7 @@ export const convertStatsToView = (tournamentStats: Object) => {
       )
     }
     if (value[0] === 'scoresByTeam') {
-      const scoring = Object.entries(value[1]).map((scoringValue: any, scoringIndex: number) => (
+      const scoring = Object.entries(value[1]).map((scoringValue: any) => (
         <div key={`scoresByTeam${scoringValue[0]}`}>
           {scoringValue[0]}
           {': '}
@@ -39,6 +39,7 @@ export const convertStatsToView = (tournamentStats: Object) => {
         </Row>
       )
     }
+    return value
   })
   return <Container>{results}</Container>
 }
@@ -47,7 +48,7 @@ export const convertBracketToView = (bracket: string[][][], tournament: Tourname
   const tournamentTeams = tournament.bracket.teams.sort(
     (a: TeamObject, b: TeamObject) => a.name.localeCompare(b.name),
   )
-  const teamNamesToIndex = tournamentTeams.map(teamObject => teamObject.name)
+  const teamNamesToIndex = tournamentTeams.map((teamObject) => teamObject.name)
 
   // After looping through every week, add the number of rounds in that week to a total, so we can
   //  keep track of the number of rounds, even when the number of rounds is inconsistent (like
@@ -56,15 +57,17 @@ export const convertBracketToView = (bracket: string[][][], tournament: Tourname
 
   // Loop through every part of the triple matrix in the bracket object
   const results = bracket.map((week: string[][], weekIndex: number) => {
-    const roundsForWeek = week.map((round: string[], roundIndex: number, allRoundsInWeek: any) => {
+    const roundsForWeek = week.map((round: string[], roundIndex: number) => {
       const rounds = round.map((team: string, teamIndex: number) => {
         // Get the team object for this team in this round.
         const realTeam = tournamentTeams[teamNamesToIndex.indexOf(team)]
         // Create a placeholder for this score, with the team name.
         return realTeam ? (
-          <div key={weekIndex + roundIndex + teamIndex}>{realTeam.name}</div>
+          // eslint-disable-next-line react/no-array-index-key
+          <div key={`${weekIndex}${roundIndex}${teamIndex}`}>{realTeam.name}</div>
         ) : (
-          <div key={weekIndex + roundIndex + teamIndex} />
+          // eslint-disable-next-line react/no-array-index-key
+          <div key={`${weekIndex}${roundIndex}${teamIndex}`} />
         )
       })
 
@@ -79,8 +82,8 @@ export const convertBracketToView = (bracket: string[][][], tournament: Tourname
 
       if (tournamentGame) {
         // This game exists, so lets put it all together
-        const { round } = tournamentGame
-        const playerRanks = round.playerRanks
+        const { round: tournamentRound } = tournamentGame
+        const playerRanks = tournamentRound.playerRanks
           ?.sort((a: PlayerRankObject, b: PlayerRankObject) => a.rank - b.rank)
           .map((player: PlayerRankObject) => (
             <div key={tournamentGame.match + player.player.username}>
@@ -94,7 +97,7 @@ export const convertBracketToView = (bracket: string[][][], tournament: Tourname
           ))
         return (
           <Col key={tournamentGame.match}>
-            <h5>{round.game.name}</h5>
+            <h5>{tournamentRound.game.name}</h5>
             {playerRanks}
           </Col>
         )
@@ -124,6 +127,7 @@ export const convertBracketToView = (bracket: string[][][], tournament: Tourname
       totalRoundsSoFar += week.length
     }
     return (
+      // eslint-disable-next-line react/no-array-index-key
       <Row className="mb-3" key={weekIndex}>
         <h3 className="text-center">
           Week
@@ -157,7 +161,6 @@ export const TournamentDetails: React.FC = () => {
   const tournamentInfo = tournamentInfoResponse.response.data?.tournament
   const tournamentInfoBracket = tournamentInfoResponse.response.data?.bracket
   const tournamentStats = tournamentStatsResponse.response.data
-  console.log(tournamentInfo, tournamentInfoBracket)
 
   const convertedBracket = !tournamentInfo ? (
     <Loading />

@@ -1,8 +1,7 @@
 import React from 'react'
-import { Controller, UseFormRegister } from 'react-hook-form'
+import { Control, Controller, UseFormRegister } from 'react-hook-form'
 import { Typeahead } from 'react-bootstrap-typeahead'
 import { Col, Form, Row } from 'react-bootstrap'
-import { Control } from 'react-hook-form/dist/types'
 import moment from 'moment'
 import { GameObject, PlayerObjectLite } from 'src/types'
 
@@ -23,6 +22,7 @@ export const RoundForm: React.FC<{
       }}
       render={({ field, fieldState }) => (
         <div className="mb-3">
+          {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
           <label htmlFor="game" className="form-label">
             Game
           </label>
@@ -56,6 +56,7 @@ export const RoundForm: React.FC<{
       }}
       render={({ field, fieldState }) => (
         <div className="mb-3">
+          {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
           <label htmlFor="game" className="form-label">
             Players
           </label>

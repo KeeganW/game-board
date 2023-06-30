@@ -25,6 +25,8 @@
         "@typescript-eslint"
     ],
     "rules": {
+        "react/require-default-props": "off",
+        "react/jsx-props-no-spreading": "off",
         "react/jsx-filename-extension": [
             2,
             {
@@ -44,7 +46,14 @@
         ],
         "semi": ["error", "never"],
         "react/jsx-uses-react": "error",
-        "react/jsx-uses-vars": "error"
+        "react/jsx-uses-vars": "error",
+        "react/function-component-definition": [
+            2,
+            {
+                "namedComponents": "arrow-function",
+                "unnamedComponents": "arrow-function"
+            }
+        ]
     },
     "settings": {
         "import/resolver": {

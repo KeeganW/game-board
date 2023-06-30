@@ -16,12 +16,12 @@ export const calculateBracketRound = (
 
   // Quickly initialize the current week to have every team play a home game
   const currentWeek = []
-  for (let currentTeam = 0; currentTeam < numberOfTeams; currentTeam++) {
+  for (let currentTeam = 0; currentTeam < numberOfTeams; currentTeam += 1) {
     currentWeek.push([currentTeam])
   }
 
   // Now we want to loop through every team, and add them to their games for the week
-  for (let currentTeam = 0; currentTeam < numberOfTeams; currentTeam++) {
+  for (let currentTeam = 0; currentTeam < numberOfTeams; currentTeam += 1) {
     // Starting placement, offset by the current team number
     let currentPlacementForTeam = (startingPlacement + currentTeam) % numberOfTeams
     // We want every member of the team to play one game this week
@@ -74,7 +74,7 @@ export const calculateBracket = (
 
   // Calculate all weeks of bracket
   const allWeeksBracket = []
-  for (let currentWeek = 0; currentWeek < totalBracketSize; currentWeek++) {
+  for (let currentWeek = 0; currentWeek < totalBracketSize; currentWeek += 1) {
     allWeeksBracket.push(calculateBracketRound(numberOfTeams, gamesPerWeek, currentWeek))
   }
 

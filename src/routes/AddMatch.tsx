@@ -72,7 +72,7 @@ export const AddMatch: React.FC = () => {
     // Get our objects
     axios
       .get('http://localhost:8000/set-csrf/')
-      .then((res) => {
+      .then(() => {
         axios
           .post('http://localhost:8000/add_match/', data, {
             headers: {
@@ -83,11 +83,11 @@ export const AddMatch: React.FC = () => {
           .then((res) => {
             setMatchAdded(res.data.pk)
           })
-          .catch((res) => {
+          .catch(() => {
             // TODO handle incorrect credentials
           })
       })
-      .catch((res) => {
+      .catch(() => {
         // TODO handle error of unable to get csrf token
       })
   }
@@ -113,7 +113,7 @@ export const AddMatch: React.FC = () => {
 
             <Form.Group className="mb-3" controlId="teamGame">
               <Form.Label>Team Game</Form.Label>
-              <Form.Check className="" id="teamGame" {...register('teamGame', {})}/>
+              <Form.Check className="" id="teamGame" {...register('teamGame', {})} />
             </Form.Group>
           </Col>
         </Row>
@@ -131,6 +131,7 @@ export const AddMatch: React.FC = () => {
                 }}
                 render={({ field, fieldState }) => (
                   <div className="mb-3">
+                    {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
                     <label htmlFor="round" className="form-label">
                       Round
                     </label>
@@ -147,11 +148,13 @@ export const AddMatch: React.FC = () => {
                             const game = games.filter(
                               (thisGame: GameObject) => round.game === thisGame.pk,
                             )?.[0]
-                            // Need to get a list of player usernames, by mapping round player ranks -> player rank player -> players username
+                            // Need to get a list of player usernames, by mapping round player
+                            //  ranks -> player rank player -> players username
                             const playerList = round.playerRanks.map((playerRankPk: number) => {
                               // Get the player rank that matches this one
                               const playerRank = playerRanks.filter(
-                                (thisPlayerRank: PlayerRankObjectLite) => thisPlayerRank.pk === playerRankPk,
+                                (thisPlayerRank: PlayerRankObjectLite) => thisPlayerRank.pk
+                                  === playerRankPk,
                               )?.[0]
                               if (playerRank) {
                                 // PlayerRank exists, so lets map it to a player.
