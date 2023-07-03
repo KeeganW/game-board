@@ -6,6 +6,21 @@ import { Navigate } from 'react-router-dom'
 import { AuthContext } from 'src/Context'
 import { CenteredPage } from 'src/utils/helpers'
 
+// Given a cookie key `name`, returns the value of
+// the cookie or `null`, if the key is not found.
+function getCookie(name: string): string | null {
+  const nameLenPlus = (name.length + 1);
+  console.log(document.cookie)
+  return document.cookie
+    .split(';')
+    .map(c => c.trim())
+    .filter(cookie => {
+      return cookie.substring(0, nameLenPlus) === `${name}=`;
+    })
+    .map(cookie => {
+      return decodeURIComponent(cookie.substring(nameLenPlus));
+    })[0] || null;
+}
 export const Login: React.FC = () => {
   const {
     register,
@@ -28,12 +43,15 @@ export const Login: React.FC = () => {
     // Get our objects
     axios
       .get('https://boardgametournaments.com/set-csrf/')
-      .then(() => {
+      .then((res) => {
+        console.log(res)
         axios
           .post('https://boardgametournaments.com/login/', data, {
             headers: {
               'Content-Type': 'application/json',
               Accept: 'application/json',
+              // TODO(keegan): This works, but is it ew?
+              'X-CSRFToken': res.data['csrftoken']
             },
           })
           .then((res) => {
