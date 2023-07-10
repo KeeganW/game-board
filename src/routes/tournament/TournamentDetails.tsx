@@ -23,8 +23,7 @@ export const convertStatsToView = (tournamentStats: Object) => {
           {scoring}
         </Row>
       )
-    }
-    if (value[0] === 'scoresByTeam') {
+    } else if (value[0] === 'scoresByTeam') {
       const scoring = Object.entries(value[1]).map((scoringValue: any) => (
         <div key={`scoresByTeam${scoringValue[0]}`}>
           {scoringValue[0]}
@@ -39,7 +38,7 @@ export const convertStatsToView = (tournamentStats: Object) => {
         </Row>
       )
     }
-    return value
+    return undefined
   })
   return <Container>{results}</Container>
 }
