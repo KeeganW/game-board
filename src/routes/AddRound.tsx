@@ -47,10 +47,10 @@ export const AddRound: React.FC = () => {
     // TODO: validate data
     // Get our objects
     axios
-      .get('http://localhost:8000/set-csrf/')
+      .get('/set-csrf/')
       .then(() => {
         axios
-          .post('http://localhost:8000/add_round/', data, {
+          .post('/add_round/', data, {
             headers: {
               'Content-Type': 'application/json',
               Accept: 'application/json',

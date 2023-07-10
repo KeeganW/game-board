@@ -27,15 +27,19 @@ export const Login: React.FC = () => {
     // TODO: validate data, convert this into a hook
     // Get our objects
     axios
-      .get('https://boardgametournaments.com/set-csrf/')
+      .get('/set-csrf/')
       .then((csrfRes) => {
+        // Set the csrf token for all future requests.
+        axios.defaults.headers.common['X-CSRFToken'] = csrfRes.data?.csrftoken
+
+        // Now login
         axios
-          .post('https://boardgametournaments.com/login/', data, {
+          .post('/login/', data, {
             headers: {
-              'Content-Type': 'application/json',
-              Accept: 'application/json',
+              // 'Content-Type': 'application/json',
+              // Accept: 'application/json',
               // TODO(keegan): This works, but is it ew?
-              'X-CSRFToken': csrfRes.data?.csrftoken,
+              // 'X-CSRFToken': csrfRes.data?.csrftoken,
             },
           })
           .then((res) => {

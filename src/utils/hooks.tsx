@@ -25,7 +25,7 @@ export function useUpdatePlayerInfo() {
     setGroupImageUrl,
   } = useContext(AuthContext)
   if (!authenticated) {
-    axios.get('http://localhost:8000/player_info/').then((playerInfoRes) => {
+    axios.get('/player_info/').then((playerInfoRes) => {
       const playerInfoResObj = playerInfoRes.data as PlayerInfo
       setAuthenticated(true)
       setPlayerPk(playerInfoResObj.playerPk)

@@ -34,7 +34,7 @@ export const AddMatch: React.FC = () => {
   const matchNumber = match || ''
 
   useEffect(() => {
-    axios.get('http://localhost:8000/round/').then((res) => {
+    axios.get('/round/').then((res) => {
       setAddRoundData(res.data as RoundObjectLite[])
     })
   }, [paramsPk, matchNumber])
@@ -71,10 +71,10 @@ export const AddMatch: React.FC = () => {
     // TODO: validate data
     // Get our objects
     axios
-      .get('http://localhost:8000/set-csrf/')
+      .get('/set-csrf/')
       .then(() => {
         axios
-          .post('http://localhost:8000/add_match/', data, {
+          .post('/add_match/', data, {
             headers: {
               'Content-Type': 'application/json',
               Accept: 'application/json',

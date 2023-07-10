@@ -17,7 +17,7 @@ export const AddTournament: React.FC = () => {
   const [tournamentAdded, setTournamentAdded] = useState<number>(-1)
 
   useEffect(() => {
-    axios.get('http://localhost:8000/add_tournament_info/').then((res) => {
+    axios.get('/add_tournament_info/').then((res) => {
       setAddTournamentData(res.data as AddTournamentInfo)
     })
   }, [])
@@ -26,10 +26,10 @@ export const AddTournament: React.FC = () => {
     // TODO: validate data, turn into a hook
     // Get our objects
     axios
-      .get('http://localhost:8000/set-csrf/')
+      .get('/set-csrf/')
       .then(() => {
         axios
-          .post('http://localhost:8000/add_tournament/', data, {
+          .post('/add_tournament/', data, {
             headers: {
               'Content-Type': 'application/json',
               Accept: 'application/json',

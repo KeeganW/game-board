@@ -7,10 +7,6 @@ Code borrowed from...
 https://blog.sreejit.dev/custom-axios-hook-useaxios-in-typescript-react
  */
 
-// TODO: make this dynamic for whatever website we end up getting
-// axios.defaults.baseURL = 'http://localhost:8000'
-axios.defaults.baseURL = 'https://boardgametournaments.com'
-
 const useAxios = (axiosParams: AxiosRequestConfig) => {
   const [request, setRequest] = useState<AxiosRequestConfig>()
   const [response, setResponse] = useState<AxiosResponse>()

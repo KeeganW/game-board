@@ -2,9 +2,11 @@ import React, { useContext } from 'react'
 import { AuthContext } from 'src/Context'
 import { Navigate } from 'react-router-dom'
 import { CenteredPage } from '../utils/helpers'
+import axios from 'axios'
 
 export const Default: React.FC = () => {
   const { authenticated, playerPk } = useContext(AuthContext)
+  console.log(`Using API ${axios.defaults.baseURL}`)
   return (
     <CenteredPage>
       <h4>Welcome to the Game Board!</h4>

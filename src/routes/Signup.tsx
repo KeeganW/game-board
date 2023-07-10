@@ -27,10 +27,10 @@ export const Signup: React.FC = () => {
     // TODO: validate data, convert this into a hook
     // Get our objects
     axios
-      .get('http://localhost:8000/set-csrf/')
+      .get('/set-csrf/')
       .then(() => {
         axios
-          .post('http://localhost:8000/signup/', data, {
+          .post('/signup/', data, {
             headers: {
               'Content-Type': 'application/json',
               Accept: 'application/json',
