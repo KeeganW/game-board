@@ -39,11 +39,11 @@
     "lint-fix": "eslint . --ext .ts,.tsx --fix",
     "prettier-format": "prettier --config .prettierrc 'src/**/*.tsx' --write",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build",
-    "start": "ENVIRON=development react-scripts start",
-    "build": "ENVIRON=development react-scripts build",
-    "test": "ENVIRON=development react-scripts test",
-    "eject": "ENVIRON=development react-scripts eject"
+    "deploy": "NODE_ENV=production gh-pages -d build",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
   },
   "browserslist": {
     "production": [
