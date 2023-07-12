@@ -2,13 +2,19 @@ import React, { useState } from 'react'
 import { Outlet, Link } from 'react-router-dom'
 import { Container, Nav, Navbar } from 'react-bootstrap'
 import { AuthContext } from 'src/Context'
+import { useGetInitialState, useGetTokens } from 'src/utils/hooks'
 
 export const App = () => {
-  const [authenticated, setAuthenticated] = useState(false)
-  const [playerPk, setPlayerPk] = useState(-1)
-  const [groupPk, setGroupPk] = useState(-1)
-  const [groupName, setGroupName] = useState('')
-  const [groupImageUrl, setGroupImageUrl] = useState('')
+  const tokens = useGetTokens()
+  const initialState = useGetInitialState()
+
+  const [authenticated, setAuthenticated] = useState(!!tokens.access)
+  const [tokenAccess, setTokenAccess] = useState(tokens.access)
+  const [tokenRefresh, setTokenRefresh] = useState(tokens.refresh)
+  const [playerPk, setPlayerPk] = useState(initialState.playerPk)
+  const [groupPk, setGroupPk] = useState(initialState.groupPk)
+  const [groupName, setGroupName] = useState(initialState.groupName)
+  const [groupImageUrl, setGroupImageUrl] = useState(initialState.groupImageUrl)
 
   return (
     <Container fluid>
@@ -18,6 +24,10 @@ export const App = () => {
         value={{
           authenticated,
           setAuthenticated,
+          tokenAccess,
+          setTokenAccess,
+          tokenRefresh,
+          setTokenRefresh,
           playerPk,
           setPlayerPk,
           groupPk,

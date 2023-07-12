@@ -3,13 +3,15 @@ import { Button, Form } from 'react-bootstrap'
 import { useForm, Controller } from 'react-hook-form'
 import axios from 'src/axiosAuth'
 import { Navigate } from 'react-router-dom'
-import { useUpdatePlayerInfo } from 'src/utils/hooks'
+import { useGetTokens, useUpdatePlayerInfo } from 'src/utils/hooks'
 import { Typeahead } from 'react-bootstrap-typeahead'
 import { AddTournamentInfo } from 'src/types'
 import { CenteredPage } from 'src/utils/helpers'
 
 export const AddTournament: React.FC = () => {
   useUpdatePlayerInfo()
+  const authToken = useGetTokens()
+
   const { register, handleSubmit, control } = useForm()
   const [addTournamentData, setAddTournamentData] = useState<AddTournamentInfo | undefined>(
     undefined,
@@ -17,34 +19,31 @@ export const AddTournament: React.FC = () => {
   const [tournamentAdded, setTournamentAdded] = useState<number>(-1)
 
   useEffect(() => {
-    axios.get('/add_tournament_info/').then((res) => {
+    axios.get('/add_tournament_info/', {
+      headers: {
+        ...(authToken.access && { Authorization: `Bearer ${authToken.access}` }),
+      },
+    }).then((res) => {
       setAddTournamentData(res.data as AddTournamentInfo)
     })
   }, [])
 
   const handleOnSubmit = (data: any) => {
-    // TODO: validate data, turn into a hook
     // Get our objects
     axios
-      .get('/set-csrf/')
-      .then(() => {
-        axios
-          .post('/add_tournament/', data, {
-            headers: {
-              'Content-Type': 'application/json',
-              Accept: 'application/json',
-            },
-          })
-          .then((res) => {
-            // Player was logged in, we should have credentials, so redirect
-            setTournamentAdded(res.data.pk)
-          })
-          .catch(() => {
-            // TODO handle incorrect credentials
-          })
+      .post('/add_tournament/', data, {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          ...(authToken.access && { Authorization: `Bearer ${authToken.access}` }),
+        },
+      })
+      .then((res) => {
+        // Player was logged in, we should have credentials, so redirect
+        setTournamentAdded(res.data.pk)
       })
       .catch(() => {
-        // TODO handle error of unable to get csrf token
+        // TODO handle incorrect credentials
       })
   }
 

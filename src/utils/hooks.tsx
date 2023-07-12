@@ -1,6 +1,5 @@
 import { useContext } from 'react'
 import { AuthContext } from 'src/Context'
-import axios from 'src/axiosAuth'
 import {
   FetchResponse,
   GameObject,
@@ -15,24 +14,37 @@ import {
 } from 'src/types'
 import useAxios from 'src/useAxios'
 
-export function useUpdatePlayerInfo() {
-  const {
-    authenticated,
-    setAuthenticated,
-    setPlayerPk,
-    setGroupPk,
-    setGroupName,
-    setGroupImageUrl,
-  } = useContext(AuthContext)
-  if (!authenticated) {
-    axios.get('/player_info/').then((playerInfoRes) => {
-      const playerInfoResObj = playerInfoRes.data as PlayerInfo
-      setAuthenticated(true)
-      setPlayerPk(playerInfoResObj.playerPk)
-      setGroupPk(playerInfoResObj.groupPk)
-      setGroupName(playerInfoResObj.groupName)
-      setGroupImageUrl(playerInfoResObj.groupImageUrl)
-    })
+export type Tokens = {
+  access: string,
+  refresh: string,
+}
+
+export const useGetTokens = (): Tokens => {
+  const tokenAccess: string = localStorage.getItem('tokenAccess') || ''
+  const tokenRefresh: string = localStorage.getItem('tokenRefresh') || ''
+  return {
+    access: tokenAccess,
+    refresh: tokenRefresh,
+  }
+}
+
+export const useGetInitialState = (): PlayerInfo => {
+  const localStorageParsed = JSON.parse(localStorage.getItem('initialState') || '{}')
+  if (
+    localStorageParsed.playerPk
+    && localStorageParsed.groupPk
+    && localStorageParsed.groupName
+    && localStorageParsed.groupImageUrl
+  ) {
+    return localStorageParsed
+  }
+  // Did not find anything from the local storage, so just return nothing
+  return {
+    playerPk: -1,
+    groupPk: -1,
+    groupName: '',
+    groupImageUrl: '',
+    detail: '',
   }
 }
 
@@ -42,9 +54,14 @@ export function useUpdatePlayerInfo() {
  * @param url The url to call with the get hook.
  */
 function useGetResponse<Type>(url: string): FetchResponse {
+  // TODO(keegan): Refresh tokens: https://dev.to/franciscomendes10866/how-to-use-axios-interceptors-b7d
+  const authToken = useGetTokens()
   const hookResponse = useAxios({
     method: 'GET',
     url,
+    headers: {
+      ...(authToken.access && { Authorization: `Bearer ${authToken.access}` }),
+    },
   })
   // Specifically set the data type to be Type
   return {
@@ -57,6 +74,32 @@ function useGetResponse<Type>(url: string): FetchResponse {
           : hookResponse.response.data,
       }
       : hookResponse.response,
+  }
+}
+
+export function useUpdatePlayerInfo() {
+  const {
+    authenticated,
+    setAuthenticated,
+    setPlayerPk,
+    setGroupPk,
+    setGroupName,
+    setGroupImageUrl,
+  } = useContext(AuthContext)
+  const playerInfoResponse = useGetResponse<PlayerInfo>('/player_info/')
+
+  if (
+    !playerInfoResponse.loading
+    && playerInfoResponse.response
+    && playerInfoResponse.response.status === 200
+    && !authenticated
+  ) {
+    const playerInfoResObj = playerInfoResponse.response.data
+    setAuthenticated(true)
+    setPlayerPk(playerInfoResObj.playerPk)
+    setGroupPk(playerInfoResObj.groupPk)
+    setGroupName(playerInfoResObj.groupName)
+    setGroupImageUrl(playerInfoResObj.groupImageUrl)
   }
 }
 

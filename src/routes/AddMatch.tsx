@@ -6,7 +6,7 @@ import { useForm, Controller } from 'react-hook-form'
 import axios from 'src/axiosAuth'
 import { Navigate, useParams } from 'react-router-dom'
 import {
-  useGetGame, useGetPlayer, useGetPlayerRank, useUpdatePlayerInfo,
+  useGetGame, useGetPlayer, useGetPlayerRank, useGetTokens, useUpdatePlayerInfo,
 } from 'src/utils/hooks'
 import { Typeahead } from 'react-bootstrap-typeahead'
 import {
@@ -17,6 +17,7 @@ import { CenteredPage, Loading } from 'src/utils/helpers'
 
 export const AddMatch: React.FC = () => {
   useUpdatePlayerInfo()
+  const authToken = useGetTokens()
 
   const playersResponse = useGetPlayer()
   const gamesResponse = useGetGame()
@@ -34,7 +35,11 @@ export const AddMatch: React.FC = () => {
   const matchNumber = match || ''
 
   useEffect(() => {
-    axios.get('/round/').then((res) => {
+    axios.get('/round/', {
+      headers: {
+        ...(authToken.access && { Authorization: `Bearer ${authToken.access}` }),
+      },
+    }).then((res) => {
       setAddRoundData(res.data as RoundObjectLite[])
     })
   }, [paramsPk, matchNumber])
@@ -68,27 +73,21 @@ export const AddMatch: React.FC = () => {
   // Good resource
   // https://medium.com/swlh/django-rest-framework-and-spa-session-authentication-with-docker-and-nginx-aa64871f29cd
   const handleOnSubmit = (data: any) => {
-    // TODO: validate data
     // Get our objects
     axios
-      .get('/set-csrf/')
-      .then(() => {
-        axios
-          .post('/add_match/', data, {
-            headers: {
-              'Content-Type': 'application/json',
-              Accept: 'application/json',
-            },
-          })
-          .then((res) => {
-            setMatchAdded(res.data.pk)
-          })
-          .catch(() => {
-            // TODO handle incorrect credentials
-          })
+      .post('/add_match/', data, {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          ...(authToken.access && { Authorization: `Bearer ${authToken.access}` }),
+        },
+      })
+      .then((res) => {
+        // Player was logged in, we should have credentials, so redirect
+        setMatchAdded(res.data.pk)
       })
       .catch(() => {
-        // TODO handle error of unable to get csrf token
+        // TODO handle incorrect credentials
       })
   }
 

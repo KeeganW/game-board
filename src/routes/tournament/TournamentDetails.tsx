@@ -34,7 +34,7 @@ export const convertStatsToView = (tournamentStats: Object) => {
       ))
       return (
         <Row key="scoresByTeam" className="text-center">
-          <h3>Scoring</h3>
+          <h3>Handicap Scoring</h3>
           {scoring}
         </Row>
       )
