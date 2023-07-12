@@ -6,14 +6,20 @@ import { useLogout } from 'src/utils/hooks'
 
 export const Logout: React.FC = () => {
   const {
-    authenticated, setAuthenticated, playerPk, setPlayerPk,
+    authenticated, setAuthenticated, setTokenAccess, setTokenRefresh, playerPk, setPlayerPk,
   } = useContext(AuthContext)
 
   const logoutResponse = useLogout()
 
   if (!logoutResponse.loading && logoutResponse.response.status === 200) {
+    localStorage.setItem('tokenAccess', '')
+    localStorage.setItem('tokenRefresh', '')
+    localStorage.setItem('initialState', '')
+
     setAuthenticated(false)
     setPlayerPk(-1)
+    setTokenAccess('')
+    setTokenRefresh('')
   }
 
   return (
