@@ -6,7 +6,7 @@ import { useForm, Controller } from 'react-hook-form'
 import axios from 'src/axiosAuth'
 import { Navigate, useParams } from 'react-router-dom'
 import {
-  useGetGame, useGetPlayer, useGetPlayerRank, useGetTokens, useUpdatePlayerInfo,
+  useGetGame, useGetPlayer, useGetPlayerRank, useUpdatePlayerInfo,
 } from 'src/utils/hooks'
 import { Typeahead } from 'react-bootstrap-typeahead'
 import {
@@ -14,10 +14,11 @@ import {
 } from 'src/types'
 import { RoundForm } from 'src/forms/RoundForm'
 import { CenteredPage, Loading } from 'src/utils/helpers'
+import { getTokens } from 'src/utils/localStorageService'
 
 export const AddMatch: React.FC = () => {
   useUpdatePlayerInfo()
-  const authToken = useGetTokens()
+  const authToken = getTokens()
 
   const playersResponse = useGetPlayer()
   const gamesResponse = useGetGame()

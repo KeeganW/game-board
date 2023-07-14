@@ -3,14 +3,15 @@ import { Button, Form } from 'react-bootstrap'
 import { useForm, Controller } from 'react-hook-form'
 import axios from 'src/axiosAuth'
 import { Navigate } from 'react-router-dom'
-import { useGetTokens, useUpdatePlayerInfo } from 'src/utils/hooks'
+import { useUpdatePlayerInfo } from 'src/utils/hooks'
 import { Typeahead } from 'react-bootstrap-typeahead'
 import { AddTournamentInfo } from 'src/types'
 import { CenteredPage } from 'src/utils/helpers'
+import { getTokens } from 'src/utils/localStorageService'
 
 export const AddTournament: React.FC = () => {
   useUpdatePlayerInfo()
-  const authToken = useGetTokens()
+  const authToken = getTokens()
 
   const { register, handleSubmit, control } = useForm()
   const [addTournamentData, setAddTournamentData] = useState<AddTournamentInfo | undefined>(

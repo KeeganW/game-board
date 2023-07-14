@@ -13,40 +13,7 @@ import {
   TournamentStats,
 } from 'src/types'
 import useAxios from 'src/useAxios'
-
-export type Tokens = {
-  access: string,
-  refresh: string,
-}
-
-export const useGetTokens = (): Tokens => {
-  const tokenAccess: string = localStorage.getItem('tokenAccess') || ''
-  const tokenRefresh: string = localStorage.getItem('tokenRefresh') || ''
-  return {
-    access: tokenAccess,
-    refresh: tokenRefresh,
-  }
-}
-
-export const useGetInitialState = (): PlayerInfo => {
-  const localStorageParsed = JSON.parse(localStorage.getItem('initialState') || '{}')
-  if (
-    localStorageParsed.playerPk
-    && localStorageParsed.groupPk
-    && localStorageParsed.groupName
-    && localStorageParsed.groupImageUrl
-  ) {
-    return localStorageParsed
-  }
-  // Did not find anything from the local storage, so just return nothing
-  return {
-    playerPk: -1,
-    groupPk: -1,
-    groupName: '',
-    groupImageUrl: '',
-    detail: '',
-  }
-}
+import { setUserState } from './localStorageService'
 
 /**
  * A generic get hook which calls useAxios, and then formats the response to be a specific type.
@@ -54,14 +21,9 @@ export const useGetInitialState = (): PlayerInfo => {
  * @param url The url to call with the get hook.
  */
 function useGetResponse<Type>(url: string): FetchResponse {
-  // TODO(keegan): Refresh tokens: https://dev.to/franciscomendes10866/how-to-use-axios-interceptors-b7d
-  const authToken = useGetTokens()
   const hookResponse = useAxios({
     method: 'GET',
     url,
-    headers: {
-      ...(authToken.access && { Authorization: `Bearer ${authToken.access}` }),
-    },
   })
   // Specifically set the data type to be Type
   return {
@@ -95,6 +57,7 @@ export function useUpdatePlayerInfo() {
     && !authenticated
   ) {
     const playerInfoResObj = playerInfoResponse.response.data
+    setUserState(playerInfoResObj)
     setAuthenticated(true)
     setPlayerPk(playerInfoResObj.playerPk)
     setGroupPk(playerInfoResObj.groupPk)

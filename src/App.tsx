@@ -2,15 +2,15 @@ import React, { useState } from 'react'
 import { Outlet, Link } from 'react-router-dom'
 import { Container, Nav, Navbar } from 'react-bootstrap'
 import { AuthContext } from 'src/Context'
-import { useGetInitialState, useGetTokens } from 'src/utils/hooks'
+import { getTokens, getUserState } from 'src/utils/localStorageService'
 
 export const App = () => {
-  const tokens = useGetTokens()
-  const initialState = useGetInitialState()
+  const tokens = getTokens()
+  const initialState = getUserState()
 
   const [authenticated, setAuthenticated] = useState(!!tokens.access)
-  const [tokenAccess, setTokenAccess] = useState(tokens.access)
-  const [tokenRefresh, setTokenRefresh] = useState(tokens.refresh)
+  const [tokenAccess, setTokenAccess] = useState(tokens.access || '')
+  const [tokenRefresh, setTokenRefresh] = useState(tokens.refresh || '')
   const [playerPk, setPlayerPk] = useState(initialState.playerPk)
   const [groupPk, setGroupPk] = useState(initialState.groupPk)
   const [groupName, setGroupName] = useState(initialState.groupName)
@@ -77,9 +77,9 @@ export const App = () => {
                   <Nav.Link as={Link} to="/login">
                     Login
                   </Nav.Link>
-                  <Nav.Link as={Link} to="/signup">
-                    Signup
-                  </Nav.Link>
+                  {/* <Nav.Link as={Link} to="/signup"> */}
+                  {/*   Signup */}
+                  {/* </Nav.Link> */}
                 </>
               )}
             </Nav>
