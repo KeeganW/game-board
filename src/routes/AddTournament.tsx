@@ -32,13 +32,7 @@ export const AddTournament: React.FC = () => {
   const handleOnSubmit = (data: any) => {
     // Get our objects
     axios
-      .post('/add_tournament/', data, {
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-          ...(authToken.access && { Authorization: `Bearer ${authToken.access}` }),
-        },
-      })
+      .post('/add_tournament/', data, {})
       .then((res) => {
         // Player was logged in, we should have credentials, so redirect
         setTournamentAdded(res.data.pk)

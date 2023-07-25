@@ -76,13 +76,7 @@ export const AddMatch: React.FC = () => {
   const handleOnSubmit = (data: any) => {
     // Get our objects
     axios
-      .post('/add_match/', data, {
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-          ...(authToken.access && { Authorization: `Bearer ${authToken.access}` }),
-        },
-      })
+      .post('/add_match/', data, {})
       .then((res) => {
         // Player was logged in, we should have credentials, so redirect
         setMatchAdded(res.data.pk)

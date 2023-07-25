@@ -50,13 +50,7 @@ export const AddRound: React.FC = () => {
   const handleOnSubmit = (data: any) => {
     // Get our objects
     axios
-      .post('/add_round/', data, {
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-          ...(authToken.access && { Authorization: `Bearer ${authToken.access}` }),
-        },
-      })
+      .post('/add_round/', data, {})
       .then((res) => {
         // Player was logged in, we should have credentials, so redirect
         setRoundAdded(res.data.pk)

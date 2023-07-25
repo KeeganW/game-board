@@ -30,12 +30,7 @@ export const Signup: React.FC = () => {
       .get('/set-csrf/')
       .then(() => {
         axios
-          .post('/signup/', data, {
-            headers: {
-              'Content-Type': 'application/json',
-              Accept: 'application/json',
-            },
-          })
+          .post('/signup/', data, {})
           .then((res) => {
             // Player was logged in, we should have credentials, so redirect
             setAuthenticated(true)
