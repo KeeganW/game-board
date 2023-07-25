@@ -8,11 +8,9 @@ import {
 } from 'src/utils/hooks'
 import { RoundForm } from 'src/forms/RoundForm'
 import { CenteredPage, Loading } from 'src/utils/helpers'
-import { getTokens } from 'src/utils/localStorageService'
 
 export const AddRound: React.FC = () => {
   useUpdatePlayerInfo()
-  const authToken = getTokens()
 
   const {
     register,
