@@ -56,9 +56,12 @@ export const convertStatsToView = (
   tournamentStats: Object,
   teamColorMapping: StringToStringMap,
 ) => {
-  const results = Object.entries(tournamentStats).map((value: any) => {
+  const results = Object.entries(tournamentStats).map((value: [string, {string: number}]) => {
     function getScoresFromStats(title: string) {
-      const scoring = Object.entries(value[1])
+      const sortedScores = Object.entries(value[1]).sort(function(a, b){
+        return b[1] - a[1]
+      })
+      const scoring = sortedScores
         .map((scoringValue: any) => (
           <Row className="mb-1 justify-content-md-center">
             <div
