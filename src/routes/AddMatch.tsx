@@ -1,16 +1,20 @@
 import React, { useEffect, useState } from 'react'
-import {
-  Button, Col, Form, Row,
-} from 'react-bootstrap'
+import { Button, Col, Form, Row } from 'react-bootstrap'
 import { useForm, Controller } from 'react-hook-form'
 import axios from 'src/axiosAuth'
 import { Navigate, useParams } from 'react-router-dom'
 import {
-  useGetGame, useGetPlayer, useGetPlayerRank, useUpdatePlayerInfo,
+  useGetGame,
+  useGetPlayer,
+  useGetPlayerRank,
+  useUpdatePlayerInfo,
 } from 'src/utils/hooks'
 import { Typeahead } from 'react-bootstrap-typeahead'
 import {
-  GameObject, PlayerObjectLite, PlayerRankObjectLite, RoundObjectLite,
+  GameObject,
+  PlayerObjectLite,
+  PlayerRankObjectLite,
+  RoundObjectLite,
 } from 'src/types'
 import { RoundForm } from 'src/forms/RoundForm'
 import { CenteredPage, Loading } from 'src/utils/helpers'
@@ -25,7 +29,9 @@ export const AddMatch: React.FC = () => {
   const playerRanksResponse = useGetPlayerRank()
 
   const { register, handleSubmit, control } = useForm()
-  const [addRoundData, setAddRoundData] = useState<RoundObjectLite[] | undefined>(undefined)
+  const [addRoundData, setAddRoundData] = useState<
+    RoundObjectLite[] | undefined
+  >(undefined)
   const [addNewRound, setAddNewRound] = useState<boolean>(false)
   const [matchAdded, setMatchAdded] = useState<number>(-1)
 
@@ -36,25 +42,29 @@ export const AddMatch: React.FC = () => {
   const matchNumber = match || ''
 
   useEffect(() => {
-    axios.get('/round/', {
-      headers: {
-        ...(authToken.access && { Authorization: `Bearer ${authToken.access}` }),
-      },
-    }).then((res) => {
-      setAddRoundData(res.data as RoundObjectLite[])
-    })
+    axios
+      .get('/round/', {
+        headers: {
+          ...(authToken.access && {
+            Authorization: `Bearer ${authToken.access}`,
+          }),
+        },
+      })
+      .then(res => {
+        setAddRoundData(res.data as RoundObjectLite[])
+      })
   }, [paramsPk, matchNumber])
 
   if (
-    !playersResponse.response
-    || !playersResponse.response.data
-    || playersResponse.loading
-    || !gamesResponse.response
-    || !gamesResponse.response.data
-    || gamesResponse.loading
-    || !playerRanksResponse.response
-    || !playerRanksResponse.response.data
-    || playerRanksResponse.loading
+    !playersResponse.response ||
+    !playersResponse.response.data ||
+    playersResponse.loading ||
+    !gamesResponse.response ||
+    !gamesResponse.response.data ||
+    gamesResponse.loading ||
+    !playerRanksResponse.response ||
+    !playerRanksResponse.response.data ||
+    playerRanksResponse.loading
   ) {
     return (
       <CenteredPage>
@@ -77,7 +87,7 @@ export const AddMatch: React.FC = () => {
     // Get our objects
     axios
       .post('/add_match/', data, {})
-      .then((res) => {
+      .then(res => {
         // Player was logged in, we should have credentials, so redirect
         setMatchAdded(res.data.pk)
       })
@@ -96,22 +106,36 @@ export const AddMatch: React.FC = () => {
           <Col>
             <Form.Group className="mb-3" controlId="match">
               <Form.Label>Match</Form.Label>
-              <Form.Control type="text" {...register('match', { required: true, value: match })} />
+              <Form.Control
+                type="text"
+                {...register('match', { required: true, value: match })}
+              />
               <Form.Text className="text-muted" />
             </Form.Group>
 
             <Form.Control
               type="hidden"
-              {...register('tournament', { required: true, value: tournamentPk })}
+              {...register('tournament', {
+                required: true,
+                value: tournamentPk,
+              })}
             />
 
             <Form.Group className="mb-3" controlId="teamGame">
               <Form.Label>Team Game</Form.Label>
-              <Form.Check className="" id="teamGame" {...register('teamGame', {})} />
+              <Form.Check
+                className=""
+                id="teamGame"
+                {...register('teamGame', {})}
+              />
             </Form.Group>
           </Col>
         </Row>
-        <Button variant="secondary" type="button" onClick={() => setAddNewRound(!addNewRound)}>
+        <Button
+          variant="secondary"
+          type="button"
+          onClick={() => setAddNewRound(!addNewRound)}
+        >
           {addNewRound ? 'Add Match By Round' : 'Add New Round for Match'}
         </Button>
         <Row>
@@ -140,28 +164,34 @@ export const AddMatch: React.FC = () => {
                           ?.map((round: RoundObjectLite) => {
                             // TODO: move this offline...
                             const game = games.filter(
-                              (thisGame: GameObject) => round.game === thisGame.pk,
+                              (thisGame: GameObject) =>
+                                round.game === thisGame.pk
                             )?.[0]
                             // Need to get a list of player usernames, by mapping round player
                             //  ranks -> player rank player -> players username
-                            const playerList = round.playerRanks.map((playerRankPk: number) => {
-                              // Get the player rank that matches this one
-                              const playerRank = playerRanks.filter(
-                                (thisPlayerRank: PlayerRankObjectLite) => thisPlayerRank.pk
-                                  === playerRankPk,
-                              )?.[0]
-                              if (playerRank) {
-                                // PlayerRank exists, so lets map it to a player.
-                                return (
-                                  players.filter(
-                                    (player: PlayerObjectLite) => playerRank.player === player.pk,
-                                  )?.[0]?.username || 'unknown'
-                                )
+                            const playerList = round.playerRanks.map(
+                              (playerRankPk: number) => {
+                                // Get the player rank that matches this one
+                                const playerRank = playerRanks.filter(
+                                  (thisPlayerRank: PlayerRankObjectLite) =>
+                                    thisPlayerRank.pk === playerRankPk
+                                )?.[0]
+                                if (playerRank) {
+                                  // PlayerRank exists, so lets map it to a player.
+                                  return (
+                                    players.filter(
+                                      (player: PlayerObjectLite) =>
+                                        playerRank.player === player.pk
+                                    )?.[0]?.username || 'unknown'
+                                  )
+                                }
+                                return 'unknown'
                               }
-                              return 'unknown'
-                            })
+                            )
                             return {
-                              label: `${game.name} - ${round.date}: \n${playerList.join(', ')}`,
+                              label: `${game.name} - ${
+                                round.date
+                              }: \n${playerList.join(', ')}`,
                               value: String(round.pk),
                             }
                           })
@@ -194,9 +224,9 @@ export const AddMatch: React.FC = () => {
         </Button>
       </Form>
       {/* If login button stops working randomly, it probably has to do with this statement */}
-      {matchAdded
-        && matchAdded >= 0
-        && (matchAdded >= 0 ? (
+      {matchAdded &&
+        matchAdded >= 0 &&
+        (matchAdded >= 0 ? (
           <Navigate replace to={`/tournament/${matchAdded}`} />
         ) : (
           <Navigate replace to="/tournament/" />

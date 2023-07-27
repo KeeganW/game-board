@@ -40,17 +40,21 @@ export const App = () => {
       >
         <Navbar bg="light" variant="light" fixed="top">
           <Container>
-            <Navbar.Brand as={Link} to={authenticated ? `group/${groupPk}` : ''}>
+            <Navbar.Brand
+              as={Link}
+              to={authenticated ? `group/${groupPk}` : ''}
+            >
               <img
                 alt=""
                 src={
-                  authenticated ? groupImageUrl : `${process.env.PUBLIC_URL}/img/logo_outline.png`
+                  authenticated
+                    ? groupImageUrl
+                    : `${process.env.PUBLIC_URL}/img/logo_outline.png`
                 }
                 width="30"
                 height="30"
                 className="d-inline-block align-top"
-              />
-              {' '}
+              />{' '}
               {authenticated ? groupName : 'Game Board'}
             </Navbar.Brand>
             <Nav className="me-auto">

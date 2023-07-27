@@ -9,7 +9,9 @@ export const PlayerTitle: React.FC<{
   <Container>
     <Row>
       <h1>
-        {`${capitalizeString(playerInfo.firstName)} ${capitalizeString(playerInfo.lastName)}`}
+        {`${capitalizeString(playerInfo.firstName)} ${capitalizeString(
+          playerInfo.lastName
+        )}`}
       </h1>
     </Row>
     <Row>

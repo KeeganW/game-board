@@ -12,7 +12,7 @@ const useAxios = (axiosParams: AxiosRequestConfig) => {
   const [response, setResponse] = useState<AxiosResponse>()
   const [error, setError] = useState<AxiosError>()
   const [loading, setLoading] = useState(
-    axiosParams.method === 'GET' || axiosParams.method === 'get',
+    axiosParams.method === 'GET' || axiosParams.method === 'get'
   )
 
   const fetchData = async (params: AxiosRequestConfig) => {
@@ -39,7 +39,13 @@ const useAxios = (axiosParams: AxiosRequestConfig) => {
 
   // Sometimes we update the hook, with a new set of params (in this case url), but a new request
   // isn't sent. In this case, we manually catch that and send a new data request.
-  if (!loading && request && request.url && axiosParams.url && request.url !== axiosParams.url) {
+  if (
+    !loading &&
+    request &&
+    request.url &&
+    axiosParams.url &&
+    request.url !== axiosParams.url
+  ) {
     setLoading(true)
     sendData()
   }

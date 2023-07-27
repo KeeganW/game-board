@@ -14,26 +14,30 @@ export const AddTournament: React.FC = () => {
   const authToken = getTokens()
 
   const { register, handleSubmit, control } = useForm()
-  const [addTournamentData, setAddTournamentData] = useState<AddTournamentInfo | undefined>(
-    undefined,
-  )
+  const [addTournamentData, setAddTournamentData] = useState<
+    AddTournamentInfo | undefined
+  >(undefined)
   const [tournamentAdded, setTournamentAdded] = useState<number>(-1)
 
   useEffect(() => {
-    axios.get('/add_tournament_info/', {
-      headers: {
-        ...(authToken.access && { Authorization: `Bearer ${authToken.access}` }),
-      },
-    }).then((res) => {
-      setAddTournamentData(res.data as AddTournamentInfo)
-    })
+    axios
+      .get('/add_tournament_info/', {
+        headers: {
+          ...(authToken.access && {
+            Authorization: `Bearer ${authToken.access}`,
+          }),
+        },
+      })
+      .then(res => {
+        setAddTournamentData(res.data as AddTournamentInfo)
+      })
   }, [])
 
   const handleOnSubmit = (data: any) => {
     // Get our objects
     axios
       .post('/add_tournament/', data, {})
-      .then((res) => {
+      .then(res => {
         // Player was logged in, we should have credentials, so redirect
         setTournamentAdded(res.data.pk)
       })
@@ -48,14 +52,18 @@ export const AddTournament: React.FC = () => {
       <Form onSubmit={handleSubmit(handleOnSubmit)}>
         <Form.Group className="mb-3" controlId="tournamentName">
           <Form.Label>Name</Form.Label>
-          <Form.Control type="text" {...register('tournamentName', { required: true })} />
+          <Form.Control
+            type="text"
+            {...register('tournamentName', { required: true })}
+          />
           <Form.Text className="text-muted" />
         </Form.Group>
         <Controller
           control={control}
           name="teams"
           rules={{
-            required: 'Please, select at least two Teams to include in this tournament',
+            required:
+              'Please, select at least two Teams to include in this tournament',
           }}
           render={({ field, fieldState }) => (
             <div className="mb-3">
@@ -71,7 +79,9 @@ export const AddTournament: React.FC = () => {
                 className={fieldState.invalid ? 'is-invalid' : ''}
                 aria-describedby="teamsError"
                 options={
-                  addTournamentData ? addTournamentData.teams.map((value) => value.name) : []
+                  addTournamentData
+                    ? addTournamentData.teams.map(value => value.name)
+                    : []
                 }
               />
               <p id="teamsError" className="invalid-feedback">
@@ -85,9 +95,9 @@ export const AddTournament: React.FC = () => {
         </Button>
       </Form>
       {/* If login button stops working randomly, it probably has to do with this statement */}
-      {tournamentAdded
-        && tournamentAdded >= 0
-        && (tournamentAdded >= 0 ? (
+      {tournamentAdded &&
+        tournamentAdded >= 0 &&
+        (tournamentAdded >= 0 ? (
           <Navigate replace to={`/tournament/${tournamentAdded}`} />
         ) : (
           <Navigate replace to="/tournament/" />

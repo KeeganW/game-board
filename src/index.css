@@ -19,3 +19,10 @@ code {
   white-space: normal;
   text-overflow: ellipsis;
 }
+
+.rounded span a {
+  color: black;
+}
+.rounded span a:hover {
+  color: #0d6efd;
+}

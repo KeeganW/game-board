@@ -1,7 +1,10 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import {
-  BracketMatchesObject, PlayerRankObject, TeamObject, TournamentObject,
+  BracketMatchesObject,
+  PlayerRankObject,
+  TeamObject,
+  TournamentObject,
 } from 'src/types'
 import { Loading, useParamsPk } from 'src/utils/helpers'
 import { useGetTournamentInfo, useGetTournamentStats } from 'src/utils/hooks'
@@ -10,42 +13,47 @@ import { Col, Container, Row } from 'react-bootstrap'
 // TODO(keegan): implement this function for white vs black text:
 //  https://blog.cristiana.tech/calculating-color-contrast-in-typescript-using-web-content-accessibility-guidelines-wcag
 type RGBValue = {
-  r: number,
-  g: number,
-  b: number,
+  r: number
+  g: number
+  b: number
 }
 const hexToRGB = (hexCode: string): RGBValue => {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hexCode)
-  return result ? {
-    r: parseInt(result[1], 16),
-    g: parseInt(result[2], 16),
-    b: parseInt(result[3], 16),
-  } : {
-    r: 0,
-    g: 0,
-    b: 0,
-  }
+  return result
+    ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16),
+      }
+    : {
+        r: 0,
+        g: 0,
+        b: 0,
+      }
 }
 
-const rgbToStyle = (rgbValue: RGBValue): string => `rgb(${rgbValue.r},${rgbValue.g},${rgbValue.b},0.5)`
+const rgbToStyle = (rgbValue: RGBValue): string =>
+  `rgb(${rgbValue.r},${rgbValue.g},${rgbValue.b},0.5)`
 
 type StringToStringMap = Map<string, string>
 type NumberToStringMap = Map<number, string>
 
 const getTeamColors = (tournamentInfo: TournamentObject): StringToStringMap => {
   const teamColorMap = new Map<string, string>()
-  tournamentInfo.bracket.teams.forEach((team) => {
+  tournamentInfo.bracket.teams.forEach(team => {
     const teamColorRGB = hexToRGB(team.color)
     teamColorMap.set(team.name, rgbToStyle(teamColorRGB))
   })
   return teamColorMap
 }
 
-const getPlayerColors = (tournamentInfo: TournamentObject): NumberToStringMap => {
+const getPlayerColors = (
+  tournamentInfo: TournamentObject
+): NumberToStringMap => {
   const playerColorMap = new Map<number, string>()
-  tournamentInfo.bracket.teams.forEach((team) => {
+  tournamentInfo.bracket.teams.forEach(team => {
     const teamColorRGB = hexToRGB(team.color)
-    team.players.forEach((player) => {
+    team.players.forEach(player => {
       playerColorMap.set(player.pk, rgbToStyle(teamColorRGB))
     })
   })
@@ -54,13 +62,15 @@ const getPlayerColors = (tournamentInfo: TournamentObject): NumberToStringMap =>
 
 export const convertStatsToView = (
   tournamentStats: Object,
-  teamColorMapping: StringToStringMap,
+  teamColorMapping: StringToStringMap
 ) => {
-  const results = Object.entries(tournamentStats).map((value: [string, {string: number}]) => {
-    function getScoresFromStats(title: string) {
-      const sortedScores = Object.entries(value[1]).sort((a, b) => b[1] - a[1])
-      const scoring = sortedScores
-        .map((scoringValue: any) => (
+  const results = Object.entries(tournamentStats).map(
+    (value: [string, { string: number }]) => {
+      function getScoresFromStats(title: string) {
+        const sortedScores = Object.entries(value[1]).sort(
+          (a, b) => b[1] - a[1]
+        )
+        const scoring = sortedScores.map((scoringValue: any) => (
           <Row className="mb-1 justify-content-md-center">
             <div
               className="col-md-auto rounded"
@@ -74,35 +84,36 @@ export const convertStatsToView = (
             </div>
           </Row>
         ))
-      return (
-        <Row key="rawScoresByTeam" className="text-center">
-          <h3>{title}</h3>
-          {scoring}
-        </Row>
-      )
-    }
+        return (
+          <Row key="rawScoresByTeam" className="text-center">
+            <h3>{title}</h3>
+            {scoring}
+          </Row>
+        )
+      }
 
-    if (value[0] === 'rawScoresByTeam') {
-      return getScoresFromStats('Raw Scoring')
+      if (value[0] === 'rawScoresByTeam') {
+        return getScoresFromStats('Raw Scoring')
+      }
+      if (value[0] === 'scoresByTeam') {
+        return getScoresFromStats('Handicap Scoring')
+      }
+      return undefined
     }
-    if (value[0] === 'scoresByTeam') {
-      return getScoresFromStats('Handicap Scoring')
-    }
-    return undefined
-  })
+  )
   return <Container>{results}</Container>
 }
 export const convertBracketToView = (
   bracket: string[][][],
   tournament: TournamentObject,
   teamColorMapping: StringToStringMap,
-  playerColorMapping: NumberToStringMap,
+  playerColorMapping: NumberToStringMap
 ) => {
   // Find all team related information for quick access later
   const tournamentTeams = tournament.bracket.teams.sort(
-    (a: TeamObject, b: TeamObject) => a.name.localeCompare(b.name),
+    (a: TeamObject, b: TeamObject) => a.name.localeCompare(b.name)
   )
-  const teamNamesToIndex = tournamentTeams.map((teamObject) => teamObject.name)
+  const teamNamesToIndex = tournamentTeams.map(teamObject => teamObject.name)
 
   // After looping through every week, add the number of rounds in that week to a total, so we can
   //  keep track of the number of rounds, even when the number of rounds is inconsistent (like
@@ -140,7 +151,7 @@ export const convertBracketToView = (
 
       // Get this specific round object from the tournament
       const tournamentGame = tournament.bracket.matches.find(
-        (value: BracketMatchesObject) => value.match === roundNumber,
+        (value: BracketMatchesObject) => value.match === roundNumber
       )
 
       if (tournamentGame) {
@@ -149,11 +160,12 @@ export const convertBracketToView = (
         const playerRanks = tournamentRound.playerRanks
           ?.sort((a: PlayerRankObject, b: PlayerRankObject) => a.rank - b.rank)
           .map((player: PlayerRankObject) => (
-
             <Row className="mb-1 justify-content-md-center">
               <div
                 className="col-md-auto rounded"
-                style={{ backgroundColor: playerColorMapping.get(player.player.pk) }}
+                style={{
+                  backgroundColor: playerColorMapping.get(player.player.pk),
+                }}
               >
                 <div key={tournamentGame.match + player.player.username}>
                   {player.rank}
@@ -165,7 +177,6 @@ export const convertBracketToView = (
                 </div>
               </div>
             </Row>
-
           ))
         return (
           <Col key={tournamentGame.match}>
@@ -182,9 +193,7 @@ export const convertBracketToView = (
         <Col key={`game${roundNumber}`}>
           <h5>
             <Link to={`/add_match/${tournament.pk}/${roundNumber}`}>
-              Game
-              {' '}
-              {roundNumber}
+              Game {roundNumber}
             </Link>
           </h5>
           {rounds}
@@ -201,11 +210,7 @@ export const convertBracketToView = (
     return (
       // eslint-disable-next-line react/no-array-index-key
       <Row className="mb-3" key={weekIndex}>
-        <h3 className="text-center">
-          Week
-          {' '}
-          {weekIndex + 1}
-        </h3>
+        <h3 className="text-center">Week {weekIndex + 1}</h3>
         {roundsForWeek}
       </Row>
     )
@@ -220,12 +225,12 @@ export const TournamentDetails: React.FC = () => {
   const tournamentStatsResponse = useGetTournamentStats(tournamentPk)
 
   if (
-    !tournamentInfoResponse.response
-    || !tournamentInfoResponse.response.data
-    || tournamentInfoResponse.loading
-    || !tournamentStatsResponse.response
-    || !tournamentStatsResponse.response.data
-    || tournamentStatsResponse.loading
+    !tournamentInfoResponse.response ||
+    !tournamentInfoResponse.response.data ||
+    tournamentInfoResponse.loading ||
+    !tournamentStatsResponse.response ||
+    !tournamentStatsResponse.response.data ||
+    tournamentStatsResponse.loading
   ) {
     return <Loading />
   }
@@ -244,7 +249,7 @@ export const TournamentDetails: React.FC = () => {
       tournamentInfoBracket,
       tournamentInfo,
       teamToColorMapping,
-      playerToColorMapping,
+      playerToColorMapping
     )
   )
   const convertedStats = !tournamentStats ? (
@@ -258,7 +263,9 @@ export const TournamentDetails: React.FC = () => {
       <Row className="mb-4">
         <Col>
           {!tournamentInfo && <Loading />}
-          <h1 className="text-center">{tournamentInfo && tournamentInfo.name}</h1>
+          <h1 className="text-center">
+            {tournamentInfo && tournamentInfo.name}
+          </h1>
         </Col>
       </Row>
       <Row>

@@ -131,6 +131,10 @@ export type TournamentStats = {
   scoresByTeam: TeamScores
 } & DetailResponse
 
+export type RecentRounds = {
+  recentRounds: RoundObject[]
+} & DetailResponse
+
 export type PlayerInfo = {
   playerPk: number
   groupPk: number

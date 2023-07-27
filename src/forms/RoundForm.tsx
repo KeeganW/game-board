@@ -10,9 +10,7 @@ export const RoundForm: React.FC<{
   register: UseFormRegister<any>
   gameOptions: any
   playerOptions: any
-}> = ({
-  control, register, gameOptions, playerOptions,
-}) => (
+}> = ({ control, register, gameOptions, playerOptions }) => (
   <>
     <Controller
       control={control}
@@ -44,7 +42,10 @@ export const RoundForm: React.FC<{
       <Form.Label>Date</Form.Label>
       <Form.Control
         type="date"
-        {...register('playedOn', { required: true, value: moment().format('YYYY-MM-DD') })}
+        {...register('playedOn', {
+          required: true,
+          value: moment().format('YYYY-MM-DD'),
+        })}
       />
       <Form.Text className="text-muted" />
     </Form.Group>
@@ -67,7 +68,10 @@ export const RoundForm: React.FC<{
             clearButton
             className={fieldState.invalid ? 'is-invalid' : ''}
             aria-describedby="playerError"
-            options={playerOptions?.map((value: PlayerObjectLite) => value.username) || []}
+            options={
+              playerOptions?.map((value: PlayerObjectLite) => value.username) ||
+              []
+            }
           />
           <p id="playerError" className="invalid-feedback">
             {fieldState.error?.message}
@@ -75,7 +79,11 @@ export const RoundForm: React.FC<{
 
           <Form.Group className="mb-3" controlId="scoresRanks">
             {field.value?.map((value: any) => (
-              <Form.Group as={Row} className="mb-3" controlId={`scoresRanks${value}`}>
+              <Form.Group
+                as={Row}
+                className="mb-3"
+                controlId={`scoresRanks${value}`}
+              >
                 <Form.Label column sm="8">
                   {`${value}'s Rank`}
                 </Form.Label>

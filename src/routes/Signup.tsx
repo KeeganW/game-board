@@ -7,10 +7,7 @@ import { AuthContext } from 'src/Context'
 import { CenteredPage } from 'src/utils/helpers'
 
 export const Signup: React.FC = () => {
-  const {
-    register,
-    handleSubmit,
-  } = useForm()
+  const { register, handleSubmit } = useForm()
   const {
     authenticated,
     setAuthenticated,
@@ -31,7 +28,7 @@ export const Signup: React.FC = () => {
       .then(() => {
         axios
           .post('/signup/', data, {})
-          .then((res) => {
+          .then(res => {
             // Player was logged in, we should have credentials, so redirect
             setAuthenticated(true)
             setPlayerPk(res.data.playerPk || -1)
@@ -113,9 +110,9 @@ export const Signup: React.FC = () => {
         </Button>
       </Form>
       {/* Once logged in, go to the logged in player's page. */}
-      {authenticated
-        && playerPk >= 0
-        && (playerPk >= 0 ? (
+      {authenticated &&
+        playerPk >= 0 &&
+        (playerPk >= 0 ? (
           <Navigate replace to={`/player/${playerPk}`} />
         ) : (
           <Navigate replace to="/player/" />

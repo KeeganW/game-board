@@ -26,7 +26,7 @@ for any request made. This lets us apply those tokens without having to manually
 every axios call.
  */
 axios.interceptors.request.use(
-  (config) => {
+  config => {
     const tokens = getTokens()
     if (tokens.access) {
       if (!config.headers) {
@@ -39,24 +39,24 @@ axios.interceptors.request.use(
     }
     return config
   },
-  (error) => {
+  error => {
     Promise.reject(error)
-  },
+  }
 )
 
 /*
 Sometimes we will need to refresh our tokens. This is done by the following interceptor.
  */
 axios.interceptors.response.use(
-  (response) => response,
-  (error) => {
+  response => response,
+  error => {
     const originalRequest = error.config
     const tokens = getTokens()
 
     // If we already tried to refresh our tokens, then we want to redirect to login.
     if (
-      error.response.status === 401
-      && originalRequest.url === `${axios.defaults.baseURL}token/login/refresh/`
+      error.response.status === 401 &&
+      originalRequest.url === `${axios.defaults.baseURL}token/login/refresh/`
     ) {
       clearTokens()
       // TODO(keegan): not sure this works...
@@ -65,26 +65,32 @@ axios.interceptors.response.use(
     }
 
     // If this is a 401, we want to try to refresh the tokens.
-    // eslint-disable-next-line no-underscore-dangle
-    if (error.response.status === 401 && !originalRequest._retry && tokens.refresh) {
+    if (
+      error.response.status === 401 &&
+      // eslint-disable-next-line no-underscore-dangle
+      !originalRequest._retry &&
+      tokens.refresh
+    ) {
       // eslint-disable-next-line no-underscore-dangle
       originalRequest._retry = true
-      return axios
-        .post('token/login/refresh/', {
-          refresh: tokens.refresh,
-        })
-        // eslint-disable-next-line consistent-return
-        .then((res) => {
-          if (res.status === 200 || res.status === 201) {
-            // Got the right tokens, so let's perform the original request now
-            setTokens(res.data)
-            axios.defaults.headers.common.Authorization = `Bearer ${tokens.access}`
-            return axios(originalRequest)
-          }
-        })
+      return (
+        axios
+          .post('token/login/refresh/', {
+            refresh: tokens.refresh,
+          })
+          // eslint-disable-next-line consistent-return
+          .then(res => {
+            if (res.status === 200 || res.status === 201) {
+              // Got the right tokens, so let's perform the original request now
+              setTokens(res.data)
+              axios.defaults.headers.common.Authorization = `Bearer ${tokens.access}`
+              return axios(originalRequest)
+            }
+          })
+      )
     }
     return Promise.reject(error)
-  },
+  }
 )
 
 export default axios

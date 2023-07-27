@@ -1,24 +1,50 @@
 import React from 'react'
 import {
-  ListGroup, ListGroupItem, Spinner, Stack,
+  Col,
+  ListGroup,
+  ListGroupItem,
+  Row,
+  Spinner,
+  Stack,
 } from 'react-bootstrap'
 import { Link, useParams } from 'react-router-dom'
+import { GapValue } from 'react-bootstrap/types'
+import { PlayerRankObject, RoundObject } from '../types'
 
 /**
  * A centered page, to make all our pages look the same.
  *
+ * @param gap The gap size we want with this page
  * @param pageWidth If we want to limit the width of the page, pass in the width here
  * @param children The rest of the page we want to display.
  */
 export const CenteredPage: React.FC<{
+  gap?: GapValue
   pageWidth?: number
   children?: any
-}> = ({ pageWidth, children }) => (
-  <Stack className="mx-auto">
-    <main className="p-3 mx-auto text-center" style={pageWidth ? { width: `${pageWidth}px` } : {}}>
+}> = ({ gap, pageWidth, children }) => (
+  <Stack gap={gap || 0} className="mx-auto">
+    <main
+      className="p-3 mx-auto text-center"
+      style={pageWidth ? { width: `${pageWidth}px` } : {}}
+    >
       {children}
     </main>
   </Stack>
+)
+export const StackedPage: React.FC<{
+  gap?: GapValue
+  pageWidth?: number
+  children?: any
+}> = ({ gap, pageWidth, children }) => (
+  <main
+    className="p-3 mx-auto text-center"
+    style={pageWidth ? { width: `${pageWidth}px` } : {}}
+  >
+    <Stack gap={gap || 0} className="mx-auto">
+      {children}
+    </Stack>
+  </main>
 )
 
 /**
@@ -44,21 +70,72 @@ export const BasicList: React.FC<{
   prefix?: string
   // eslint-disable-next-line no-unused-vars
   alternateDisplay?: (value: any) => any
-}> = ({
-  children, listObject, prefix, alternateDisplay,
-}) => {
-  const links = listObject?.map((value) => (
+}> = ({ children, listObject, prefix, alternateDisplay }) => {
+  const links = listObject?.map(value => (
     <ListGroupItem as={Link} to={`${prefix || ''}${value.pk}`} key={value.pk}>
       {alternateDisplay ? alternateDisplay(value) : value.name}
     </ListGroupItem>
   ))
   return (
-    <CenteredPage>
+    <>
       <ListGroup variant="flush" className="align-items-center">
         {links}
       </ListGroup>
       {children}
-    </CenteredPage>
+    </>
+  )
+}
+
+export const RoundDisplay: React.FC<{
+  children?: any
+  roundObject: RoundObject
+  playerColorMapping?: Map<number, string>
+}> = ({ children, roundObject, playerColorMapping }) => {
+  // Get the players and their scores/ranks listed out
+  const roundScores = roundObject.playerRanks
+    ?.sort((a: PlayerRankObject, b: PlayerRankObject) => a.rank - b.rank)
+    .map((playerRankObject: PlayerRankObject) => {
+      const playerColor = playerColorMapping?.get(playerRankObject.player.pk)
+      return (
+        <Row className="mb-1 justify-content-md-center">
+          <Col
+            xs
+            md="auto"
+            className="rounded"
+            style={playerColor ? { backgroundColor: playerColor } : {}}
+          >
+            <span key={`${roundObject.pk}-${playerRankObject.player.username}`}>
+              <span style={{ fontWeight: 'bold' }}>
+                {playerRankObject.rank}
+              </span>
+              {': '}
+              <Link to={`/player/${playerRankObject.player.pk}`}>
+                {playerRankObject.player.username}
+              </Link>
+              {' ('}
+              {`${playerRankObject.score}`}
+              {') '}
+            </span>
+          </Col>
+        </Row>
+      )
+    })
+
+  return (
+    <Col key={`round-${roundObject.pk}`} style={{ minWidth: 175 }}>
+      <div
+        className="mb-2 d-flex align-items-center justify-content-center"
+        style={{ minHeight: 50 }}
+      >
+        <div>
+          <h5 className="mb-0" key={`round-game-${roundObject.pk}`}>
+            {roundObject.game.name}
+          </h5>
+        </div>
+      </div>
+      {roundScores}
+      {children}
+    </Col>
   )
 }
 

@@ -1,8 +1,6 @@
 import React from 'react'
 import { render } from 'react-dom'
-import {
-  Routes, Route, HashRouter, Navigate,
-} from 'react-router-dom'
+import { Routes, Route, HashRouter, Navigate } from 'react-router-dom'
 
 import 'src/index.css'
 import { App } from 'src/App'
@@ -47,5 +45,5 @@ render(
       <Route path="/*" element={<Navigate to="/" />} />
     </Routes>
   </HashRouter>,
-  rootElement,
+  rootElement
 )

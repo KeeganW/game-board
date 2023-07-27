@@ -30,12 +30,14 @@ export const clearTokens = () => {
 }
 
 export const getUserState = (): PlayerInfo => {
-  const localStorageParsed = JSON.parse(localStorage.getItem('initialState') || '{}')
+  const localStorageParsed = JSON.parse(
+    localStorage.getItem('initialState') || '{}'
+  )
   if (
-    localStorageParsed.playerPk
-    && localStorageParsed.groupPk
-    && localStorageParsed.groupName
-    && localStorageParsed.groupImageUrl
+    localStorageParsed.playerPk &&
+    localStorageParsed.groupPk &&
+    localStorageParsed.groupName &&
+    localStorageParsed.groupImageUrl
   ) {
     return localStorageParsed
   }

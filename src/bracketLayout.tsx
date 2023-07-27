@@ -9,7 +9,7 @@
 export const calculateBracketRound = (
   numberOfTeams: number,
   sizeOfTeams: number,
-  offset?: number,
+  offset?: number
 ): number[][] => {
   // Starting placement is the provided offset, or 1 (since first team doesn't need to place on own)
   const startingPlacement = offset || 1
@@ -23,7 +23,8 @@ export const calculateBracketRound = (
   // Now we want to loop through every team, and add them to their games for the week
   for (let currentTeam = 0; currentTeam < numberOfTeams; currentTeam += 1) {
     // Starting placement, offset by the current team number
-    let currentPlacementForTeam = (startingPlacement + currentTeam) % numberOfTeams
+    let currentPlacementForTeam =
+      (startingPlacement + currentTeam) % numberOfTeams
     // We want every member of the team to play one game this week
     let numberLeftToPlace = sizeOfTeams - 1
 
@@ -66,16 +67,19 @@ export const calculateBracket = (
   numberOfRounds: number,
   numberOfTeams: number,
   gamesPerWeek: number,
-  maxNumberOfWeeks?: number,
+  maxNumberOfWeeks?: number
 ): number[][][] => {
   // Get the number of rounds needed for there to be even matchups.
   const minBracketSize = numberOfTeams - 1
-  const totalBracketSize = Math.ceil(numberOfRounds / minBracketSize) * minBracketSize
+  const totalBracketSize =
+    Math.ceil(numberOfRounds / minBracketSize) * minBracketSize
 
   // Calculate all weeks of bracket
   const allWeeksBracket = []
   for (let currentWeek = 0; currentWeek < totalBracketSize; currentWeek += 1) {
-    allWeeksBracket.push(calculateBracketRound(numberOfTeams, gamesPerWeek, currentWeek))
+    allWeeksBracket.push(
+      calculateBracketRound(numberOfTeams, gamesPerWeek, currentWeek)
+    )
   }
 
   /*

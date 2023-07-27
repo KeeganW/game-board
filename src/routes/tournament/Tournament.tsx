@@ -1,7 +1,10 @@
 import React from 'react'
 import { Navigate } from 'react-router-dom'
 import {
-  BasicList, CenteredPage, Loading, useParamsPk,
+  BasicList,
+  CenteredPage,
+  Loading,
+  useParamsPk,
 } from 'src/utils/helpers'
 import { useGetTournament, useUpdatePlayerInfo } from 'src/utils/hooks'
 import { TournamentDetails } from './TournamentDetails'
@@ -13,9 +16,9 @@ export const Tournament: React.FC = () => {
   const allTournamentsResponse = useGetTournament()
 
   if (
-    !allTournamentsResponse.response
-    || !allTournamentsResponse.response.data
-    || allTournamentsResponse.loading
+    !allTournamentsResponse.response ||
+    !allTournamentsResponse.response.data ||
+    allTournamentsResponse.loading
   ) {
     return (
       <CenteredPage>

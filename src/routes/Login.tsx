@@ -7,10 +7,7 @@ import { AuthContext } from 'src/Context'
 import { CenteredPage } from 'src/utils/helpers'
 
 export const Login: React.FC = () => {
-  const {
-    register,
-    handleSubmit,
-  } = useForm()
+  const { register, handleSubmit } = useForm()
   const {
     authenticated,
     setAuthenticated,
@@ -28,7 +25,7 @@ export const Login: React.FC = () => {
   const handleOnSubmit = (data: any) => {
     axios
       .post('/token/login/', data, {})
-      .then((tokenResponse) => {
+      .then(tokenResponse => {
         // Player was logged in, we should have credentials, so redirect
         setAuthenticated(true)
         setTokenAccess(tokenResponse.data?.access)
@@ -38,7 +35,7 @@ export const Login: React.FC = () => {
 
         axios
           .post('/login/', data, {})
-          .then((loginResponse) => {
+          .then(loginResponse => {
             // Player was logged in, we should have credentials, so redirect
             setPlayerPk(loginResponse.data.playerPk || -1)
             setGroupPk(loginResponse.data.groupPk || -1)
@@ -46,7 +43,10 @@ export const Login: React.FC = () => {
             setGroupImageUrl(loginResponse.data.groupImageUrl || '')
 
             // Store this in our local storage for any other tabs that are opened
-            localStorage.setItem('initialState', JSON.stringify(loginResponse.data))
+            localStorage.setItem(
+              'initialState',
+              JSON.stringify(loginResponse.data)
+            )
           })
           .catch(() => {
             // TODO handle incorrect credentials
@@ -83,9 +83,9 @@ export const Login: React.FC = () => {
         </Button>
       </Form>
       {/* Once logged in, go to the logged in player's page. */}
-      {authenticated
-        && playerPk >= 0
-        && (playerPk >= 0 ? (
+      {authenticated &&
+        playerPk >= 0 &&
+        (playerPk >= 0 ? (
           <Navigate replace to={`/player/${playerPk}`} />
         ) : (
           <Navigate replace to="/player/" />

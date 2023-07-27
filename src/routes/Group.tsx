@@ -1,24 +1,41 @@
 import React from 'react'
 import { Navigate } from 'react-router-dom'
-import { useGetGroup, useGetPlayer, useUpdatePlayerInfo } from 'src/utils/hooks'
 import {
-  BasicList, capitalizeString, CenteredPage, Loading, useParamsPk,
+  useGetGroup,
+  useGetPlayer,
+  useGetRecentRounds,
+  useUpdatePlayerInfo,
+} from 'src/utils/hooks'
+import {
+  BasicList,
+  capitalizeString,
+  CenteredPage,
+  Loading,
+  RoundDisplay,
+  StackedPage,
+  useParamsPk,
 } from 'src/utils/helpers'
+import { Row } from 'react-bootstrap'
+import { PlayerObjectFull, RoundObject } from '../types'
 
 export const Group: React.FC = () => {
   useUpdatePlayerInfo()
   const paramsPk = useParamsPk()
   const groupResponse = useGetGroup(paramsPk)
   const playerResponse = useGetPlayer()
+  const recentRoundsResponse = useGetRecentRounds(paramsPk)
 
   // Only show the page if things are still loading
   if (
-    !groupResponse.response
-    || !groupResponse.response.data
-    || groupResponse.loading
-    || !playerResponse.response
-    || !playerResponse.response.data
-    || playerResponse.loading
+    !groupResponse.response ||
+    !groupResponse.response.data ||
+    groupResponse.loading ||
+    !playerResponse.response ||
+    !playerResponse.response.data ||
+    playerResponse.loading ||
+    !recentRoundsResponse.response ||
+    !recentRoundsResponse.response.data ||
+    recentRoundsResponse.loading
   ) {
     return (
       <CenteredPage>
@@ -32,19 +49,35 @@ export const Group: React.FC = () => {
   }
 
   const group = groupResponse.response.data
+  // TODO(keegan): create group specific username request
   const players = playerResponse.response.data
+  const groupPlayers = players.filter((player: PlayerObjectFull) =>
+    group.players.includes(player.pk)
+  )
+  const recentRounds = recentRoundsResponse.response.data
+  const roundsDisplay = recentRounds.recentRounds.map(
+    (roundObject: RoundObject) => <RoundDisplay roundObject={roundObject} />
+  )
 
   return (
-    <CenteredPage>
+    <StackedPage gap={5}>
       <h1>{group.name}</h1>
-      <h4>Players</h4>
-      <BasicList
-        listObject={players}
-        prefix="/player/"
-        alternateDisplay={(player: any) => `${capitalizeString(player.firstName)} ${capitalizeString(player.lastName)} (${
-          player.username
-        })`}
-      />
-    </CenteredPage>
+      <Row>
+        <h4>Recent Rounds</h4>
+        <Row>{roundsDisplay}</Row>
+      </Row>
+      <Row>
+        <h4>Players</h4>
+        <BasicList
+          listObject={groupPlayers}
+          prefix="/player/"
+          alternateDisplay={(player: any) =>
+            `${capitalizeString(player.firstName)} ${capitalizeString(
+              player.lastName
+            )} (${player.username})`
+          }
+        />
+      </Row>
+    </StackedPage>
   )
 }

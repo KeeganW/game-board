@@ -3,32 +3,26 @@ import { Button, Form } from 'react-bootstrap'
 import { useForm } from 'react-hook-form'
 import axios from 'src/axiosAuth'
 import { Navigate } from 'react-router-dom'
-import {
-  useGetGame, useGetPlayer, useUpdatePlayerInfo,
-} from 'src/utils/hooks'
+import { useGetGame, useGetPlayer, useUpdatePlayerInfo } from 'src/utils/hooks'
 import { RoundForm } from 'src/forms/RoundForm'
 import { CenteredPage, Loading } from 'src/utils/helpers'
 
 export const AddRound: React.FC = () => {
   useUpdatePlayerInfo()
 
-  const {
-    register,
-    handleSubmit,
-    control,
-  } = useForm()
+  const { register, handleSubmit, control } = useForm()
   const [roundAdded, setRoundAdded] = useState<number>(-1)
 
   const playersResponse = useGetPlayer()
   const gamesResponse = useGetGame()
 
   if (
-    !playersResponse.response
-    || !playersResponse.response.data
-    || playersResponse.loading
-    || !gamesResponse.response
-    || !gamesResponse.response.data
-    || gamesResponse.loading
+    !playersResponse.response ||
+    !playersResponse.response.data ||
+    playersResponse.loading ||
+    !gamesResponse.response ||
+    !gamesResponse.response.data ||
+    gamesResponse.loading
   ) {
     return (
       <CenteredPage>
@@ -49,7 +43,7 @@ export const AddRound: React.FC = () => {
     // Get our objects
     axios
       .post('/add_round/', data, {})
-      .then((res) => {
+      .then(res => {
         // Player was logged in, we should have credentials, so redirect
         setRoundAdded(res.data.pk)
       })
@@ -73,9 +67,9 @@ export const AddRound: React.FC = () => {
         </Button>
       </Form>
       {/* Redirect away when round is properly submitted */}
-      {roundAdded
-        && roundAdded >= 0
-        && (roundAdded >= 0 ? (
+      {roundAdded &&
+        roundAdded >= 0 &&
+        (roundAdded >= 0 ? (
           <Navigate replace to={`/round/${roundAdded}`} />
         ) : (
           <Navigate replace to="/round/" />

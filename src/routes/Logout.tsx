@@ -6,7 +6,12 @@ import { useLogout } from 'src/utils/hooks'
 
 export const Logout: React.FC = () => {
   const {
-    authenticated, setAuthenticated, setTokenAccess, setTokenRefresh, playerPk, setPlayerPk,
+    authenticated,
+    setAuthenticated,
+    setTokenAccess,
+    setTokenRefresh,
+    playerPk,
+    setPlayerPk,
   } = useContext(AuthContext)
 
   const logoutResponse = useLogout()

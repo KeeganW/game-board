@@ -8,6 +8,7 @@ import {
   PlayerObjectFull,
   PlayerRankObject,
   PlayerStats,
+  RecentRounds,
   RoundObject,
   TournamentObject,
   TournamentStats,
@@ -30,11 +31,11 @@ function useGetResponse<Type>(url: string): FetchResponse {
     ...hookResponse,
     response: hookResponse.response
       ? {
-        ...hookResponse.response,
-        data: hookResponse.response.data
-          ? (hookResponse.response.data as Type)
-          : hookResponse.response.data,
-      }
+          ...hookResponse.response,
+          data: hookResponse.response.data
+            ? (hookResponse.response.data as Type)
+            : hookResponse.response.data,
+        }
       : hookResponse.response,
   }
 }
@@ -51,10 +52,10 @@ export function useUpdatePlayerInfo() {
   const playerInfoResponse = useGetResponse<PlayerInfo>('/player_info/')
 
   if (
-    !playerInfoResponse.loading
-    && playerInfoResponse.response
-    && playerInfoResponse.response.status === 200
-    && !authenticated
+    !playerInfoResponse.loading &&
+    playerInfoResponse.response &&
+    playerInfoResponse.response.status === 200 &&
+    !authenticated
   ) {
     const playerInfoResObj = playerInfoResponse.response.data
     setUserState(playerInfoResObj)
@@ -86,7 +87,9 @@ export function useGetGame(gamePk?: string | number): FetchResponse {
   return useGetResponse<GameObject>(url)
 }
 
-export function useGetPlayerRank(playerRankPk?: string | number): FetchResponse {
+export function useGetPlayerRank(
+  playerRankPk?: string | number
+): FetchResponse {
   const url = `/player_rank/${playerRankPk || ''}`
   return useGetResponse<PlayerRankObject>(url)
 }
@@ -96,7 +99,9 @@ export function useGetRound(roundPk?: string | number): FetchResponse {
   return useGetResponse<RoundObject>(url)
 }
 
-export function useGetTournament(tournamentPk?: string | number): FetchResponse {
+export function useGetTournament(
+  tournamentPk?: string | number
+): FetchResponse {
   const url = `/tournament/${tournamentPk || ''}`
   return useGetResponse<TournamentObject>(url)
 }
@@ -106,12 +111,21 @@ export function useGetPlayerStats(playerPk: string | number): FetchResponse {
   return useGetResponse<PlayerStats>(url)
 }
 
-export function useGetTournamentStats(tournamentPk: string | number): FetchResponse {
+export function useGetTournamentStats(
+  tournamentPk: string | number
+): FetchResponse {
   const url = `/tournament_stats/${tournamentPk}`
   return useGetResponse<TournamentStats>(url)
 }
 
-export function useGetTournamentInfo(tournamentPk: string | number): FetchResponse {
+export function useGetTournamentInfo(
+  tournamentPk: string | number
+): FetchResponse {
   const url = `/tournament_info/${tournamentPk}`
   return useGetResponse<TournamentObject>(url)
+}
+
+export function useGetRecentRounds(groupPk?: string | number): FetchResponse {
+  const url = `/recent_rounds/${groupPk || ''}`
+  return useGetResponse<RecentRounds>(url)
 }

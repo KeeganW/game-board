@@ -1,6 +1,10 @@
 import React from 'react'
 import { CenteredPage, Loading, useParamsPk } from 'src/utils/helpers'
-import { useGetPlayer, useGetPlayerStats, useUpdatePlayerInfo } from 'src/utils/hooks'
+import {
+  useGetPlayer,
+  useGetPlayerStats,
+  useUpdatePlayerInfo,
+} from 'src/utils/hooks'
 import { PlayerTitle } from 'src/routes/player/PlayerTitle'
 import { PlayerQuickLook } from 'src/routes/player/PlayerQuickLook'
 import { PlayerRecentGames } from 'src/routes/player/PlayerRecentGames'
@@ -14,12 +18,12 @@ export const Player: React.FC = () => {
 
   // Only show the page if things are still loading
   if (
-    !player.response
-    || !player.response.data
-    || player.loading
-    || !playerStats.response
-    || !playerStats.response.data
-    || playerStats.loading
+    !player.response ||
+    !player.response.data ||
+    player.loading ||
+    !playerStats.response ||
+    !playerStats.response.data ||
+    playerStats.loading
   ) {
     return (
       <CenteredPage>
@@ -41,7 +45,10 @@ export const Player: React.FC = () => {
       <br />
       <PlayerQuickLook playerStatsInfo={playerStatsInfo} />
       <br />
-      <PlayerRecentGames playerStatsInfo={playerStatsInfo} playerPk={playerInfo.pk} />
+      <PlayerRecentGames
+        playerStatsInfo={playerStatsInfo}
+        playerPk={playerInfo.pk}
+      />
 
       {/* Charting Player Stats */}
       {/* <Container> */}
