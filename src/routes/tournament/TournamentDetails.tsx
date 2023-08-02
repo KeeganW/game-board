@@ -1,12 +1,12 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import { BracketMatchesObject, TeamObject, TournamentObject } from 'src/types'
 import {
-  BracketMatchesObject,
-  PlayerRankObject,
-  TeamObject,
-  TournamentObject,
-} from 'src/types'
-import { Loading, useParamsPk } from 'src/utils/helpers'
+  CardDisplay,
+  Loading,
+  RoundDisplay,
+  useParamsPk,
+} from 'src/utils/helpers'
 import { useGetTournamentInfo, useGetTournamentStats } from 'src/utils/hooks'
 import { Col, Container, Row } from 'react-bootstrap'
 
@@ -71,7 +71,7 @@ export const convertStatsToView = (
           (a, b) => b[1] - a[1]
         )
         const scoring = sortedScores.map((scoringValue: any) => (
-          <Row className="mb-1 justify-content-md-center">
+          <Row className="mb-1 justify-content-center">
             <div
               className="col-md-auto rounded"
               style={{ backgroundColor: teamColorMapping.get(scoringValue[0]) }}
@@ -128,7 +128,7 @@ export const convertBracketToView = (
         const realTeam = tournamentTeams[teamNamesToIndex.indexOf(team)]
         // Create a placeholder for this score, with the team name.
         return realTeam ? (
-          <Row className="mb-1 justify-content-md-center">
+          <Row className="mb-1 justify-content-left">
             <div
               className="col-md-auto rounded"
               style={{ backgroundColor: teamColorMapping.get(team) }}
@@ -157,31 +157,15 @@ export const convertBracketToView = (
       if (tournamentGame) {
         // This game exists, so lets put it all together
         const { round: tournamentRound } = tournamentGame
-        const playerRanks = tournamentRound.playerRanks
-          ?.sort((a: PlayerRankObject, b: PlayerRankObject) => a.rank - b.rank)
-          .map((player: PlayerRankObject) => (
-            <Row className="mb-1 justify-content-md-center">
-              <div
-                className="col-md-auto rounded"
-                style={{
-                  backgroundColor: playerColorMapping.get(player.player.pk),
-                }}
-              >
-                <div key={tournamentGame.match + player.player.username}>
-                  {player.rank}
-                  {': '}
-                  <Link to={`/player/${player.player.pk}`}>
-                    {player.player.username}
-                  </Link>
-                  {` - ${player.score}`}
-                </div>
-              </div>
-            </Row>
-          ))
         return (
-          <Col key={tournamentGame.match}>
-            <h5>{tournamentRound.game.name}</h5>
-            {playerRanks}
+          <Col>
+            <Row className="justify-content-center">
+              <RoundDisplay
+                roundObject={tournamentRound}
+                playerColorMapping={playerColorMapping}
+                showTournamentScores={true}
+              />
+            </Row>
           </Col>
         )
       }
@@ -191,12 +175,17 @@ export const convertBracketToView = (
       //  or do something clever
       return (
         <Col key={`game${roundNumber}`}>
-          <h5>
-            <Link to={`/add_match/${tournament.pk}/${roundNumber}`}>
-              Game {roundNumber}
-            </Link>
-          </h5>
-          {rounds}
+          <Row className="justify-content-center">
+            <CardDisplay
+              title={
+                <Link to={`/add_match/${tournament.pk}/${roundNumber}`}>
+                  Game {roundNumber}
+                </Link>
+              }
+              subtitle={''}
+              content={rounds}
+            />
+          </Row>
         </Col>
       )
     })
@@ -209,7 +198,7 @@ export const convertBracketToView = (
     }
     return (
       // eslint-disable-next-line react/no-array-index-key
-      <Row className="mb-3" key={weekIndex}>
+      <Row className="mb-3 justify-content-center" key={weekIndex}>
         <h3 className="text-center">Week {weekIndex + 1}</h3>
         {roundsForWeek}
       </Row>

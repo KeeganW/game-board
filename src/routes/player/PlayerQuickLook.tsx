@@ -9,10 +9,10 @@ export const PlayerQuickLook: React.FC<{
     <Row>
       <Col>
         <Row>
-          <h5>Favorite Game</h5>
+          <h5>Most Played Game</h5>
         </Row>
         <Row>
-          <div>{playerStatsInfo.favoriteGame.name}</div>
+          <div>{playerStatsInfo.mostPlayedGame.name}</div>
         </Row>
       </Col>
       <Col>

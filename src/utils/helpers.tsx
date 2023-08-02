@@ -1,14 +1,18 @@
 import React from 'react'
 import {
+  Card,
   Col,
   ListGroup,
   ListGroupItem,
+  OverlayTrigger,
   Row,
   Spinner,
   Stack,
+  Tooltip,
 } from 'react-bootstrap'
 import { Link, useParams } from 'react-router-dom'
 import { GapValue } from 'react-bootstrap/types'
+import moment from 'moment'
 import { PlayerRankObject, RoundObject } from '../types'
 
 /**
@@ -86,7 +90,7 @@ export const BasicList: React.FC<{
   )
 }
 
-export const RoundDisplay: React.FC<{
+export const RoundDisplayOld: React.FC<{
   children?: any
   roundObject: RoundObject
   playerColorMapping?: Map<number, string>
@@ -97,7 +101,7 @@ export const RoundDisplay: React.FC<{
     .map((playerRankObject: PlayerRankObject) => {
       const playerColor = playerColorMapping?.get(playerRankObject.player.pk)
       return (
-        <Row className="mb-1 justify-content-md-center">
+        <Row className="mb-1 justify-content-center">
           <Col
             xs
             md="auto"
@@ -136,6 +140,133 @@ export const RoundDisplay: React.FC<{
       {roundScores}
       {children}
     </Col>
+  )
+}
+
+export const CardDisplay: React.FC<{
+  children?: any
+  title: any
+  subtitle: any
+  content: any
+}> = ({ children, title, subtitle, content }) => {
+  return (
+    <Card className="mb-2" style={{ width: '300px', textAlign: 'left' }}>
+      <Card.Body>
+        <Card.Title>{title}</Card.Title>
+        <Card.Subtitle className="mb-2 text-muted">{subtitle}</Card.Subtitle>
+        <Card.Text>{content}</Card.Text>
+        {children}
+      </Card.Body>
+    </Card>
+  )
+}
+
+const rankToScoreMap: { [key: number]: number } = {
+  1: 9,
+  2: 7,
+  3: 5,
+  4: 3,
+}
+
+export const HoverTooltip: React.FC<{
+  tooltip: string | number
+  text: any
+}> = ({ tooltip, text }) => {
+  return (
+    <OverlayTrigger
+      delay={{ hide: 200, show: 300 }}
+      overlay={props => <Tooltip {...props}>{tooltip}</Tooltip>}
+      placement="top"
+    >
+      <span>{text}</span>
+    </OverlayTrigger>
+  )
+}
+
+export const RoundDisplay: React.FC<{
+  children?: any
+  roundObject: RoundObject
+  playerColorMapping?: Map<number, string>
+  showTournamentScores?: boolean
+}> = ({ children, roundObject, playerColorMapping, showTournamentScores }) => {
+  // Get the players and their scores/ranks listed out
+  const roundScores = roundObject.playerRanks
+    ?.sort((a: PlayerRankObject, b: PlayerRankObject) => a.rank - b.rank)
+    .map((playerRankObject: PlayerRankObject) => {
+      const playerColor = playerColorMapping?.get(playerRankObject.player.pk)
+      return (
+        <Row
+          className="mb-1 link-color-fix justify-content-between"
+          style={
+            playerColor
+              ? {
+                  borderBottomColor: playerColor,
+                  borderBottomStyle: 'solid',
+                  borderBottomWidth: '2px',
+                }
+              : {}
+          }
+        >
+          <Col md="auto">
+            <span key={`${roundObject.pk}-${playerRankObject.player.username}`}>
+              <span style={{ fontWeight: 'bold' }}>
+                <HoverTooltip
+                  tooltip={playerRankObject.score}
+                  text={playerRankObject.rank}
+                />
+              </span>
+              {': '}
+              <Link to={`/player/${playerRankObject.player.pk}`}>
+                {playerRankObject.player.username}
+              </Link>
+            </span>
+          </Col>
+          <Col md="auto">
+            <span key={`${roundObject.pk}-${playerRankObject.player.username}`}>
+              <span>
+                {showTournamentScores ? (
+                  <HoverTooltip
+                    tooltip={`Base Score for Rank (${
+                      rankToScoreMap[playerRankObject.rank]
+                    }) + Player's Handicap (${
+                      playerRankObject.tournamentHandicap
+                    }) - Rank (${playerRankObject.rank})`}
+                    text={(
+                      rankToScoreMap[playerRankObject.rank] +
+                      playerRankObject.tournamentHandicap -
+                      playerRankObject.rank
+                    ).toFixed(1)}
+                  />
+                ) : (
+                  playerRankObject.score
+                )}
+              </span>
+            </span>
+          </Col>
+        </Row>
+      )
+    })
+
+  const roundMoment = moment(roundObject.date)
+  const dateFromNow = roundMoment.fromNow()
+  const datePretty = roundMoment.format('LL')
+  const dateWithTooltip = (
+    <HoverTooltip tooltip={datePretty} text={dateFromNow} />
+  )
+
+  const roundScoresLimited =
+    roundScores.length > 4
+      ? // ? [...roundScores.slice(0, 3), `and ${roundScores.length - 3} more...`]
+        roundScores
+      : roundScores
+
+  return (
+    <CardDisplay
+      title={roundObject.game.name}
+      subtitle={dateWithTooltip}
+      content={roundScoresLimited}
+      children={children}
+    />
   )
 }
 

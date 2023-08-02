@@ -20,9 +20,9 @@ code {
   text-overflow: ellipsis;
 }
 
-.rounded span a {
+.link-color-fix span a {
   color: black;
 }
-.rounded span a:hover {
+.link-color-fix span a:hover {
   color: #0d6efd;
 }

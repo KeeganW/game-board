@@ -12,7 +12,7 @@ export const PlayerRecentGames: React.FC<{
       <Col>
         <Row>
           <Col>
-            <h4>Last 3 Games Played</h4>
+            <h4>Last {playerStatsInfo.lastGamesPlayed.length} Games Played</h4>
           </Col>
         </Row>
         <Row>
