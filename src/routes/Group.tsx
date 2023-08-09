@@ -6,17 +6,14 @@ import {
   useGetRecentRounds,
   useUpdatePlayerInfo,
 } from 'src/utils/hooks'
-import {
-  BasicList,
-  capitalizeString,
-  CenteredPage,
-  Loading,
-  RoundDisplay,
-  StackedPage,
-  useParamsPk,
-} from 'src/utils/helpers'
+import { capitalizeString, useParamsPk } from 'src/utils/helpers'
 import { Row } from 'react-bootstrap'
-import { PlayerObjectFull, RoundObject } from '../types'
+import { PlayerObjectFull, RoundObject } from 'src/types'
+import { CenteredPage } from 'src/components/CenteredPage'
+import { Loading } from 'src/components/Loading'
+import { StackedPage } from 'src/components/StackedPage'
+import { RoundDisplay } from 'src/components/RoundDisplay'
+import { BasicList } from 'src/components/BasicList'
 
 export const Group: React.FC = () => {
   useUpdatePlayerInfo()

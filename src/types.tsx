@@ -135,6 +135,8 @@ export type TournamentStats = {
   scoresByTeam: TeamScores
 } & DetailResponse
 
+export type TournamentTeamColors = Map<string, string> & DetailResponse
+
 export type RecentRounds = {
   recentRounds: RoundObject[]
 } & DetailResponse

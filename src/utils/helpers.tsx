@@ -1,273 +1,11 @@
-import React from 'react'
-import {
-  Card,
-  Col,
-  ListGroup,
-  ListGroupItem,
-  OverlayTrigger,
-  Row,
-  Spinner,
-  Stack,
-  Tooltip,
-} from 'react-bootstrap'
-import { Link, useParams } from 'react-router-dom'
-import { GapValue } from 'react-bootstrap/types'
-import moment from 'moment'
-import { PlayerRankObject, RoundObject } from '../types'
+import { useParams } from 'react-router-dom'
+import { TournamentObject, TournamentTeamColors } from 'src/types'
 
-/**
- * A centered page, to make all our pages look the same.
- *
- * @param gap The gap size we want with this page
- * @param pageWidth If we want to limit the width of the page, pass in the width here
- * @param children The rest of the page we want to display.
- */
-export const CenteredPage: React.FC<{
-  gap?: GapValue
-  pageWidth?: number
-  children?: any
-}> = ({ gap, pageWidth, children }) => (
-  <Stack gap={gap || 0} className="mx-auto">
-    <main
-      className="p-3 mx-auto text-center"
-      style={pageWidth ? { width: `${pageWidth}px` } : {}}
-    >
-      {children}
-    </main>
-  </Stack>
-)
-export const StackedPage: React.FC<{
-  gap?: GapValue
-  pageWidth?: number
-  children?: any
-}> = ({ gap, pageWidth, children }) => (
-  <main
-    className="p-3 mx-auto text-center"
-    style={pageWidth ? { width: `${pageWidth}px` } : {}}
-  >
-    <Stack gap={gap || 0} className="mx-auto">
-      {children}
-    </Stack>
-  </main>
-)
-
-/**
- * A bootstrap formatted loading spinner, which can be popped in wherever needed.
- */
-export const Loading: React.FC = () => (
-  <CenteredPage>
-    <Spinner animation="border" variant="primary" />
-  </CenteredPage>
-)
-
-/**
- * Generates a bootstrap formatted list.
- *
- * @param children Any children to insert after the list
- * @param listObject The list to format
- * @param prefix Any prefix to apply to the link for the list
- * @param alternateDisplay Any display override for the list that you want to do
- */
-export const BasicList: React.FC<{
-  children?: any
-  listObject: any[] | undefined
-  prefix?: string
-  // eslint-disable-next-line no-unused-vars
-  alternateDisplay?: (value: any) => any
-}> = ({ children, listObject, prefix, alternateDisplay }) => {
-  const links = listObject?.map(value => (
-    <ListGroupItem as={Link} to={`${prefix || ''}${value.pk}`} key={value.pk}>
-      {alternateDisplay ? alternateDisplay(value) : value.name}
-    </ListGroupItem>
-  ))
-  return (
-    <>
-      <ListGroup variant="flush" className="align-items-center">
-        {links}
-      </ListGroup>
-      {children}
-    </>
-  )
-}
-
-export const RoundDisplayOld: React.FC<{
-  children?: any
-  roundObject: RoundObject
-  playerColorMapping?: Map<number, string>
-}> = ({ children, roundObject, playerColorMapping }) => {
-  // Get the players and their scores/ranks listed out
-  const roundScores = roundObject.playerRanks
-    ?.sort((a: PlayerRankObject, b: PlayerRankObject) => a.rank - b.rank)
-    .map((playerRankObject: PlayerRankObject) => {
-      const playerColor = playerColorMapping?.get(playerRankObject.player.pk)
-      return (
-        <Row className="mb-1 justify-content-center">
-          <Col
-            xs
-            md="auto"
-            className="rounded"
-            style={playerColor ? { backgroundColor: playerColor } : {}}
-          >
-            <span key={`${roundObject.pk}-${playerRankObject.player.username}`}>
-              <span style={{ fontWeight: 'bold' }}>
-                {playerRankObject.rank}
-              </span>
-              {': '}
-              <Link to={`/player/${playerRankObject.player.pk}`}>
-                {playerRankObject.player.username}
-              </Link>
-              {' ('}
-              {`${playerRankObject.score}`}
-              {') '}
-            </span>
-          </Col>
-        </Row>
-      )
-    })
-
-  return (
-    <Col key={`round-${roundObject.pk}`} style={{ minWidth: 175 }}>
-      <div
-        className="mb-2 d-flex align-items-center justify-content-center"
-        style={{ minHeight: 50 }}
-      >
-        <div>
-          <h5 className="mb-0" key={`round-game-${roundObject.pk}`}>
-            {roundObject.game.name}
-          </h5>
-        </div>
-      </div>
-      {roundScores}
-      {children}
-    </Col>
-  )
-}
-
-export const CardDisplay: React.FC<{
-  children?: any
-  title: any
-  subtitle: any
-  content: any
-}> = ({ children, title, subtitle, content }) => {
-  return (
-    <Card className="mb-2" style={{ width: '300px', textAlign: 'left' }}>
-      <Card.Body>
-        <Card.Title>{title}</Card.Title>
-        <Card.Subtitle className="mb-2 text-muted">{subtitle}</Card.Subtitle>
-        <Card.Text>{content}</Card.Text>
-        {children}
-      </Card.Body>
-    </Card>
-  )
-}
-
-const rankToScoreMap: { [key: number]: number } = {
+export const rankToScoreMap: { [key: number]: number } = {
   1: 9,
   2: 7,
   3: 5,
   4: 3,
-}
-
-export const HoverTooltip: React.FC<{
-  tooltip: string | number
-  text: any
-}> = ({ tooltip, text }) => {
-  return (
-    <OverlayTrigger
-      delay={{ hide: 200, show: 300 }}
-      overlay={props => <Tooltip {...props}>{tooltip}</Tooltip>}
-      placement="top"
-    >
-      <span>{text}</span>
-    </OverlayTrigger>
-  )
-}
-
-export const RoundDisplay: React.FC<{
-  children?: any
-  roundObject: RoundObject
-  playerColorMapping?: Map<number, string>
-  showTournamentScores?: boolean
-}> = ({ children, roundObject, playerColorMapping, showTournamentScores }) => {
-  // Get the players and their scores/ranks listed out
-  const roundScores = roundObject.playerRanks
-    ?.sort((a: PlayerRankObject, b: PlayerRankObject) => a.rank - b.rank)
-    .map((playerRankObject: PlayerRankObject) => {
-      const playerColor = playerColorMapping?.get(playerRankObject.player.pk)
-      return (
-        <Row
-          className="mb-1 link-color-fix justify-content-between"
-          style={
-            playerColor
-              ? {
-                  borderBottomColor: playerColor,
-                  borderBottomStyle: 'solid',
-                  borderBottomWidth: '2px',
-                }
-              : {}
-          }
-        >
-          <Col md="auto">
-            <span key={`${roundObject.pk}-${playerRankObject.player.username}`}>
-              <span style={{ fontWeight: 'bold' }}>
-                <HoverTooltip
-                  tooltip={playerRankObject.score}
-                  text={playerRankObject.rank}
-                />
-              </span>
-              {': '}
-              <Link to={`/player/${playerRankObject.player.pk}`}>
-                {playerRankObject.player.username}
-              </Link>
-            </span>
-          </Col>
-          <Col md="auto">
-            <span key={`${roundObject.pk}-${playerRankObject.player.username}`}>
-              <span>
-                {showTournamentScores ? (
-                  <HoverTooltip
-                    tooltip={`Base Score for Rank (${
-                      rankToScoreMap[playerRankObject.rank]
-                    }) + Player's Handicap (${
-                      playerRankObject.tournamentHandicap
-                    }) - Rank (${playerRankObject.rank})`}
-                    text={(
-                      rankToScoreMap[playerRankObject.rank] +
-                      playerRankObject.tournamentHandicap -
-                      playerRankObject.rank
-                    ).toFixed(1)}
-                  />
-                ) : (
-                  playerRankObject.score
-                )}
-              </span>
-            </span>
-          </Col>
-        </Row>
-      )
-    })
-
-  const roundMoment = moment(roundObject.date)
-  const dateFromNow = roundMoment.fromNow()
-  const datePretty = roundMoment.format('LL')
-  const dateWithTooltip = (
-    <HoverTooltip tooltip={datePretty} text={dateFromNow} />
-  )
-
-  const roundScoresLimited =
-    roundScores.length > 4
-      ? // ? [...roundScores.slice(0, 3), `and ${roundScores.length - 3} more...`]
-        roundScores
-      : roundScores
-
-  return (
-    <CardDisplay
-      title={roundObject.game.name}
-      subtitle={dateWithTooltip}
-      content={roundScoresLimited}
-      children={children}
-    />
-  )
 }
 
 /**
@@ -317,4 +55,54 @@ export function ordinalSuffix(input: number) {
     return `${input}rd`
   }
   return `${input}th`
+}
+
+// TODO(keegan): implement this function for white vs black text:
+//  https://blog.cristiana.tech/calculating-color-contrast-in-typescript-using-web-content-accessibility-guidelines-wcag
+export type RGBValue = {
+  r: number
+  g: number
+  b: number
+}
+export const hexToRGB = (hexCode: string): RGBValue => {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hexCode)
+  return result
+    ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16),
+      }
+    : {
+        r: 0,
+        g: 0,
+        b: 0,
+      }
+}
+
+export const rgbToStyle = (rgbValue: RGBValue): string =>
+  `rgb(${rgbValue.r},${rgbValue.g},${rgbValue.b},0.5)`
+
+export type StringToStringMap = Map<string, string>
+export type NumberToStringMap = Map<number, string>
+
+export const getTeamColors = (
+  tournamentInfo: TournamentObject
+): StringToStringMap => {
+  const teamColorMap = new Map<string, string>()
+  tournamentInfo.bracket.teams.forEach(team => {
+    const teamColorRGB = hexToRGB(team.color)
+    teamColorMap.set(team.name, rgbToStyle(teamColorRGB))
+  })
+  return teamColorMap
+}
+
+export const getTeamColorsMap = (
+  teamColors: TournamentTeamColors
+): StringToStringMap => {
+  const teamColorMap = new Map<string, string>()
+  Object.entries(teamColors).forEach(value => {
+    const teamColorRGB = hexToRGB(value[1])
+    teamColorMap.set(value[0], rgbToStyle(teamColorRGB))
+  })
+  return teamColorMap
 }

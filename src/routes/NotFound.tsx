@@ -1,6 +1,6 @@
 import React from 'react'
-import { CenteredPage } from 'src/utils/helpers'
 import { Link } from 'react-router-dom'
+import { CenteredPage } from 'src/components/CenteredPage'
 
 export const NotFound = () => (
   <CenteredPage>

@@ -12,6 +12,7 @@ import {
   RoundObject,
   TournamentObject,
   TournamentStats,
+  TournamentTeamColors,
 } from 'src/types'
 import useAxios from 'src/useAxios'
 import { setUserState } from './localStorageService'
@@ -112,10 +113,17 @@ export function useGetPlayerStats(playerPk: string | number): FetchResponse {
 }
 
 export function useGetTournamentStats(
-  tournamentPk: string | number
+  tournamentPk?: string | number
 ): FetchResponse {
-  const url = `/tournament_stats/${tournamentPk}`
+  const url = `/tournament_stats/${tournamentPk || ''}`
   return useGetResponse<TournamentStats>(url)
+}
+
+export function useGetTournamentTeamColors(
+  tournamentPk?: string | number
+): FetchResponse {
+  const url = `/tournament_team_colors/${tournamentPk || ''}`
+  return useGetResponse<TournamentTeamColors>(url)
 }
 
 export function useGetTournamentInfo(

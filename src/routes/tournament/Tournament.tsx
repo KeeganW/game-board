@@ -1,12 +1,10 @@
 import React from 'react'
 import { Navigate } from 'react-router-dom'
-import {
-  BasicList,
-  CenteredPage,
-  Loading,
-  useParamsPk,
-} from 'src/utils/helpers'
+import { useParamsPk } from 'src/utils/helpers'
 import { useGetTournament, useUpdatePlayerInfo } from 'src/utils/hooks'
+import { CenteredPage } from 'src/components/CenteredPage'
+import { Loading } from 'src/components/Loading'
+import { BasicList } from 'src/components/BasicList'
 import { TournamentDetails } from './TournamentDetails'
 
 export const Tournament: React.FC = () => {

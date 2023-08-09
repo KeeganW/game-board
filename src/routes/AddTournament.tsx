@@ -6,7 +6,7 @@ import { Navigate } from 'react-router-dom'
 import { useUpdatePlayerInfo } from 'src/utils/hooks'
 import { Typeahead } from 'react-bootstrap-typeahead'
 import { AddTournamentInfo } from 'src/types'
-import { CenteredPage } from 'src/utils/helpers'
+import { CenteredPage } from 'src/components/CenteredPage'
 import { getTokens } from 'src/utils/localStorageService'
 
 export const AddTournament: React.FC = () => {

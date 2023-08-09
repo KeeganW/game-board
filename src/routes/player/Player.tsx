@@ -1,5 +1,5 @@
 import React from 'react'
-import { CenteredPage, Loading, useParamsPk } from 'src/utils/helpers'
+import { useParamsPk } from 'src/utils/helpers'
 import {
   useGetPlayer,
   useGetPlayerStats,
@@ -9,6 +9,8 @@ import { PlayerTitle } from 'src/routes/player/PlayerTitle'
 import { PlayerQuickLook } from 'src/routes/player/PlayerQuickLook'
 import { PlayerRecentGames } from 'src/routes/player/PlayerRecentGames'
 import { Navigate } from 'react-router-dom'
+import { CenteredPage } from 'src/components/CenteredPage'
+import { Loading } from 'src/components/Loading'
 
 export const Player: React.FC = () => {
   useUpdatePlayerInfo()

@@ -17,8 +17,9 @@ import {
   RoundObjectLite,
 } from 'src/types'
 import { RoundForm } from 'src/forms/RoundForm'
-import { CenteredPage, Loading } from 'src/utils/helpers'
+import { CenteredPage } from 'src/components/CenteredPage'
 import { getTokens } from 'src/utils/localStorageService'
+import { Loading } from 'src/components/Loading'
 
 export const AddMatch: React.FC = () => {
   useUpdatePlayerInfo()

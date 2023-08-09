@@ -1,8 +1,8 @@
 import React, { useContext } from 'react'
 import { Navigate } from 'react-router-dom'
 import { AuthContext } from 'src/Context'
-import { CenteredPage } from 'src/utils/helpers'
 import { useLogout } from 'src/utils/hooks'
+import { CenteredPage } from 'src/components/CenteredPage'
 
 export const Logout: React.FC = () => {
   const {

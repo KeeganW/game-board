@@ -2,7 +2,7 @@ import React, { useContext } from 'react'
 import { AuthContext } from 'src/Context'
 import { Navigate } from 'react-router-dom'
 import axios from 'axios'
-import { CenteredPage } from 'src/utils/helpers'
+import { CenteredPage } from 'src/components/CenteredPage'
 
 export const Default: React.FC = () => {
   const { authenticated, playerPk } = useContext(AuthContext)

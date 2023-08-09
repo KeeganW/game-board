@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form'
 import axios from 'src/axiosAuth'
 import { Navigate } from 'react-router-dom'
 import { AuthContext } from 'src/Context'
-import { CenteredPage } from 'src/utils/helpers'
+import { CenteredPage } from 'src/components/CenteredPage'
 
 export const Signup: React.FC = () => {
   const { register, handleSubmit } = useForm()

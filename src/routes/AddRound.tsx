@@ -5,7 +5,8 @@ import axios from 'src/axiosAuth'
 import { Navigate } from 'react-router-dom'
 import { useGetGame, useGetPlayer, useUpdatePlayerInfo } from 'src/utils/hooks'
 import { RoundForm } from 'src/forms/RoundForm'
-import { CenteredPage, Loading } from 'src/utils/helpers'
+import { CenteredPage } from 'src/components/CenteredPage'
+import { Loading } from 'src/components/Loading'
 
 export const AddRound: React.FC = () => {
   useUpdatePlayerInfo()

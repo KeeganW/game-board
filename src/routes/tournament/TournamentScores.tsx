@@ -4,9 +4,9 @@ import { BracketMatchesObject, TeamObject, TournamentObject } from 'src/types'
 import { useParamsPk } from 'src/utils/helpers'
 import { useGetTournamentInfo, useGetTournamentStats } from 'src/utils/hooks'
 import { Col, Container, Row } from 'react-bootstrap'
-import { RoundDisplay } from '../../components/RoundDisplay'
-import { CardDisplay } from '../../components/CardDisplay'
-import { Loading } from '../../components/Loading'
+import { RoundDisplay } from 'src/components/RoundDisplay'
+import { CardDisplay } from 'src/components/CardDisplay'
+import { Loading } from 'src/components/Loading'
 
 // TODO(keegan): implement this function for white vs black text:
 //  https://blog.cristiana.tech/calculating-color-contrast-in-typescript-using-web-content-accessibility-guidelines-wcag
