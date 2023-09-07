@@ -154,7 +154,11 @@ export const convertBracketToView = (
 
       if (tournamentMatch) {
         // This game exists, so lets put it all together
-        const { round: tournamentRound, modifiedScoring, teamGame } = tournamentMatch
+        const {
+          round: tournamentRound,
+          modifiedScoring,
+          teamGame,
+        } = tournamentMatch
         return (
           <Col>
             <Row className="justify-content-center">

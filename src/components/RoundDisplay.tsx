@@ -14,7 +14,14 @@ export const RoundDisplay: React.FC<{
   showTournamentScores?: boolean
   modifiedScoring?: boolean
   teamGame?: boolean
-}> = ({ children, roundObject, playerColorMapping, showTournamentScores, modifiedScoring, teamGame }) => {
+}> = ({
+  children,
+  roundObject,
+  playerColorMapping,
+  showTournamentScores,
+  modifiedScoring,
+  teamGame,
+}) => {
   // Get the players and their scores/ranks listed out
   const roundScores = roundObject.playerRanks
     ?.sort((a: PlayerRankObject, b: PlayerRankObject) => a.rank - b.rank)
@@ -22,9 +29,9 @@ export const RoundDisplay: React.FC<{
       const playerColor = playerColorMapping?.get(playerRankObject.player.pk)
       let tooltip = `Base Score for Rank (${
         rankToScoreMap[playerRankObject.rank]
-      }) + Player's Handicap (${
-        playerRankObject.tournamentHandicap
-      }) - Rank (${playerRankObject.rank})`
+      }) + Player's Handicap (${playerRankObject.tournamentHandicap}) - Rank (${
+        playerRankObject.rank
+      })`
       let score = (
         rankToScoreMap[playerRankObject.rank] +
         playerRankObject.tournamentHandicap -
@@ -72,10 +79,7 @@ export const RoundDisplay: React.FC<{
             <span key={`${roundObject.pk}-${playerRankObject.player.username}`}>
               <span>
                 {showTournamentScores ? (
-                  <HoverTooltip
-                    tooltip={tooltip}
-                    text={score}
-                  />
+                  <HoverTooltip tooltip={tooltip} text={score} />
                 ) : (
                   playerRankObject.score
                 )}
@@ -94,9 +98,9 @@ export const RoundDisplay: React.FC<{
   )
 
   const roundScoresLimited = roundScores
-    // roundScores.length > 4
-    //   ? [...roundScores.slice(0, 3), `and ${roundScores.length - 3} more...`]
-    //   : roundScores
+  // roundScores.length > 4
+  //   ? [...roundScores.slice(0, 3), `and ${roundScores.length - 3} more...`]
+  //   : roundScores
 
   return (
     <CardDisplay
