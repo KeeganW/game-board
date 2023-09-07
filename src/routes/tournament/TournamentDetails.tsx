@@ -148,20 +148,24 @@ export const convertBracketToView = (
       const roundNumber = totalRoundsSoFar + roundIndex + 1
 
       // Get this specific round object from the tournament
-      const tournamentGame = tournament.bracket.matches.find(
+      const tournamentMatch = tournament.bracket.matches.find(
         (value: BracketMatchesObject) => value.match === roundNumber
       )
 
-      if (tournamentGame) {
+      if (tournamentMatch) {
         // This game exists, so lets put it all together
-        const { round: tournamentRound } = tournamentGame
+        const { round: tournamentRound, modifiedScoring, teamGame } = tournamentMatch
         return (
           <Col>
             <Row className="justify-content-center">
               <RoundDisplay
                 roundObject={tournamentRound}
                 playerColorMapping={playerColorMapping}
-                showTournamentScores
+                showTournamentScores={false}
+                // TODO: Disable showing score breakdown except by admins
+                // showTournamentScores={true}
+                modifiedScoring={modifiedScoring}
+                teamGame={teamGame}
               />
             </Row>
           </Col>

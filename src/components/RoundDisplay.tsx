@@ -12,12 +12,34 @@ export const RoundDisplay: React.FC<{
   roundObject: RoundObject
   playerColorMapping?: Map<number, string>
   showTournamentScores?: boolean
-}> = ({ children, roundObject, playerColorMapping, showTournamentScores }) => {
+  modifiedScoring?: boolean
+  teamGame?: boolean
+}> = ({ children, roundObject, playerColorMapping, showTournamentScores, modifiedScoring, teamGame }) => {
   // Get the players and their scores/ranks listed out
   const roundScores = roundObject.playerRanks
     ?.sort((a: PlayerRankObject, b: PlayerRankObject) => a.rank - b.rank)
     .map((playerRankObject: PlayerRankObject) => {
       const playerColor = playerColorMapping?.get(playerRankObject.player.pk)
+      let tooltip = `Base Score for Rank (${
+        rankToScoreMap[playerRankObject.rank]
+      }) + Player's Handicap (${
+        playerRankObject.tournamentHandicap
+      }) - Rank (${playerRankObject.rank})`
+      let score = (
+        rankToScoreMap[playerRankObject.rank] +
+        playerRankObject.tournamentHandicap -
+        playerRankObject.rank
+      ).toFixed(1)
+      if (teamGame) {
+        tooltip = `Base Score for Rank (${
+          rankToScoreMap[playerRankObject.rank]
+        })`
+        score = `${rankToScoreMap[playerRankObject.rank]}`
+      }
+      if (modifiedScoring) {
+        tooltip = `( ${tooltip} ) * Modified Scoring (2)`
+        score = (Number(score) * 2).toFixed(1)
+      }
       return (
         <Row
           className="mb-1 link-color-fix justify-content-between"
@@ -46,20 +68,13 @@ export const RoundDisplay: React.FC<{
             </span>
           </Col>
           <Col md="auto">
+            {/* TODO(keegan): multiply by two for later weeks */}
             <span key={`${roundObject.pk}-${playerRankObject.player.username}`}>
               <span>
                 {showTournamentScores ? (
                   <HoverTooltip
-                    tooltip={`Base Score for Rank (${
-                      rankToScoreMap[playerRankObject.rank]
-                    }) + Player's Handicap (${
-                      playerRankObject.tournamentHandicap
-                    }) - Rank (${playerRankObject.rank})`}
-                    text={(
-                      rankToScoreMap[playerRankObject.rank] +
-                      playerRankObject.tournamentHandicap -
-                      playerRankObject.rank
-                    ).toFixed(1)}
+                    tooltip={tooltip}
+                    text={score}
                   />
                 ) : (
                   playerRankObject.score
@@ -78,11 +93,10 @@ export const RoundDisplay: React.FC<{
     <HoverTooltip tooltip={datePretty} text={dateFromNow} />
   )
 
-  const roundScoresLimited =
-    roundScores.length > 4
-      ? [...roundScores.slice(0, 3), `and ${roundScores.length - 3} more...`]
-      : // roundScores
-        roundScores
+  const roundScoresLimited = roundScores
+    // roundScores.length > 4
+    //   ? [...roundScores.slice(0, 3), `and ${roundScores.length - 3} more...`]
+    //   : roundScores
 
   return (
     <CardDisplay

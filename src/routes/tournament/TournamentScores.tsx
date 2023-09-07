@@ -30,6 +30,7 @@ const hexToRGB = (hexCode: string): RGBValue => {
       }
 }
 
+// TODO(keegan): remove these
 const rgbToStyle = (rgbValue: RGBValue): string =>
   `rgb(${rgbValue.r},${rgbValue.g},${rgbValue.b},0.5)`
 

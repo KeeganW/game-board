@@ -47,13 +47,17 @@ const ScoreboardForTournament: React.FC<{
             key={`rawScoresByTeamAll${title}`}
             className="text-center"
           >
-            <h3
-              id={`rawScoresByTeamAll${title}Title`}
-              key={`rawScoresByTeamAll${title}Title`}
-            >
-              {title}
-            </h3>
-            {scoring}
+            <Col>
+              <Row>
+                <h3
+                  id={`rawScoresByTeamAll${title}Title`}
+                  key={`rawScoresByTeamAll${title}Title`}
+                >
+                  {title}
+                </h3>
+              </Row>
+              {scoring}
+            </Col>
           </Row>
         )
       }
@@ -68,15 +72,9 @@ const ScoreboardForTournament: React.FC<{
     }
   )
   return (
-    <Container>
-      <Row>
-        <Col>
-          <Row className="mb-4">
-            <h2 className="text-center">{tournamentName}</h2>
-            {results}
-          </Row>
-        </Col>
-      </Row>
+    <Container className="mb-4">
+      <h2 className="text-center">{tournamentName}</h2>
+      {results}
     </Container>
   )
 }
