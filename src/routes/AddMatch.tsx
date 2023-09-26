@@ -1,25 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import { Button, Col, Form, Row } from 'react-bootstrap'
-import { useForm, Controller } from 'react-hook-form'
 import axios from 'src/axiosAuth'
 import { Navigate, useParams } from 'react-router-dom'
-import {
-  useGetGame,
-  useGetPlayer,
-  useGetPlayerRank,
-  useUpdatePlayerInfo,
-} from 'src/utils/hooks'
-import { Typeahead } from 'react-bootstrap-typeahead'
-import {
-  GameObject,
-  PlayerObjectLite,
-  PlayerRankObjectLite,
-  RoundObjectLite,
-} from 'src/types'
+import { useGetGame, useGetPlayer, useUpdatePlayerInfo } from 'src/utils/hooks'
+import { RoundObjectLite } from 'src/types'
 import { RoundForm } from 'src/forms/RoundForm'
 import { CenteredPage } from 'src/components/CenteredPage'
 import { getTokens } from 'src/utils/localStorageService'
 import { Loading } from 'src/components/Loading'
+import { useForm } from '@mantine/form'
+import { Checkbox, NumberInput } from '@mantine/core'
 
 export const AddMatch: React.FC = () => {
   useUpdatePlayerInfo()
@@ -27,20 +17,30 @@ export const AddMatch: React.FC = () => {
 
   const playersResponse = useGetPlayer()
   const gamesResponse = useGetGame()
-  const playerRanksResponse = useGetPlayerRank()
 
-  const { register, handleSubmit, control } = useForm()
-  const [addRoundData, setAddRoundData] = useState<
-    RoundObjectLite[] | undefined
-  >(undefined)
+  const submitterType = 'h'
+  const [, setAddRoundData] = useState<RoundObjectLite[] | undefined>(undefined)
   const [addNewRound, setAddNewRound] = useState<boolean>(false)
   const [matchAdded, setMatchAdded] = useState<number>(-1)
 
   // Get player info if provided
   const params = useParams()
-  const { tournamentPk, match } = params
-  const paramsPk = tournamentPk || ''
-  const matchNumber = match || ''
+  const { tournamentPk, matchPk } = params
+  const tournamentPkSafe = tournamentPk || ''
+  const matchPkSafe = matchPk || ''
+  const initialValues = {
+    initialValues: {
+      game: '',
+      date: new Date(),
+      players: [],
+      teamGame: false,
+      match: matchPkSafe,
+    },
+  }
+  const form = useForm(initialValues)
+  useEffect(() => {
+    form.setValues(initialValues.initialValues)
+  }, [params])
 
   useEffect(() => {
     axios
@@ -54,7 +54,7 @@ export const AddMatch: React.FC = () => {
       .then(res => {
         setAddRoundData(res.data as RoundObjectLite[])
       })
-  }, [paramsPk, matchNumber])
+  }, [tournamentPkSafe, matchPkSafe])
 
   if (
     !playersResponse.response ||
@@ -62,10 +62,7 @@ export const AddMatch: React.FC = () => {
     playersResponse.loading ||
     !gamesResponse.response ||
     !gamesResponse.response.data ||
-    gamesResponse.loading ||
-    !playerRanksResponse.response ||
-    !playerRanksResponse.response.data ||
-    playerRanksResponse.loading
+    gamesResponse.loading
   ) {
     return (
       <CenteredPage>
@@ -80,7 +77,6 @@ export const AddMatch: React.FC = () => {
 
   const players = playersResponse.response.data
   const games = gamesResponse.response.data
-  const playerRanks = playerRanksResponse.response.data
 
   // Good resource
   // https://medium.com/swlh/django-rest-framework-and-spa-session-authentication-with-docker-and-nginx-aa64871f29cd
@@ -97,39 +93,36 @@ export const AddMatch: React.FC = () => {
       })
   }
 
-  if (!paramsPk) {
+  if (!tournamentPkSafe) {
     return <div>Please find this page through your associated tournament.</div>
   }
   return (
     <CenteredPage pageWidth={300}>
-      <Form onSubmit={handleSubmit(handleOnSubmit)}>
+      <Form
+        onSubmit={form.onSubmit((values: any) =>
+          handleOnSubmit({
+            ...values,
+            tournamentPk,
+            submitterType,
+          })
+        )}
+      >
         <Row>
           <Col>
-            <Form.Group className="mb-3" controlId="match">
-              <Form.Label>Match</Form.Label>
-              <Form.Control
-                type="text"
-                {...register('match', { required: true, value: match })}
-              />
-              <Form.Text className="text-muted" />
-            </Form.Group>
-
-            <Form.Control
-              type="hidden"
-              {...register('tournament', {
-                required: true,
-                value: tournamentPk,
-              })}
+            <NumberInput
+              id="match"
+              label="Match Number"
+              min={0}
+              {...form.getInputProps('match')}
             />
 
-            <Form.Group className="mb-3" controlId="teamGame">
-              <Form.Label>Team Game</Form.Label>
-              <Form.Check
-                className=""
-                id="teamGame"
-                {...register('teamGame', {})}
-              />
-            </Form.Group>
+            <Checkbox
+              id="teamGame"
+              label="Team Game"
+              {...form.getInputProps('teamGame')}
+            />
+
+            {/*   Team game */}
           </Col>
         </Row>
         <Button
@@ -142,68 +135,11 @@ export const AddMatch: React.FC = () => {
         <Row>
           {!addNewRound && (
             <Col>
-              <Controller
-                control={control}
-                name="round"
-                rules={{
-                  required: 'Please, select at least one Round input value',
-                }}
-                render={({ field, fieldState }) => (
-                  <div className="mb-3">
-                    {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
-                    <label htmlFor="round" className="form-label">
-                      Round
-                    </label>
-                    <Typeahead
-                      {...field}
-                      id="round"
-                      clearButton
-                      className={fieldState.invalid ? 'is-invalid' : ''}
-                      aria-describedby="gameError"
-                      options={
-                        addRoundData
-                          ?.map((round: RoundObjectLite) => {
-                            // TODO: move this offline...
-                            const game = games.filter(
-                              (thisGame: GameObject) =>
-                                round.game === thisGame.pk
-                            )?.[0]
-                            // Need to get a list of player usernames, by mapping round player
-                            //  ranks -> player rank player -> players username
-                            const playerList = round.playerRanks.map(
-                              (playerRankPk: number) => {
-                                // Get the player rank that matches this one
-                                const playerRank = playerRanks.filter(
-                                  (thisPlayerRank: PlayerRankObjectLite) =>
-                                    thisPlayerRank.pk === playerRankPk
-                                )?.[0]
-                                if (playerRank) {
-                                  // PlayerRank exists, so lets map it to a player.
-                                  return (
-                                    players.filter(
-                                      (player: PlayerObjectLite) =>
-                                        playerRank.player === player.pk
-                                    )?.[0]?.username || 'unknown'
-                                  )
-                                }
-                                return 'unknown'
-                              }
-                            )
-                            return {
-                              label: `${game.name} - ${
-                                round.date
-                              }: \n${playerList.join(', ')}`,
-                              value: String(round.pk),
-                            }
-                          })
-                          .reverse() || []
-                      }
-                    />
-                    <p id="gameError" className="invalid-feedback">
-                      {fieldState.error?.message}
-                    </p>
-                  </div>
-                )}
+              <NumberInput
+                id="round"
+                label="Round Number"
+                min={0}
+                {...form.getInputProps('round')}
               />
             </Col>
           )}
@@ -211,10 +147,10 @@ export const AddMatch: React.FC = () => {
           {addNewRound && (
             <Col>
               <RoundForm
-                control={control}
-                register={register}
+                form={form}
                 gameOptions={games}
                 playerOptions={players}
+                hideRanksSubmission
               />
             </Col>
           )}

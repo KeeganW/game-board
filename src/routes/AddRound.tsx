@@ -1,17 +1,23 @@
 import React, { useState } from 'react'
 import { Button, Form } from 'react-bootstrap'
-import { useForm } from 'react-hook-form'
 import axios from 'src/axiosAuth'
 import { Navigate } from 'react-router-dom'
 import { useGetGame, useGetPlayer, useUpdatePlayerInfo } from 'src/utils/hooks'
 import { RoundForm } from 'src/forms/RoundForm'
 import { CenteredPage } from 'src/components/CenteredPage'
 import { Loading } from 'src/components/Loading'
+import { useForm } from '@mantine/form'
 
 export const AddRound: React.FC = () => {
   useUpdatePlayerInfo()
 
-  const { register, handleSubmit, control } = useForm()
+  const form = useForm({
+    initialValues: {
+      game: '',
+      date: new Date(),
+      players: [],
+    },
+  })
   const [roundAdded, setRoundAdded] = useState<number>(-1)
 
   const playersResponse = useGetPlayer()
@@ -55,14 +61,8 @@ export const AddRound: React.FC = () => {
 
   return (
     <CenteredPage pageWidth={300}>
-      <Form onSubmit={handleSubmit(handleOnSubmit)}>
-        {/* https://github.com/react-hook-form/react-hook-form/discussions/2624 */}
-        <RoundForm
-          control={control}
-          register={register}
-          gameOptions={games}
-          playerOptions={players}
-        />
+      <Form onSubmit={form.onSubmit((values: any) => handleOnSubmit(values))}>
+        <RoundForm form={form} gameOptions={games} playerOptions={players} />
         <Button variant="primary" type="submit">
           Submit
         </Button>

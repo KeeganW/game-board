@@ -1,6 +1,8 @@
 import React from 'react'
 import { render } from 'react-dom'
 import { Routes, Route, HashRouter, Navigate } from 'react-router-dom'
+// eslint-disable-next-line import/no-unresolved
+import '@mantine/core/styles.css'
 
 import 'src/index.css'
 import { App } from 'src/App'
@@ -15,13 +17,18 @@ import { Tournament } from 'src/routes/tournament/Tournament'
 import { AddRound } from 'src/routes/AddRound'
 import { AddMatch } from 'src/routes/AddMatch'
 import { AddTournament } from 'src/routes/AddTournament'
-import { MantineProvider } from '@mantine/core'
+import { createTheme, MantineProvider } from '@mantine/core'
 import { CurrentTournaments } from './routes/tournament/CurrentTournaments'
+import { CurrentTournamentRound } from './routes/roundSubmit/CurrentTournamentRound'
+import { Round } from './routes/Round'
 
 // More route information can be found at https://reactrouter.com/docs/en/v6/getting-started/tutorial
 const rootElement = document.getElementById('root')
+const theme = createTheme({
+  /** Put your mantine theme override here */
+})
 render(
-  <MantineProvider withGlobalStyles withNormalizeCSS>
+  <MantineProvider theme={theme}>
     <HashRouter>
       <Routes>
         <Route path="/" element={<App />}>
@@ -36,13 +43,30 @@ render(
           <Route path="/group" element={<Group />}>
             <Route path=":pk" element={<Group />} />
           </Route>
+          <Route path="/round" element={<Round />}>
+            <Route path=":pk" element={<Round />} />
+          </Route>
           <Route path="/tournament" element={<Tournament />}>
             <Route path=":pk" element={<Tournament />} />
           </Route>
           <Route path="/add_match" element={<AddMatch />}>
-            <Route path=":tournamentPk/:match" element={<AddMatch />} />
+            <Route path=":tournamentPk/:matchPk" element={<AddMatch />} />
           </Route>
           <Route path="/add_round" element={<AddRound />} />
+
+          {/* Stands for add_current_round, shortened for qr codes */}
+          <Route path="/acr" element={<CurrentTournamentRound />}>
+            <Route path=":tournamentPk" element={<CurrentTournamentRound />} />
+            <Route
+              path=":tournamentPk/:matchPk"
+              element={<CurrentTournamentRound />}
+            />
+            <Route
+              path=":tournamentPk/:matchPk/:submitterType"
+              element={<CurrentTournamentRound />}
+            />
+          </Route>
+
           <Route path="/add_tournament" element={<AddTournament />} />
           <Route path="/current" element={<CurrentTournaments />}>
             <Route path=":pk" element={<CurrentTournaments />} />

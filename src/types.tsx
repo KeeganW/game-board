@@ -54,7 +54,7 @@ export type GroupObjectLite = {
 
 export type PlayerRankObject = {
   pk: number
-  player: PlayerObjectLite
+  player: PlayerObjectFull
   score: number
   rank: number
   handicap: number
@@ -139,6 +139,10 @@ export type TournamentTeamColors = Map<string, string> & DetailResponse
 
 export type RecentRounds = {
   recentRounds: RoundObject[]
+} & DetailResponse
+
+export type TournamentMatches = {
+  tournamentMatches: BracketMatchesObject[]
 } & DetailResponse
 
 export type PlayerInfo = {

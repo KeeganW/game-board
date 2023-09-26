@@ -134,6 +134,7 @@ export const convertBracketToView = (
               {/* eslint-disable-next-line react/no-array-index-key */}
               <div key={`${weekIndex}${roundIndex}${teamIndex}`}>
                 {realTeam.name}
+                {teamIndex === 0 ? ' (Home)' : undefined}
               </div>
             </div>
           </Row>
@@ -149,7 +150,15 @@ export const convertBracketToView = (
 
       // Get this specific round object from the tournament
       const tournamentMatch = tournament.bracket.matches.find(
-        (value: BracketMatchesObject) => value.match === roundNumber
+        (value: BracketMatchesObject) =>
+          value.match === roundNumber && value.round.playerRanks.length > 0
+      )
+
+      // Check if it is scheduled
+      const isScheduled = tournament.bracket.matches.find(
+        (value: BracketMatchesObject) => {
+          return value.match === roundNumber
+        }
       )
 
       if (tournamentMatch) {
@@ -175,10 +184,26 @@ export const convertBracketToView = (
           </Col>
         )
       }
-      // TODO: There will be an issue here. How do we add team games, if we have added other rounds
-      //  first? This code assumes the games are listed in order, but we also don't know how many
-      //  team games there are in the first vs second weeks... Need to add either add a fixed amount
-      //  or do something clever
+      if (isScheduled) {
+        const { round: tournamentRound } = isScheduled
+        return (
+          <Col>
+            <Row className="justify-content-center">
+              <RoundDisplay
+                roundObject={tournamentRound}
+                playerColorMapping={playerColorMapping}
+                showTournamentScores={false}
+                // TODO: Disable showing score breakdown except by admins
+                // showTournamentScores={true}
+                modifiedScoring={false}
+                teamGame={false}
+              >
+                {rounds}
+              </RoundDisplay>
+            </Row>
+          </Col>
+        )
+      }
       return (
         <Col key={`game${roundNumber}`}>
           <Row className="justify-content-center">

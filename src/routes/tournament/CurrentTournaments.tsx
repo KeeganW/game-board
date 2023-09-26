@@ -106,7 +106,7 @@ export const CurrentTournaments: React.FC = () => {
 
   if (isArray(allTournaments)) {
     const allTournamentStats = []
-    for (let i = 0; i < allTournaments.length; i += 1) {
+    for (let i = allTournaments.length - 1; i >= 0; i -= 1) {
       const tournamentInfo = allTournaments[i]
       const allTournamentPk = tournamentInfo.pk
       const teamToColorMapping = getTeamColorsMap(

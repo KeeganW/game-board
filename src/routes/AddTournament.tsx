@@ -4,7 +4,6 @@ import { useForm, Controller } from 'react-hook-form'
 import axios from 'src/axiosAuth'
 import { Navigate } from 'react-router-dom'
 import { useUpdatePlayerInfo } from 'src/utils/hooks'
-import { Typeahead } from 'react-bootstrap-typeahead'
 import { AddTournamentInfo } from 'src/types'
 import { CenteredPage } from 'src/components/CenteredPage'
 import { getTokens } from 'src/utils/localStorageService'
@@ -14,9 +13,9 @@ export const AddTournament: React.FC = () => {
   const authToken = getTokens()
 
   const { register, handleSubmit, control } = useForm()
-  const [addTournamentData, setAddTournamentData] = useState<
-    AddTournamentInfo | undefined
-  >(undefined)
+  const [, setAddTournamentData] = useState<AddTournamentInfo | undefined>(
+    undefined
+  )
   const [tournamentAdded, setTournamentAdded] = useState<number>(-1)
 
   useEffect(() => {
@@ -65,25 +64,25 @@ export const AddTournament: React.FC = () => {
             required:
               'Please, select at least two Teams to include in this tournament',
           }}
-          render={({ field, fieldState }) => (
+          render={({ fieldState }) => (
             <div className="mb-3">
               {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
               <label htmlFor="team" className="form-label">
                 Teams
               </label>
-              <Typeahead
-                {...field}
-                id="team"
-                multiple
-                clearButton
-                className={fieldState.invalid ? 'is-invalid' : ''}
-                aria-describedby="teamsError"
-                options={
-                  addTournamentData
-                    ? addTournamentData.teams.map(value => value.name)
-                    : []
-                }
-              />
+              {/* <Typeahead */}
+              {/*   {...field} */}
+              {/*   id="team" */}
+              {/*   multiple */}
+              {/*   clearButton */}
+              {/*   className={fieldState.invalid ? 'is-invalid' : ''} */}
+              {/*   aria-describedby="teamsError" */}
+              {/*   options={ */}
+              {/*     addTournamentData */}
+              {/*       ? addTournamentData.teams.map(value => value.name) */}
+              {/*       : [] */}
+              {/*   } */}
+              {/* /> */}
               <p id="teamsError" className="invalid-feedback">
                 {fieldState.error?.message}
               </p>

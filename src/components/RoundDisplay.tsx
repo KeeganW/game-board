@@ -14,6 +14,7 @@ export const RoundDisplay: React.FC<{
   showTournamentScores?: boolean
   modifiedScoring?: boolean
   teamGame?: boolean
+  useUsernames?: boolean
 }> = ({
   children,
   roundObject,
@@ -21,6 +22,7 @@ export const RoundDisplay: React.FC<{
   showTournamentScores,
   modifiedScoring,
   teamGame,
+  useUsernames,
 }) => {
   // Get the players and their scores/ranks listed out
   const roundScores = roundObject.playerRanks
@@ -70,7 +72,9 @@ export const RoundDisplay: React.FC<{
               </span>
               {': '}
               <Link to={`/player/${playerRankObject.player.pk}`}>
-                {playerRankObject.player.username}
+                {useUsernames
+                  ? playerRankObject.player.username
+                  : `${playerRankObject.player.firstName} ${playerRankObject.player.lastName}`}
               </Link>
             </span>
           </Col>

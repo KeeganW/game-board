@@ -1,6 +1,7 @@
 import { useContext } from 'react'
 import { AuthContext } from 'src/Context'
 import {
+  BracketMatchesObject,
   FetchResponse,
   GameObject,
   GroupObjectLite,
@@ -10,6 +11,8 @@ import {
   PlayerStats,
   RecentRounds,
   RoundObject,
+  RoundObjectLite,
+  TournamentMatches,
   TournamentObject,
   TournamentStats,
   TournamentTeamColors,
@@ -21,11 +24,13 @@ import { setUserState } from './localStorageService'
  * A generic get hook which calls useAxios, and then formats the response to be a specific type.
  *
  * @param url The url to call with the get hook.
+ * @param params Any params to pass along
  */
-function useGetResponse<Type>(url: string): FetchResponse {
+function useGetResponse<Type>(url: string, params?: any): FetchResponse {
   const hookResponse = useAxios({
     method: 'GET',
     url,
+    params,
   })
   // Specifically set the data type to be Type
   return {
@@ -97,7 +102,25 @@ export function useGetPlayerRank(
 
 export function useGetRound(roundPk?: string | number): FetchResponse {
   const url = `/round/${roundPk || ''}`
+  return useGetResponse<RoundObjectLite>(url)
+}
+
+export function useGetGameRound(roundPk?: string | number): FetchResponse {
+  const url = `/game_round/${roundPk || ''}`
   return useGetResponse<RoundObject>(url)
+}
+
+export function useGetMatch(matchPk?: string | number): FetchResponse {
+  const url = `/bracket_match/${matchPk || ''}`
+  return useGetResponse<BracketMatchesObject>(url)
+}
+
+export function useGetTournamentMatches(
+  tournamentPk?: string | number,
+  params?: any
+): FetchResponse {
+  const url = `/tournament_matches/${tournamentPk || ''}`
+  return useGetResponse<TournamentMatches>(url, params)
 }
 
 export function useGetTournament(
