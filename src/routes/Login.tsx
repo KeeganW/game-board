@@ -5,6 +5,7 @@ import axios from 'src/axiosAuth'
 import { Navigate } from 'react-router-dom'
 import { AuthContext } from 'src/Context'
 import { CenteredPage } from 'src/components/CenteredPage'
+import { notifications } from '@mantine/notifications'
 
 export const Login: React.FC = () => {
   const { register, handleSubmit } = useForm()
@@ -48,12 +49,26 @@ export const Login: React.FC = () => {
               JSON.stringify(loginResponse.data)
             )
           })
-          .catch(() => {
-            // TODO handle incorrect credentials
+          .catch(loginErrorRes => {
+            notifications.show({
+              color: 'red',
+              title: 'Login Error',
+              message:
+                // eslint-disable-next-line no-underscore-dangle
+                loginErrorRes.response.data?.errors?.__all__ ||
+                'General error on this page.',
+            })
           })
       })
-      .catch(() => {
-        // TODO handle incorrect credentials
+      .catch(loginTokenErrorRes => {
+        notifications.show({
+          color: 'red',
+          title: 'Login Error',
+          message:
+            // eslint-disable-next-line no-underscore-dangle
+            loginTokenErrorRes.response.data?.errors?.__all__ ||
+            'General error on this page.',
+        })
       })
   }
 

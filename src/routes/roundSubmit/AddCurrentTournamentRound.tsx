@@ -15,6 +15,7 @@ import QRCode from 'react-qr-code'
 import { Center, Title } from '@mantine/core'
 import { BracketMatchesObject, PlayerRankObject } from 'src/types'
 import { RoundDisplay } from 'src/components/RoundDisplay'
+import { notifications } from '@mantine/notifications'
 
 export const AddCurrentTournamentRound: React.FC<{
   tournamentPk: string
@@ -113,8 +114,14 @@ export const AddCurrentTournamentRound: React.FC<{
         // Player was logged in, we should have credentials, so redirect
         setRoundAdded(res.data.pk)
       })
-      .catch(() => {
-        // TODO handle incorrect credentials
+      .catch(res => {
+        notifications.show({
+          color: 'red',
+          title: 'Submission Error',
+          message:
+            // eslint-disable-next-line no-underscore-dangle
+            res.response.data?.errors?.__all__ || 'General error on this page.',
+        })
       })
   }
 
@@ -133,7 +140,7 @@ export const AddCurrentTournamentRound: React.FC<{
   }
   if (submitterType === 'h') {
     return (
-      <CenteredPage pageWidth={400}>
+      <CenteredPage pageWidth={300}>
         <Form
           onSubmit={form.onSubmit((values: any) =>
             handleOnSubmit({
@@ -159,13 +166,13 @@ export const AddCurrentTournamentRound: React.FC<{
   }
   if (match?.round?.playerRanks?.length === 0) {
     return (
-      <CenteredPage pageWidth={400}>
+      <CenteredPage pageWidth={300}>
         <Title>Please wait for the host to submit scores</Title>
       </CenteredPage>
     )
   }
   return (
-    <CenteredPage pageWidth={400}>
+    <CenteredPage pageWidth={300}>
       <Title>Please validate the following scores</Title>
       <Center>
         <RoundDisplay roundObject={match?.round} />

@@ -147,7 +147,7 @@ export const RoundForm: React.FC<{
       {form.values.players.length > 0 && (
         <Select
           id="submitter"
-          label="Sportsmanship Submitter (you)"
+          label="Who are you?"
           disabled={disableSubmitterSubmission}
           data={
             selectedPlayerObjects?.map((value: PlayerObjectFull) => ({

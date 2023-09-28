@@ -66,7 +66,10 @@ export const App = () => {
       ]
     : [
         <a href="#/current" className={classes.link}>
-          Current
+          Current Standings
+        </a>,
+        <a href="#/acr" className={classes.link}>
+          Add Round
         </a>,
       ]
 

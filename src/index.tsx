@@ -18,9 +18,11 @@ import { AddRound } from 'src/routes/AddRound'
 import { AddMatch } from 'src/routes/AddMatch'
 import { AddTournament } from 'src/routes/AddTournament'
 import { createTheme, MantineProvider } from '@mantine/core'
+import { Notifications } from '@mantine/notifications'
 import { CurrentTournaments } from './routes/tournament/CurrentTournaments'
 import { CurrentTournamentRound } from './routes/roundSubmit/CurrentTournamentRound'
 import { Round } from './routes/Round'
+import { ResetPassword } from './routes/ResetPassword'
 
 // More route information can be found at https://reactrouter.com/docs/en/v6/getting-started/tutorial
 const rootElement = document.getElementById('root')
@@ -29,12 +31,19 @@ const theme = createTheme({
 })
 render(
   <MantineProvider theme={theme}>
+    <Notifications
+      zIndex={1000}
+      style={{ position: 'absolute', top: '60px', left: '0px' }}
+    />
     <HashRouter>
       <Routes>
         <Route path="/" element={<App />}>
           <Route path="/*" element={<NotFound />} />
           <Route path="/" element={<Default />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/reset_password" element={<ResetPassword />}>
+            <Route path=":username/:token" element={<ResetPassword />} />
+          </Route>
           <Route path="/signup" element={<Signup />} />
           <Route path="/logout" element={<Logout />} />
           <Route path="/player" element={<Player />}>
