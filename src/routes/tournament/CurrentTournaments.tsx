@@ -156,11 +156,10 @@ export const CurrentTournaments: React.FC = () => {
   }
 
   const tournamentTeamColors = tournamentTeamColorsResponse.response.data // Get colors
-  const tournamentNames = tournamentNamesResponse.response.data // Get colors
+  const tournamentNames = tournamentNamesResponse.response.data.names // Get names
   const tournamentScores = tournamentScoresResponse.response.data // Get scores
   const tournamentSchedule = tournamentScheduleResponse.response.data // Get schedule
 
-  // const allTournamentScores: any[] = []
   // Loop over all the tournaments provided
   const allTournamentScores = Object.entries(tournamentScores).map(
     (thisTournamentScoresFullObject: any) => {
@@ -171,7 +170,10 @@ export const CurrentTournaments: React.FC = () => {
         const teamToColorMapping = getTeamColorsMap(
           tournamentTeamColors[thisTournamentPk]
         )
-        const thisTournamentName = tournamentNames[thisTournamentPk]
+        const thisTournamentName = tournamentNames.find(
+          (tournamentName: any) =>
+            tournamentName.pk.toString() === thisTournamentPk
+        )
         const thisTournamentSchedule = tournamentSchedule[thisTournamentPk]
 
         // Append all of this to an object to return
@@ -179,7 +181,9 @@ export const CurrentTournaments: React.FC = () => {
           <div>
             <ScoreboardForTournament
               key={thisTournamentPk}
-              tournamentName={thisTournamentName}
+              tournamentName={
+                thisTournamentName ? thisTournamentName.name : undefined
+              }
               tournamentStats={thisTournamentScores}
               tournamentTeamColors={teamToColorMapping}
             />

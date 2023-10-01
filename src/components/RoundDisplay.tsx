@@ -128,7 +128,7 @@ export const RoundDisplay: React.FC<{
 
   return (
     <CardDisplay
-      title={roundObject.game.name || roundObject.game}
+      title={roundObject.game.name}
       subtitle={dateWithTooltip}
       content={roundScoresLimited}
     >

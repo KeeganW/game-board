@@ -24,6 +24,13 @@ export type GameObject = {
   gamePicture: string
 }
 
+export type GameObjectExposed = {
+  pk: number
+  name: string
+  description: string
+  gamePicture: string
+}
+
 export type GroupObject = {
   pk: number
   name: string
@@ -92,7 +99,7 @@ export type RoundObject = {
 
 export type RoundObjectExposed = {
   pk: number
-  game: string
+  game: GameObjectExposed
   date: string
   playerRanks: PlayerRankObjectExposed[]
   group: string
@@ -167,8 +174,12 @@ export type TournamentStats = TournamentDifferentScores & DetailResponse
 export type TournamentTeamColors = Map<[team: string], [color: string]> &
   DetailResponse
 
-export type TournamentNames = Map<[team: string], [color: string]> &
-  DetailResponse
+export type TournamentNames = {
+  names: {
+    pk: number
+    name: string
+  }
+} & DetailResponse
 
 export type TournamentScores = Map<
   [tournamentPk: string],

@@ -1,17 +1,13 @@
 import React from 'react'
 import { useParams } from 'react-router-dom'
-import { useUpdatePlayerInfo } from 'src/utils/hooks'
 import { CenteredPage } from 'src/components/CenteredPage'
 import { BasicList } from 'src/components/BasicList'
-import moment from 'moment'
 import { Title } from '@mantine/core'
 import { AddCurrentTournamentRound } from './AddCurrentTournamentRound'
 import { TournamentList } from './TournamentList'
 import { MatchList } from './MatchList'
 
 export const CurrentTournamentRound: React.FC = () => {
-  useUpdatePlayerInfo()
-
   // Get current tournaments list, and ask the user to pick one
   // Get current games list for tournament, and ask the user to pick one
   //  Games are limited by the current date.
@@ -38,8 +34,6 @@ export const CurrentTournamentRound: React.FC = () => {
         <Title>Which game did you play?</Title>
         <MatchList
           tournamentPk={tournamentPkSafe}
-          dateStart={moment().subtract(1, 'days')}
-          dateEnd={moment().add(5, 'days')}
           prefix={`/acr/${tournamentPkSafe}/`}
         />
       </CenteredPage>

@@ -1,28 +1,22 @@
 import React from 'react'
-import { Navigate } from 'react-router-dom'
-import { useGetTournament } from 'src/utils/hooks'
+import { useGetTournamentNames } from 'src/utils/hooks'
 import { Loading } from 'src/components/Loading'
 import { BasicList } from 'src/components/BasicList'
+import { isStillLoading } from 'src/utils/helpers'
 
 export const TournamentList: React.FC<{
   prefix?: string
   addTournamentOption?: boolean
-}> = ({ prefix, addTournamentOption }) => {
-  const allTournamentsResponse = useGetTournament()
+  showCompleted?: boolean
+}> = ({ prefix, addTournamentOption, showCompleted }) => {
+  const completedParams: any = showCompleted ? undefined : { completed: false }
+  const allTournamentsResponse = useGetTournamentNames('', completedParams)
 
-  if (
-    !allTournamentsResponse.response ||
-    !allTournamentsResponse.response.data ||
-    allTournamentsResponse.loading
-  ) {
+  if (isStillLoading([allTournamentsResponse])) {
     return <Loading />
   }
-  // Catch weird instances where we need to log out
-  if (allTournamentsResponse.response.status === 401) {
-    return <Navigate replace to="/logout/" />
-  }
 
-  const allTournaments = allTournamentsResponse.response.data
+  const allTournaments = allTournamentsResponse.response.data.names
 
   return (
     <BasicList

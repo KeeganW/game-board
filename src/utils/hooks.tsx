@@ -82,41 +82,60 @@ export function useLogout() {
   return useGetResponse<any>(url)
 }
 
-export function useGetGroup(groupPk?: string | number): FetchResponse {
+export function useGetGroup(
+  groupPk?: string | number,
+  params?: any
+): FetchResponse {
   const url = `/group/${groupPk || ''}`
-  return useGetResponse<GroupObjectLite>(url)
+  return useGetResponse<GroupObjectLite>(url, params)
 }
 
-export function useGetPlayer(playerPk?: string | number): FetchResponse {
+export function useGetPlayer(
+  playerPk?: string | number,
+  params?: any
+): FetchResponse {
   const url = `/player/${playerPk || ''}`
-  return useGetResponse<PlayerObjectFull>(url)
+  return useGetResponse<PlayerObjectFull>(url, params)
 }
 
-export function useGetGame(gamePk?: string | number): FetchResponse {
+export function useGetGame(
+  gamePk?: string | number,
+  params?: any
+): FetchResponse {
   const url = `/game/${gamePk || ''}`
-  return useGetResponse<GameObject>(url)
+  return useGetResponse<GameObject>(url, params)
 }
 
 export function useGetPlayerRank(
-  playerRankPk?: string | number
+  playerRankPk?: string | number,
+  params?: any
 ): FetchResponse {
   const url = `/player_rank/${playerRankPk || ''}`
-  return useGetResponse<PlayerRankObject>(url)
+  return useGetResponse<PlayerRankObject>(url, params)
 }
 
-export function useGetRound(roundPk?: string | number): FetchResponse {
+export function useGetRound(
+  roundPk?: string | number,
+  params?: any
+): FetchResponse {
   const url = `/round/${roundPk || ''}`
-  return useGetResponse<RoundObjectLite>(url)
+  return useGetResponse<RoundObjectLite>(url, params)
 }
 
-export function useGetGameRound(roundPk?: string | number): FetchResponse {
+export function useGetGameRound(
+  roundPk?: string | number,
+  params?: any
+): FetchResponse {
   const url = `/game_round/${roundPk || ''}`
-  return useGetResponse<RoundObject>(url)
+  return useGetResponse<RoundObject>(url, params)
 }
 
-export function useGetMatch(matchPk?: string | number): FetchResponse {
+export function useGetMatch(
+  matchPk?: string | number,
+  params?: any
+): FetchResponse {
   const url = `/bracket_match/${matchPk || ''}`
-  return useGetResponse<BracketMatchesObject>(url)
+  return useGetResponse<BracketMatchesObject>(url, params)
 }
 
 export function useGetTournamentMatches(
@@ -128,36 +147,43 @@ export function useGetTournamentMatches(
 }
 
 export function useGetTournament(
-  tournamentPk?: string | number
+  tournamentPk?: string | number,
+  params?: any
 ): FetchResponse {
   const url = `/tournament/${tournamentPk || ''}`
-  return useGetResponse<TournamentObject>(url)
+  return useGetResponse<TournamentObject>(url, params)
 }
 
-export function useGetPlayerStats(playerPk: string | number): FetchResponse {
+export function useGetPlayerStats(
+  playerPk: string | number,
+  params?: any
+): FetchResponse {
   const url = `/player_stats/${playerPk}`
-  return useGetResponse<PlayerStats>(url)
+  return useGetResponse<PlayerStats>(url, params)
 }
 
 export function useGetTournamentStats(
-  tournamentPk?: string | number
+  tournamentPk?: string | number,
+  params?: any
 ): FetchResponse {
   const url = `/tournament_stats/${tournamentPk || ''}`
-  return useGetResponse<TournamentStats>(url)
+  return useGetResponse<TournamentStats>(url, params)
 }
 
 export function useGetTournamentTeamColors(
-  tournamentPk?: string | number
+  tournamentPk?: string | number,
+  params?: any
 ): FetchResponse {
   const url = `/tournament_team_colors/${tournamentPk || ''}`
-  return useGetResponse<TournamentTeamColors>(url)
+  return useGetResponse<TournamentTeamColors>(url, params)
 }
 
 export function useGetTournamentNames(
-  tournamentPk?: string | number
+  tournamentPk?: string | number,
+  params?: any
 ): FetchResponse {
   const url = `/tournament_names/${tournamentPk || ''}`
-  return useGetResponse<TournamentNames>(url)
+  return useGetResponse<TournamentNames>(url, params)
 }
 
 export function useGetTournamentScores(
@@ -177,20 +203,25 @@ export function useGetTournamentSchedule(
 }
 
 export function useGetTournamentPlayers(
-  tournamentPk?: string | number
+  tournamentPk?: string | number,
+  params?: any
 ): FetchResponse {
   const url = `/tournament_players/${tournamentPk || ''}`
-  return useGetResponse<TournamentPlayers>(url)
+  return useGetResponse<TournamentPlayers>(url, params)
 }
 
 export function useGetTournamentInfo(
-  tournamentPk: string | number
+  tournamentPk: string | number,
+  params?: any
 ): FetchResponse {
   const url = `/tournament_info/${tournamentPk}`
-  return useGetResponse<TournamentObject>(url)
+  return useGetResponse<TournamentObject>(url, params)
 }
 
-export function useGetRecentRounds(groupPk?: string | number): FetchResponse {
+export function useGetRecentRounds(
+  groupPk?: string | number,
+  params?: any
+): FetchResponse {
   const url = `/recent_rounds/${groupPk || ''}`
-  return useGetResponse<RecentRounds>(url)
+  return useGetResponse<RecentRounds>(url, params)
 }
