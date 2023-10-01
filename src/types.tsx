@@ -32,6 +32,14 @@ export type GroupObject = {
   groupPicture: string
 }
 
+export type GroupObjectLite = {
+  pk: number
+  name: string
+  players: number[]
+  admins: number[]
+  groupPicture: string
+}
+
 export type PlayerObjectFull = {
   pk: number
   username: string
@@ -44,12 +52,10 @@ export type PlayerObjectFull = {
   primaryGroup: GroupObject
 }
 
-export type GroupObjectLite = {
-  pk: number
-  name: string
-  players: number[]
-  admins: number[]
-  groupPicture: string
+export type PlayerObjectExposed = {
+  username: string
+  firstName: string
+  lastName: string
 }
 
 export type PlayerRankObject = {
@@ -59,6 +65,12 @@ export type PlayerRankObject = {
   rank: number
   handicap: number
   tournamentHandicap: number
+}
+
+export type PlayerRankObjectExposed = {
+  player: string
+  score: number
+  rank: number
 }
 
 export type PlayerRankObjectLite = {
@@ -78,6 +90,14 @@ export type RoundObject = {
   group: GroupObject
 }
 
+export type RoundObjectExposed = {
+  pk: number
+  game: string
+  date: string
+  playerRanks: PlayerRankObjectExposed[]
+  group: string
+}
+
 export type RoundObjectLite = {
   pk: number
   game: number
@@ -90,6 +110,13 @@ export type BracketMatchesObject = {
   pk: number
   match: number
   round: RoundObject
+  teamGame: boolean
+  modifiedScoring: boolean
+}
+
+export type BracketMatchesObjectExposed = {
+  match: number
+  round: RoundObjectExposed
   teamGame: boolean
   modifiedScoring: boolean
 }
@@ -130,12 +157,40 @@ type TeamScores = {
   [team: string]: number
 }
 
-export type TournamentStats = {
+export type TournamentDifferentScores = {
   rawScoresByTeam: TeamScores
   scoresByTeam: TeamScores
-} & DetailResponse
+}
 
-export type TournamentTeamColors = Map<string, string> & DetailResponse
+export type TournamentStats = TournamentDifferentScores & DetailResponse
+
+export type TournamentTeamColors = Map<[team: string], [color: string]> &
+  DetailResponse
+
+export type TournamentNames = Map<[team: string], [color: string]> &
+  DetailResponse
+
+export type TournamentScores = Map<
+  [tournamentPk: string],
+  TournamentDifferentScores
+> &
+  DetailResponse
+
+export type TournamentSchedule = Map<
+  [tournamentPk: string],
+  [
+    tournament: Array<
+      [week: Array<[match: Array<BracketMatchesObjectExposed>]>]
+    >
+  ]
+> &
+  DetailResponse
+
+export type TournamentPlayers = Map<
+  [tournamentPk: string],
+  Map<[playerPk: string], PlayerObjectExposed>
+> &
+  DetailResponse
 
 export type RecentRounds = {
   recentRounds: RoundObject[]

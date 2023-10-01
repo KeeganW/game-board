@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { CSSProperties } from 'react'
 import { Col, Row } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 import moment from 'moment'
@@ -10,11 +10,13 @@ import { rankToScoreMap } from '../utils/helpers'
 export const RoundDisplay: React.FC<{
   children?: any
   roundObject: RoundObject
-  playerColorMapping?: Map<number, string>
+  playerColorMapping?: Map<number | string, string>
   showTournamentScores?: boolean
   modifiedScoring?: boolean
   teamGame?: boolean
   useUsernames?: boolean
+  usePlayer?: boolean
+  isSchedule?: boolean
 }> = ({
   children,
   roundObject,
@@ -23,12 +25,17 @@ export const RoundDisplay: React.FC<{
   modifiedScoring,
   teamGame,
   useUsernames,
+  usePlayer,
+  isSchedule,
 }) => {
   // Get the players and their scores/ranks listed out
   const roundScores = roundObject.playerRanks
     ?.sort((a: PlayerRankObject, b: PlayerRankObject) => a.rank - b.rank)
     .map((playerRankObject: PlayerRankObject) => {
-      const playerColor = playerColorMapping?.get(playerRankObject.player.pk)
+      const playerColor = playerColorMapping?.get(
+        playerRankObject.player.pk ||
+          (playerRankObject.player as unknown as string)
+      )
       let tooltip = `Base Score for Rank (${
         rankToScoreMap[playerRankObject.rank]
       }) + Player's Handicap (${playerRankObject.tournamentHandicap}) - Rank (${
@@ -49,47 +56,60 @@ export const RoundDisplay: React.FC<{
         tooltip = `( ${tooltip} ) * Modified Scoring (2)`
         score = (Number(score) * 2).toFixed(1)
       }
+      const borderHighlight: CSSProperties = {
+        borderBottomColor: playerColor,
+        borderBottomStyle: 'solid',
+        borderBottomWidth: '2px',
+      }
+      const totalHighlight: CSSProperties = {
+        backgroundColor: playerColor,
+        borderRadius: '0.25rem',
+      }
+      const isSchedulePlayerColor = playerColor ? totalHighlight : {}
+      const normalPlayerColor = playerColor ? borderHighlight : {}
+      const useUsernamesName = useUsernames
+        ? playerRankObject.player.username
+        : `${playerRankObject.player.firstName} ${playerRankObject.player.lastName}`
       return (
         <Row
           className="mb-1 link-color-fix justify-content-between"
-          style={
-            playerColor
-              ? {
-                  borderBottomColor: playerColor,
-                  borderBottomStyle: 'solid',
-                  borderBottomWidth: '2px',
-                }
-              : {}
-          }
+          style={isSchedule ? isSchedulePlayerColor : normalPlayerColor}
         >
-          <Col md="auto">
-            <span key={`${roundObject.pk}-${playerRankObject.player.username}`}>
-              <span style={{ fontWeight: 'bold' }}>
-                <HoverTooltip
-                  tooltip={playerRankObject.score}
-                  text={playerRankObject.rank}
-                />
-              </span>
-              {': '}
-              <Link to={`/player/${playerRankObject.player.pk}`}>
-                {useUsernames
-                  ? playerRankObject.player.username
-                  : `${playerRankObject.player.firstName} ${playerRankObject.player.lastName}`}
-              </Link>
-            </span>
-          </Col>
-          <Col md="auto">
-            {/* TODO(keegan): multiply by two for later weeks */}
-            <span key={`${roundObject.pk}-${playerRankObject.player.username}`}>
-              <span>
-                {showTournamentScores ? (
-                  <HoverTooltip tooltip={tooltip} text={score} />
-                ) : (
-                  playerRankObject.score
-                )}
-              </span>
-            </span>
-          </Col>
+          {isSchedule ? (
+            <div>{usePlayer ? playerRankObject.player : useUsernamesName}</div>
+          ) : (
+            <div>
+              <Col md="auto">
+                <span
+                  key={`${roundObject.pk}-${playerRankObject.player.username}`}
+                >
+                  <span style={{ fontWeight: 'bold' }}>
+                    <HoverTooltip
+                      tooltip={playerRankObject.score}
+                      text={playerRankObject.rank}
+                    />
+                  </span>
+                  {': '}
+                  <Link to={`/player/${playerRankObject.player.pk}`}>
+                    {usePlayer ? playerRankObject.player : useUsernamesName}
+                  </Link>
+                </span>
+              </Col>
+              <Col md="auto">
+                <span
+                  key={`${roundObject.pk}-${playerRankObject.player.username}`}
+                >
+                  <span>
+                    {showTournamentScores ? (
+                      <HoverTooltip tooltip={tooltip} text={score} />
+                    ) : (
+                      playerRankObject.score
+                    )}
+                  </span>
+                </span>
+              </Col>
+            </div>
+          )}
         </Row>
       )
     })
@@ -108,7 +128,7 @@ export const RoundDisplay: React.FC<{
 
   return (
     <CardDisplay
-      title={roundObject.game.name}
+      title={roundObject.game.name || roundObject.game}
       subtitle={dateWithTooltip}
       content={roundScoresLimited}
     >

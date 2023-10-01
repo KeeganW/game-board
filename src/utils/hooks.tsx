@@ -13,7 +13,11 @@ import {
   RoundObject,
   RoundObjectLite,
   TournamentMatches,
+  TournamentNames,
   TournamentObject,
+  TournamentPlayers,
+  TournamentSchedule,
+  TournamentScores,
   TournamentStats,
   TournamentTeamColors,
 } from 'src/types'
@@ -147,6 +151,36 @@ export function useGetTournamentTeamColors(
 ): FetchResponse {
   const url = `/tournament_team_colors/${tournamentPk || ''}`
   return useGetResponse<TournamentTeamColors>(url)
+}
+
+export function useGetTournamentNames(
+  tournamentPk?: string | number
+): FetchResponse {
+  const url = `/tournament_names/${tournamentPk || ''}`
+  return useGetResponse<TournamentNames>(url)
+}
+
+export function useGetTournamentScores(
+  tournamentPk?: string | number,
+  params?: any
+): FetchResponse {
+  const url = `/tournament_scores/${tournamentPk || ''}`
+  return useGetResponse<TournamentScores>(url, params)
+}
+
+export function useGetTournamentSchedule(
+  tournamentPk?: string | number,
+  params?: any
+): FetchResponse {
+  const url = `/tournament_schedule/${tournamentPk || ''}`
+  return useGetResponse<TournamentSchedule>(url, params)
+}
+
+export function useGetTournamentPlayers(
+  tournamentPk?: string | number
+): FetchResponse {
+  const url = `/tournament_players/${tournamentPk || ''}`
+  return useGetResponse<TournamentPlayers>(url)
 }
 
 export function useGetTournamentInfo(

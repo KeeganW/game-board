@@ -83,7 +83,11 @@ export const convertStatsToView = (
           </Row>
         ))
         return (
-          <Row key="rawScoresByTeam" className="text-center">
+          <Row
+            key="rawScoresByTeam"
+            className="text-center"
+            css="--bs-gutter-x: 0;"
+          >
             <h3>{title}</h3>
             {scoring}
           </Row>

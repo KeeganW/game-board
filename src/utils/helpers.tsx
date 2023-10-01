@@ -1,5 +1,9 @@
 import { useParams } from 'react-router-dom'
-import { TournamentObject, TournamentTeamColors } from 'src/types'
+import {
+  FetchResponse,
+  TournamentObject,
+  TournamentTeamColors,
+} from 'src/types'
 
 export const rankToScoreMap: { [key: number]: number } = {
   1: 9,
@@ -105,4 +109,17 @@ export const getTeamColorsMap = (
     teamColorMap.set(value[0], rgbToStyle(teamColorRGB))
   })
   return teamColorMap
+}
+
+export const isStillLoading = (fetchResponses: FetchResponse[]): boolean => {
+  let isLoading = false
+  fetchResponses.forEach((fetchResponse: FetchResponse) => {
+    isLoading =
+      !fetchResponse.response ||
+      !fetchResponse.response.data ||
+      fetchResponse.loading
+        ? true
+        : isLoading
+  })
+  return isLoading
 }

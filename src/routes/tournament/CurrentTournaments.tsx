@@ -1,17 +1,22 @@
 import React from 'react'
 import {
-  useGetTournament,
-  useGetTournamentStats,
+  useGetTournamentNames,
+  useGetTournamentSchedule,
+  useGetTournamentScores,
   useGetTournamentTeamColors,
 } from 'src/utils/hooks'
 import { Col, Container, Row } from 'react-bootstrap'
 import { Loading } from 'src/components/Loading'
 import {
   getTeamColorsMap,
+  isStillLoading,
   StringToStringMap,
   useParamsPk,
 } from 'src/utils/helpers'
 import { isArray } from 'lodash'
+import moment from 'moment'
+import { BracketMatchesObjectExposed } from 'src/types'
+import { RoundDisplay } from 'src/components/RoundDisplay'
 
 const ScoreboardForTournament: React.FC<{
   tournamentName: string
@@ -79,58 +84,114 @@ const ScoreboardForTournament: React.FC<{
   )
 }
 
+const ScheduleForTournament: React.FC<{
+  schedule: string[][][]
+  teamColorMapping: StringToStringMap
+}> = ({ schedule, teamColorMapping }) => {
+  // Loop through every part of the triple matrix in the bracket object
+  const results = schedule.map((week: string[][], weekIndex: number) => {
+    if (week && week.length > 0) {
+      const firstRound = (week[0] as any).round
+      if (
+        firstRound &&
+        moment(firstRound.date) < moment().add(5, 'days') &&
+        moment(firstRound.date) > moment().subtract(1, 'days')
+      ) {
+        const roundsForWeek = week.map((match: string[]) => {
+          const matchObject = match as unknown as BracketMatchesObjectExposed
+          if (isArray(match)) {
+            return <div />
+          }
+          return (
+            <Col>
+              <Row className="justify-content-center">
+                <RoundDisplay
+                  roundObject={matchObject.round as any}
+                  playerColorMapping={teamColorMapping}
+                  showTournamentScores={false}
+                  modifiedScoring={matchObject.modifiedScoring}
+                  teamGame={matchObject.teamGame}
+                  usePlayer
+                  isSchedule
+                />
+              </Row>
+            </Col>
+          )
+        })
+        return (
+          // eslint-disable-next-line react/no-array-index-key
+          <Row className="mb-3 justify-content-center" key={weekIndex}>
+            <h3 className="text-center">Week {weekIndex + 1}</h3>
+            {roundsForWeek}
+          </Row>
+        )
+      }
+    }
+    return undefined
+  })
+  return <Container>{results}</Container>
+}
+
 export const CurrentTournaments: React.FC = () => {
   const tournamentPk = useParamsPk()
 
-  const tournamentStatsResponse = useGetTournamentStats(tournamentPk)
   const tournamentTeamColorsResponse = useGetTournamentTeamColors(tournamentPk)
-  const allTournamentsResponse = useGetTournament(tournamentPk)
+  const tournamentNamesResponse = useGetTournamentNames(tournamentPk)
+  const tournamentScoresResponse = useGetTournamentScores(tournamentPk, {
+    completed: false,
+  })
+  const tournamentScheduleResponse = useGetTournamentSchedule(tournamentPk, {
+    completed: false,
+  })
 
   if (
-    !tournamentStatsResponse.response ||
-    !tournamentStatsResponse.response.data ||
-    tournamentStatsResponse.loading ||
-    !tournamentTeamColorsResponse.response ||
-    !tournamentTeamColorsResponse.response.data ||
-    tournamentTeamColorsResponse.loading ||
-    !allTournamentsResponse.response ||
-    !allTournamentsResponse.response.data ||
-    allTournamentsResponse.loading
+    isStillLoading([
+      tournamentTeamColorsResponse,
+      tournamentNamesResponse,
+      tournamentScoresResponse,
+      tournamentScheduleResponse,
+    ])
   ) {
     return <Loading />
   }
 
-  const tournamentStats = tournamentStatsResponse.response.data // Get actual stats
   const tournamentTeamColors = tournamentTeamColorsResponse.response.data // Get colors
-  const allTournaments = allTournamentsResponse.response.data // Get tournament name
+  const tournamentNames = tournamentNamesResponse.response.data // Get colors
+  const tournamentScores = tournamentScoresResponse.response.data // Get scores
+  const tournamentSchedule = tournamentScheduleResponse.response.data // Get schedule
 
-  if (isArray(allTournaments)) {
-    const allTournamentStats = []
-    for (let i = allTournaments.length - 1; i >= 0; i -= 1) {
-      const tournamentInfo = allTournaments[i]
-      const allTournamentPk = tournamentInfo.pk
-      const teamToColorMapping = getTeamColorsMap(
-        tournamentTeamColors[allTournamentPk]
-      )
-      allTournamentStats.push(
-        <ScoreboardForTournament
-          key={allTournamentPk}
-          tournamentName={tournamentInfo.name}
-          tournamentStats={tournamentStats[allTournamentPk]}
-          tournamentTeamColors={teamToColorMapping}
-        />
-      )
+  // const allTournamentScores: any[] = []
+  // Loop over all the tournaments provided
+  const allTournamentScores = Object.entries(tournamentScores).map(
+    (thisTournamentScoresFullObject: any) => {
+      const thisTournamentPk = thisTournamentScoresFullObject[0]
+      const thisTournamentScores = thisTournamentScoresFullObject[1]
+      if (thisTournamentPk !== 'detail') {
+        // Get the scores, colors, and name for this tournament
+        const teamToColorMapping = getTeamColorsMap(
+          tournamentTeamColors[thisTournamentPk]
+        )
+        const thisTournamentName = tournamentNames[thisTournamentPk]
+        const thisTournamentSchedule = tournamentSchedule[thisTournamentPk]
+
+        // Append all of this to an object to return
+        return (
+          <div>
+            <ScoreboardForTournament
+              key={thisTournamentPk}
+              tournamentName={thisTournamentName}
+              tournamentStats={thisTournamentScores}
+              tournamentTeamColors={teamToColorMapping}
+            />
+            <ScheduleForTournament
+              schedule={thisTournamentSchedule}
+              teamColorMapping={teamToColorMapping}
+            />
+          </div>
+        )
+      }
+      return undefined
     }
-    return <div>{allTournamentStats}</div>
-  }
-  // Get colors
-  const teamToColorMapping = getTeamColorsMap(tournamentTeamColors)
-
-  return (
-    <ScoreboardForTournament
-      tournamentName={allTournaments.name}
-      tournamentStats={tournamentStats}
-      tournamentTeamColors={teamToColorMapping}
-    />
   )
+  return <div>{allTournamentScores}</div>
 }
