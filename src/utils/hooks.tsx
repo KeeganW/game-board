@@ -12,6 +12,7 @@ import {
   RecentRounds,
   RoundObject,
   RoundObjectLite,
+  TournamentMatch,
   TournamentMatches,
   TournamentNames,
   TournamentObject,
@@ -208,6 +209,14 @@ export function useGetTournamentPlayers(
 ): FetchResponse {
   const url = `/tournament_players/${tournamentPk || ''}`
   return useGetResponse<TournamentPlayers>(url, params)
+}
+
+export function useGetTournamentMatch(
+  tournamentPk: string | number,
+  params?: any
+): FetchResponse {
+  const url = `/tournament_match/${tournamentPk}`
+  return useGetResponse<TournamentMatch>(url, params)
 }
 
 export function useGetTournamentInfo(

@@ -3,9 +3,8 @@ import { Button, Form } from 'react-bootstrap'
 import axios from 'src/axiosAuth'
 import {
   useGetGame,
-  useGetPlayer,
-  useGetTournamentInfo,
-  useUpdatePlayerInfo,
+  useGetTournamentMatch,
+  useGetTournamentPlayers,
 } from 'src/utils/hooks'
 import { RoundForm } from 'src/forms/RoundForm'
 import { CenteredPage } from 'src/components/CenteredPage'
@@ -16,47 +15,32 @@ import { Center, Title } from '@mantine/core'
 import { BracketMatchesObject, PlayerRankObject } from 'src/types'
 import { RoundDisplay } from 'src/components/RoundDisplay'
 import { notifications } from '@mantine/notifications'
+import { isStillLoading } from '../../utils/helpers'
 
 export const AddCurrentTournamentRound: React.FC<{
   tournamentPk: string
   matchPk: string
   submitterType: string
 }> = ({ tournamentPk, matchPk, submitterType }) => {
-  useUpdatePlayerInfo()
   const [roundAdded, setRoundAdded] = useState<number>(-1)
-
-  // Host will see all team names, and be asked to add a player for each team
-  // Consider that each team may have a sub, or may be a specific player we already know about
-  // Generate QR code once complete for users to submit honor
-
-  // Other people will be offered the game too, if they are not the host, they need to wait for host
-  // If host is done, then they see a form that just has the player names and scores, and hearts for honor
   // TODO(keegan): tournament setting for only a single point of honor
-  // Submit button at end submits honor + affirms scores
-
-  // Add this to round form:
-  // Did you enjoy this game? Thumbs up, Thumbs down
-  // On thumbs down, a text box offering "Please leave any feedback you have :)
-  // Add this to round form:
-  // Checkbox for no scores, only winners
-  // Changes form to be "please select winners"
+  //  Add this to round form:
+  //   Did you enjoy this game? Thumbs up, Thumbs down
+  //   On thumbs down, a text box offering "Please leave any feedback you have :)
+  //  Add this to round form:
+  //   Checkbox for no scores, only winners
+  //   Changes form to be "please select winners"
 
   // Get list of all games and players
-  const playersResponse = useGetPlayer()
+  const playersResponse = useGetTournamentPlayers(tournamentPk)
   const gamesResponse = useGetGame()
 
   // Then, let's get the tournament and match information for this current instance
-  const tournamentInfoResponse = useGetTournamentInfo(tournamentPk)
-  const tournamentInfo = tournamentInfoResponse.response?.data?.tournament
+  const tournamentMatchResponse = useGetTournamentMatch(matchPk)
+  const tournamentMatch = tournamentMatchResponse.response?.data
 
   // Let's get the relevant match and its info
-  const matchSearch =
-    tournamentInfo?.bracket?.matches?.filter(
-      (bracketMatch: BracketMatchesObject) =>
-        bracketMatch.pk === Number.parseInt(matchPk, 10)
-    ) || []
-  const match: BracketMatchesObject =
-    matchSearch.length > 0 ? matchSearch[0] : {}
+  const match: BracketMatchesObject = tournamentMatch?.[matchPk] || {}
   const playerRanks: PlayerRankObject[] = match?.round?.playerRanks
 
   // Get the current scores and ranks
@@ -87,23 +71,16 @@ export const AddCurrentTournamentRound: React.FC<{
   // Create a hook to update the form when the match finally loads
   useEffect(() => {
     form.setValues(initialValues.initialValues)
-  }, [tournamentInfo])
+    // form.setInitialValues(initialValues.initialValues)
+  }, [tournamentMatch])
 
   if (
-    !tournamentInfoResponse.response ||
-    !tournamentInfoResponse.response.data ||
-    tournamentInfoResponse.loading ||
-    !playersResponse.response ||
-    !playersResponse.response.data ||
-    playersResponse.loading ||
-    !gamesResponse.response ||
-    !gamesResponse.response.data ||
-    gamesResponse.loading
+    isStillLoading([playersResponse, gamesResponse, tournamentMatchResponse])
   ) {
     return <Loading />
   }
 
-  const players = playersResponse.response.data
+  const players = playersResponse.response.data[tournamentPk]
   const games = gamesResponse.response.data
 
   const handleOnSubmit = (data: any) => {

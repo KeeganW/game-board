@@ -203,6 +203,12 @@ export type TournamentPlayers = Map<
 > &
   DetailResponse
 
+export type TournamentMatch = Map<
+  [tournamentPk: string],
+  BracketMatchesObject
+> &
+  DetailResponse
+
 export type RecentRounds = {
   recentRounds: RoundObject[]
 } & DetailResponse
