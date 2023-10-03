@@ -70,6 +70,8 @@ export type PlayerRankObject = {
   player: PlayerObjectFull
   score: number
   rank: number
+  honor: number
+  validated: boolean
   handicap: number
   tournamentHandicap: number
 }

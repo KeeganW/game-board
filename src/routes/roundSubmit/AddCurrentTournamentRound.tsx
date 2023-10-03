@@ -45,9 +45,11 @@ export const AddCurrentTournamentRound: React.FC<{
 
   // Get the current scores and ranks
   const playerScores: any = {}
+  const playerValidations: any = {}
   const playerRankRanks: any = {}
   playerRanks?.forEach((value: PlayerRankObject) => {
     playerScores[`score-input-${value.player.username}`] = value.score
+    playerValidations[value.player.username] = value.validated
     playerRankRanks[`rank-input-${value.player.username}`] = value.rank
   })
 
@@ -132,6 +134,7 @@ export const AddCurrentTournamentRound: React.FC<{
             form={form}
             gameOptions={games}
             playerOptions={players}
+            playerValidations={playerValidations}
             hideRanksSubmission
           />
           <Button variant="primary" type="submit">
@@ -168,6 +171,7 @@ export const AddCurrentTournamentRound: React.FC<{
           form={form}
           gameOptions={games}
           playerOptions={players}
+          playerValidations={playerValidations}
           hideInstructions
           hideGameSubmission
           hideDateSubmission

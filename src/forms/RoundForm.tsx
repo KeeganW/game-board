@@ -19,6 +19,7 @@ export const RoundForm: React.FC<{
   form: any
   gameOptions: any
   playerOptions: any
+  playerValidations?: any
   hideInstructions?: boolean
   disableGameSubmission?: boolean
   disableDateSubmission?: boolean
@@ -35,6 +36,7 @@ export const RoundForm: React.FC<{
   form,
   gameOptions,
   playerOptions,
+  playerValidations,
   hideInstructions,
   disableGameSubmission,
   disableDateSubmission,
@@ -83,6 +85,19 @@ export const RoundForm: React.FC<{
   const selectedPlayerObjects = playerOptions?.filter(
     (value: PlayerObjectFull) => form.values.players.includes(value.username)
   )
+
+  const playerSubmitterOptions: any[] = []
+  const playerSubmitterOptionsAll: any[] = []
+  selectedPlayerObjects?.forEach((value: PlayerObjectFull) => {
+    const playerOption = {
+      value: value.username,
+      label: `${value.firstName} ${value.lastName}`,
+    }
+    if (playerValidations && !playerValidations[value.username]) {
+      playerSubmitterOptions.push(playerOption)
+    }
+    playerSubmitterOptionsAll.push(playerOption)
+  })
 
   // Return the actual form itself
   return (
@@ -150,10 +165,9 @@ export const RoundForm: React.FC<{
           label="Who are you?"
           disabled={disableSubmitterSubmission}
           data={
-            selectedPlayerObjects?.map((value: PlayerObjectFull) => ({
-              value: value.username,
-              label: `${value.firstName} ${value.lastName}`,
-            })) || []
+            playerSubmitterOptions.length > 0
+              ? playerSubmitterOptions
+              : playerSubmitterOptionsAll || []
           }
           {...form.getInputProps('submitter')}
         />
@@ -172,6 +186,7 @@ export const RoundForm: React.FC<{
             (value: PlayerObjectFull) => value.username === playerUsername
           )
           const playerObject = playerObjects ? playerObjects[0] : undefined
+          const playerIsSubmitter = playerUsername === form.values.submitter
 
           const heartIcon = (
             <IconHeartFilled
@@ -197,17 +212,19 @@ export const RoundForm: React.FC<{
                   : playerUsername}
               </Title>
 
-              <Center m="md">
-                <Switch
-                  size="sm"
-                  color="red"
-                  labelPosition="left"
-                  label="Sportsmanship"
-                  onLabel={heartIcon}
-                  offLabel={emptyHeartIcon}
-                  {...form.getInputProps(`honor-input-${playerUsername}`)}
-                />
-              </Center>
+              {playerIsSubmitter ? undefined : (
+                <Center m="md">
+                  <Switch
+                    size="sm"
+                    color="red"
+                    labelPosition="left"
+                    label="Sportsmanship"
+                    onLabel={heartIcon}
+                    offLabel={emptyHeartIcon}
+                    {...form.getInputProps(`honor-input-${playerUsername}`)}
+                  />
+                </Center>
+              )}
 
               {hideScoresSubmission ? undefined : (
                 <NumberInput

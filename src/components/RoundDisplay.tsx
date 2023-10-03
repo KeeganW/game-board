@@ -70,46 +70,38 @@ export const RoundDisplay: React.FC<{
       const useUsernamesName = useUsernames
         ? playerRankObject.player.username
         : `${playerRankObject.player.firstName} ${playerRankObject.player.lastName}`
-      return (
+      return isSchedule ? (
+        <div>{usePlayer ? playerRankObject.player : useUsernamesName}</div>
+      ) : (
         <Row
           className="mb-1 link-color-fix justify-content-between"
           style={isSchedule ? isSchedulePlayerColor : normalPlayerColor}
         >
-          {isSchedule ? (
-            <div>{usePlayer ? playerRankObject.player : useUsernamesName}</div>
-          ) : (
-            <div>
-              <Col md="auto">
-                <span
-                  key={`${roundObject.pk}-${playerRankObject.player.username}`}
-                >
-                  <span style={{ fontWeight: 'bold' }}>
-                    <HoverTooltip
-                      tooltip={playerRankObject.score}
-                      text={playerRankObject.rank}
-                    />
-                  </span>
-                  {': '}
-                  <Link to={`/player/${playerRankObject.player.pk}`}>
-                    {usePlayer ? playerRankObject.player : useUsernamesName}
-                  </Link>
-                </span>
-              </Col>
-              <Col md="auto">
-                <span
-                  key={`${roundObject.pk}-${playerRankObject.player.username}`}
-                >
-                  <span>
-                    {showTournamentScores ? (
-                      <HoverTooltip tooltip={tooltip} text={score} />
-                    ) : (
-                      playerRankObject.score
-                    )}
-                  </span>
-                </span>
-              </Col>
-            </div>
-          )}
+          <Col md="auto">
+            <span key={`${roundObject.pk}-${playerRankObject.player.username}`}>
+              <span style={{ fontWeight: 'bold' }}>
+                <HoverTooltip
+                  tooltip={playerRankObject.score}
+                  text={playerRankObject.rank}
+                />
+              </span>
+              {': '}
+              <Link to={`/player/${playerRankObject.player.pk}`}>
+                {usePlayer ? playerRankObject.player : useUsernamesName}
+              </Link>
+            </span>
+          </Col>
+          <Col md="auto">
+            <span key={`${roundObject.pk}-${playerRankObject.player.username}`}>
+              <span>
+                {showTournamentScores ? (
+                  <HoverTooltip tooltip={tooltip} text={score} />
+                ) : (
+                  playerRankObject.score
+                )}
+              </span>
+            </span>
+          </Col>
         </Row>
       )
     })
