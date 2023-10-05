@@ -71,7 +71,14 @@ export const RoundDisplay: React.FC<{
         ? playerRankObject.player.username
         : `${playerRankObject.player.firstName} ${playerRankObject.player.lastName}`
       return isSchedule ? (
-        <div>{usePlayer ? playerRankObject.player : useUsernamesName}</div>
+        <Row
+          className="mb-1 link-color-fix justify-content-between"
+          style={isSchedule ? isSchedulePlayerColor : normalPlayerColor}
+        >
+          <Col md="auto">
+            {usePlayer ? playerRankObject.player : useUsernamesName}
+          </Col>
+        </Row>
       ) : (
         <Row
           className="mb-1 link-color-fix justify-content-between"
