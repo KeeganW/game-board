@@ -34,7 +34,7 @@ export const MatchList: React.FC<{
           if (
             firstRound &&
             moment(firstRound.date) < moment().add(5, 'days') &&
-            moment(firstRound.date) > moment().subtract(1, 'days')
+            moment(firstRound.date) > moment().subtract(2, 'days')
           ) {
             week.forEach((match: string[]) => {
               const matchObject =

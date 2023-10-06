@@ -94,7 +94,7 @@ const ScheduleForTournament: React.FC<{
       const firstRound = (week[0] as any).round
       if (
         firstRound &&
-        moment(firstRound.date) < moment().add(5, 'days') &&
+        moment(firstRound.date) < moment().add(6, 'days') &&
         moment(firstRound.date) > moment().subtract(1, 'days')
       ) {
         const roundsForWeek = week.map((match: string[]) => {
@@ -102,6 +102,7 @@ const ScheduleForTournament: React.FC<{
           if (isArray(match)) {
             return <div />
           }
+          const isSchedule = matchObject?.round?.playerRanks?.[0]?.rank === 0
           return (
             <Col>
               <Row className="justify-content-center">
@@ -112,7 +113,7 @@ const ScheduleForTournament: React.FC<{
                   modifiedScoring={matchObject.modifiedScoring}
                   teamGame={matchObject.teamGame}
                   usePlayer
-                  isSchedule
+                  isSchedule={isSchedule}
                 />
               </Row>
             </Col>
