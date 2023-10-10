@@ -10,7 +10,7 @@ import { rankToScoreMap } from '../utils/helpers'
 export const RoundDisplay: React.FC<{
   children?: any
   roundObject: RoundObject
-  playerColorMapping?: Map<number | string, string>
+  teamColorMapping?: Map<number | string, string>
   showTournamentScores?: boolean
   modifiedScoring?: boolean
   teamGame?: boolean
@@ -20,7 +20,7 @@ export const RoundDisplay: React.FC<{
 }> = ({
   children,
   roundObject,
-  playerColorMapping,
+  teamColorMapping,
   showTournamentScores,
   modifiedScoring,
   teamGame,
@@ -32,9 +32,8 @@ export const RoundDisplay: React.FC<{
   const roundScores = roundObject.playerRanks
     ?.sort((a: PlayerRankObject, b: PlayerRankObject) => a.rank - b.rank)
     .map((playerRankObject: PlayerRankObject) => {
-      const playerColor = playerColorMapping?.get(
-        playerRankObject.player.pk ||
-          (playerRankObject.player as unknown as string)
+      const playerColor = teamColorMapping?.get(
+        playerRankObject.representing.name
       )
       let tooltip = `Base Score for Rank (${
         rankToScoreMap[playerRankObject.rank]

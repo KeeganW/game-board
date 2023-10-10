@@ -177,7 +177,7 @@ export const convertBracketToView = (
             <Row className="justify-content-center">
               <RoundDisplay
                 roundObject={tournamentRound}
-                playerColorMapping={playerColorMapping}
+                teamColorMapping={teamColorMapping}
                 showTournamentScores={false}
                 // TODO: Disable showing score breakdown except by admins
                 // showTournamentScores={true}
@@ -195,7 +195,7 @@ export const convertBracketToView = (
             <Row className="justify-content-center">
               <RoundDisplay
                 roundObject={tournamentRound}
-                playerColorMapping={playerColorMapping}
+                teamColorMapping={teamColorMapping}
                 showTournamentScores={false}
                 // TODO: Disable showing score breakdown except by admins
                 // showTournamentScores={true}

@@ -9,14 +9,6 @@ export const PlayerQuickLook: React.FC<{
     <Row>
       <Col>
         <Row>
-          <h5>Most Played Game</h5>
-        </Row>
-        <Row>
-          <div>{playerStatsInfo.mostPlayedGame.name}</div>
-        </Row>
-      </Col>
-      <Col>
-        <Row>
           <h5>Number of Games Played</h5>
         </Row>
         <Row>

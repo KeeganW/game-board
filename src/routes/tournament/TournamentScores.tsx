@@ -161,7 +161,7 @@ export const convertBracketToView = (
             <Row className="justify-content-center">
               <RoundDisplay
                 roundObject={tournamentRound}
-                playerColorMapping={playerColorMapping}
+                teamColorMapping={teamColorMapping}
                 showTournamentScores
               />
             </Row>

@@ -55,7 +55,6 @@ export type PlayerObjectFull = {
   dateOfBirth: string
   profileImage: string
   favoriteGames: GameObject[]
-  mostPlayedGame: GameObject
   primaryGroup: GroupObject
 }
 
@@ -68,6 +67,7 @@ export type PlayerObjectExposed = {
 export type PlayerRankObject = {
   pk: number
   player: PlayerObjectFull
+  representing: TeamObject
   score: number
   rank: number
   honor: number
@@ -158,7 +158,6 @@ export type TournamentObject = {
 export type PlayerStats = {
   numberGamesPlayed: number
   favoriteGames: GameObject[]
-  mostPlayedGame: GameObject
   lastGamesPlayed: RoundObject[]
 } & DetailResponse
 

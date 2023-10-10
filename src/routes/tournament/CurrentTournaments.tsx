@@ -108,7 +108,7 @@ const ScheduleForTournament: React.FC<{
               <Row className="justify-content-center">
                 <RoundDisplay
                   roundObject={matchObject.round as any}
-                  playerColorMapping={teamColorMapping}
+                  teamColorMapping={teamColorMapping}
                   showTournamentScores={false}
                   modifiedScoring={matchObject.modifiedScoring}
                   teamGame={matchObject.teamGame}
