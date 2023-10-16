@@ -5,6 +5,9 @@ import {
   useGetGame,
   useGetTournamentMatch,
   useGetTournamentPlayers,
+  useGetTournamentSchedule,
+  useGetTournamentTeamColors,
+  useGetTournamentTeamPlayers,
 } from 'src/utils/hooks'
 import { RoundForm } from 'src/forms/RoundForm'
 import { CenteredPage } from 'src/components/CenteredPage'
@@ -15,7 +18,11 @@ import { Center, Title } from '@mantine/core'
 import { BracketMatchesObject, PlayerRankObject } from 'src/types'
 import { RoundDisplay } from 'src/components/RoundDisplay'
 import { notifications } from '@mantine/notifications'
-import { isStillLoading } from '../../utils/helpers'
+import {
+  getTeamColorsMap,
+  isStillLoading,
+  SMALL_WIDTH,
+} from 'src/utils/helpers'
 
 export const AddCurrentTournamentRound: React.FC<{
   tournamentPk: string
@@ -35,6 +42,14 @@ export const AddCurrentTournamentRound: React.FC<{
   const playersResponse = useGetTournamentPlayers(tournamentPk)
   const gamesResponse = useGetGame()
 
+  // Lets get other relevant info
+  const tournamentTeamPlayersResponse =
+    useGetTournamentTeamPlayers(tournamentPk)
+  const tournamentScheduleResponse = useGetTournamentSchedule(tournamentPk, {
+    completed: false,
+  })
+  const tournamentTeamColorsResponse = useGetTournamentTeamColors(tournamentPk)
+
   // Then, let's get the tournament and match information for this current instance
   const tournamentMatchResponse = useGetTournamentMatch(matchPk)
   const tournamentMatch = tournamentMatchResponse.response?.data
@@ -47,10 +62,13 @@ export const AddCurrentTournamentRound: React.FC<{
   const playerScores: any = {}
   const playerValidations: any = {}
   const playerRankRanks: any = {}
+  const playerRankRepresenting: any = {}
   playerRanks?.forEach((value: PlayerRankObject) => {
     playerScores[`score-input-${value.player.username}`] = value.score
     playerValidations[value.player.username] = value.validated
     playerRankRanks[`rank-input-${value.player.username}`] = value.rank
+    playerRankRepresenting[`representing-input-${value.player.username}`] =
+      value.representing?.name
   })
 
   // Create an object with all our initial values, or defaults
@@ -65,6 +83,7 @@ export const AddCurrentTournamentRound: React.FC<{
       submitter: '',
       ...playerScores,
       ...playerRankRanks,
+      ...playerRankRepresenting,
     },
   }
 
@@ -77,13 +96,27 @@ export const AddCurrentTournamentRound: React.FC<{
   }, [tournamentMatch])
 
   if (
-    isStillLoading([playersResponse, gamesResponse, tournamentMatchResponse])
+    isStillLoading([
+      playersResponse,
+      gamesResponse,
+      tournamentTeamPlayersResponse,
+      tournamentMatchResponse,
+      tournamentScheduleResponse,
+      tournamentTeamColorsResponse,
+    ])
   ) {
     return <Loading />
   }
 
   const players = playersResponse.response.data[tournamentPk]
   const games = gamesResponse.response.data
+  const tournamentTeamPlayers =
+    tournamentTeamPlayersResponse.response.data[tournamentPk]
+  const tournamentSchedule =
+    tournamentScheduleResponse.response.data[tournamentPk]
+  const tournamentTeamColors =
+    tournamentTeamColorsResponse.response.data[tournamentPk]
+  const teamToColorMapping = getTeamColorsMap(tournamentTeamColors)
 
   const handleOnSubmit = (data: any) => {
     // Get our objects
@@ -99,7 +132,8 @@ export const AddCurrentTournamentRound: React.FC<{
           title: 'Submission Error',
           message:
             // eslint-disable-next-line no-underscore-dangle
-            res.response.data?.errors?.__all__ || 'General error on this page.',
+            res.response.data?.errors?.__all__ ||
+            'Error submitting this round.',
         })
       })
   }
@@ -107,7 +141,7 @@ export const AddCurrentTournamentRound: React.FC<{
   if (roundAdded && roundAdded >= 0) {
     // TODO(keegan): provide a link to round (`/round/${roundAdded}`), and a link to tournament
     return (
-      <CenteredPage pageWidth={600}>
+      <CenteredPage>
         <Title m="lg">
           Please have everyone at the table submit their sportsmanship scores!
         </Title>
@@ -119,7 +153,7 @@ export const AddCurrentTournamentRound: React.FC<{
   }
   if (submitterType === 'h') {
     return (
-      <CenteredPage pageWidth={300}>
+      <CenteredPage pageWidth={SMALL_WIDTH}>
         <Form
           onSubmit={form.onSubmit((values: any) =>
             handleOnSubmit({
@@ -134,29 +168,35 @@ export const AddCurrentTournamentRound: React.FC<{
             form={form}
             gameOptions={games}
             playerOptions={players}
+            matchPk={matchPk}
             playerValidations={playerValidations}
+            tournamentTeamPlayers={tournamentTeamPlayers}
+            tournamentSchedule={tournamentSchedule}
             hideRanksSubmission
           />
-          <Button variant="primary" type="submit">
-            Submit Scores
-          </Button>
+          <Center>
+            <Button variant="primary" type="submit">
+              Submit Scores
+            </Button>
+          </Center>
         </Form>
       </CenteredPage>
     )
   }
   if (match?.round?.playerRanks?.length === 0) {
     return (
-      <CenteredPage pageWidth={300}>
+      <CenteredPage pageWidth={SMALL_WIDTH}>
         <Title>Please wait for the host to submit scores</Title>
       </CenteredPage>
     )
   }
   return (
-    <CenteredPage pageWidth={300}>
+    <CenteredPage pageWidth={SMALL_WIDTH}>
       <Title>Please validate the following scores</Title>
-      <Center>
-        <RoundDisplay roundObject={match?.round} />
-      </Center>
+      <RoundDisplay
+        roundObject={match?.round}
+        teamColorMapping={teamToColorMapping}
+      />
       <Form
         onSubmit={form.onSubmit((values: any) =>
           handleOnSubmit({
@@ -171,17 +211,24 @@ export const AddCurrentTournamentRound: React.FC<{
           form={form}
           gameOptions={games}
           playerOptions={players}
+          matchPk={matchPk}
           playerValidations={playerValidations}
+          tournamentTeamPlayers={tournamentTeamPlayers}
+          tournamentSchedule={tournamentSchedule}
           hideInstructions
+          hideSubstituteWarning
           hideGameSubmission
           hideDateSubmission
           hidePlayersSubmission
           hideRanksSubmission
           hideScoresSubmission
+          hideRepresentingSubmission
         />
-        <Button variant="primary" type="submit">
-          Validate Scores
-        </Button>
+        <Center>
+          <Button variant="primary" type="submit">
+            Validate Scores
+          </Button>
+        </Center>
       </Form>
     </CenteredPage>
   )

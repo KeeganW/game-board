@@ -1,11 +1,10 @@
-import React, { CSSProperties } from 'react'
-import { Col, Row } from 'react-bootstrap'
-import { Link } from 'react-router-dom'
+import React from 'react'
 import moment from 'moment'
-import { PlayerRankObject, RoundObject } from '../types'
-import { HoverTooltip } from './HoverTooltip'
-import { CardDisplay } from './CardDisplay'
-import { rankToScoreMap } from '../utils/helpers'
+import { PlayerRankObject, RoundObject } from 'src/types'
+import { HoverTooltip } from 'src/components/HoverTooltip'
+import { CardDisplay } from 'src/components/CardDisplay'
+import { PlayerRankDisplay } from 'src/components/PlayerRankDisplay'
+import { RowDisplay } from 'src/components/RowDisplay'
 
 export const RoundDisplay: React.FC<{
   children?: any
@@ -32,94 +31,36 @@ export const RoundDisplay: React.FC<{
   const roundScores = roundObject.playerRanks
     ?.sort((a: PlayerRankObject, b: PlayerRankObject) => a.rank - b.rank)
     .map((playerRankObject: PlayerRankObject) => {
-      const playerColor = teamColorMapping?.get(
-        playerRankObject.representing.name
-      )
-      let tooltip = `Base Score for Rank (${
-        rankToScoreMap[playerRankObject.rank]
-      }) + Player's Handicap (${playerRankObject.tournamentHandicap}) - Rank (${
-        playerRankObject.rank
-      })`
-      let score = (
-        rankToScoreMap[playerRankObject.rank] +
-        playerRankObject.tournamentHandicap -
-        playerRankObject.rank
-      ).toFixed(1)
-      if (teamGame) {
-        tooltip = `Base Score for Rank (${
-          rankToScoreMap[playerRankObject.rank]
-        })`
-        score = `${rankToScoreMap[playerRankObject.rank]}`
-      }
-      if (modifiedScoring) {
-        tooltip = `( ${tooltip} ) * Modified Scoring (2)`
-        score = (Number(score) * 2).toFixed(1)
-      }
-      const borderHighlight: CSSProperties = {
-        borderBottomColor: playerColor,
-        borderBottomStyle: 'solid',
-        borderBottomWidth: '2px',
-      }
-      const totalHighlight: CSSProperties = {
-        backgroundColor: playerColor,
-        borderRadius: '0.25rem',
-      }
-      const isSchedulePlayerColor = playerColor ? totalHighlight : {}
-      const normalPlayerColor = playerColor ? borderHighlight : {}
-      const useUsernamesName = useUsernames
-        ? playerRankObject.player.username
-        : `${playerRankObject.player.firstName} ${playerRankObject.player.lastName}`
-      return isSchedule ? (
-        <Row
-          className="mb-1 link-color-fix justify-content-between"
-          style={isSchedule ? isSchedulePlayerColor : normalPlayerColor}
-        >
-          <Col md="auto">
-            {usePlayer ? playerRankObject.player : useUsernamesName}
-          </Col>
-        </Row>
-      ) : (
-        <Row
-          className="mb-1 link-color-fix justify-content-between"
-          style={isSchedule ? isSchedulePlayerColor : normalPlayerColor}
-        >
-          <Col md="auto">
-            <span key={`${roundObject.pk}-${playerRankObject.player.username}`}>
-              <span style={{ fontWeight: 'bold' }}>
-                <HoverTooltip
-                  tooltip={playerRankObject.score}
-                  text={playerRankObject.rank}
-                />
-              </span>
-              {': '}
-              <Link to={`/player/${playerRankObject.player.pk}`}>
-                {usePlayer ? playerRankObject.player : useUsernamesName}
-              </Link>
-            </span>
-          </Col>
-          <Col md="auto">
-            <span key={`${roundObject.pk}-${playerRankObject.player.username}`}>
-              <span>
-                {showTournamentScores ? (
-                  <HoverTooltip tooltip={tooltip} text={score} />
-                ) : (
-                  playerRankObject.score
-                )}
-              </span>
-            </span>
-          </Col>
-        </Row>
+      return (
+        <PlayerRankDisplay
+          playerRankObject={playerRankObject}
+          teamColorMapping={teamColorMapping}
+          showTournamentScores={showTournamentScores}
+          modifiedScoring={modifiedScoring}
+          teamGame={teamGame}
+          useUsernames={useUsernames}
+          usePlayer={usePlayer}
+          isSchedule={isSchedule}
+        />
       )
     })
 
-  const roundMoment = moment(roundObject.date)
+  const playerRanksHeader = (
+    <RowDisplay
+      rank={<HoverTooltip tooltip="Rank" text="R" />}
+      player="Player"
+      score={<HoverTooltip tooltip="Score" text="S" />}
+    />
+  )
+
+  const roundMoment = moment(roundObject.date).set('hours', 19)
   const dateFromNow = roundMoment.fromNow()
   const datePretty = roundMoment.format('LL')
   const dateWithTooltip = (
     <HoverTooltip tooltip={datePretty} text={dateFromNow} />
   )
 
-  const roundScoresLimited = roundScores
+  const roundScoresWithHeader = [playerRanksHeader, ...roundScores]
   // roundScores.length > 4
   //   ? [...roundScores.slice(0, 3), `and ${roundScores.length - 3} more...`]
   //   : roundScores
@@ -128,7 +69,7 @@ export const RoundDisplay: React.FC<{
     <CardDisplay
       title={roundObject.game.name}
       subtitle={dateWithTooltip}
-      content={roundScoresLimited}
+      content={isSchedule ? roundScores : roundScoresWithHeader}
     >
       {children}
     </CardDisplay>

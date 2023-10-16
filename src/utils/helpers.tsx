@@ -12,6 +12,8 @@ export const rankToScoreMap: { [key: number]: number } = {
   4: 3,
 }
 
+export const SMALL_WIDTH = 330
+
 /**
  * Capitalizes any given string.
  *

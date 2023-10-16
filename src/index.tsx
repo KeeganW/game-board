@@ -3,6 +3,8 @@ import { render } from 'react-dom'
 import { Routes, Route, HashRouter, Navigate } from 'react-router-dom'
 // eslint-disable-next-line import/no-unresolved
 import '@mantine/core/styles.css'
+// eslint-disable-next-line import/no-unresolved
+import '@mantine/notifications/styles.css'
 
 import 'src/index.css'
 import { App } from 'src/App'
@@ -31,10 +33,7 @@ const theme = createTheme({
 })
 render(
   <MantineProvider theme={theme}>
-    <Notifications
-      zIndex={1000}
-      style={{ position: 'absolute', top: '60px', left: '0px' }}
-    />
+    <Notifications />
     <HashRouter>
       <Routes>
         <Route path="/" element={<App />}>

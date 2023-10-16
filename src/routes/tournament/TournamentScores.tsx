@@ -35,7 +35,6 @@ const rgbToStyle = (rgbValue: RGBValue): string =>
   `rgb(${rgbValue.r},${rgbValue.g},${rgbValue.b},0.5)`
 
 type StringToStringMap = Map<string, string>
-type NumberToStringMap = Map<number, string>
 
 const getTeamColors = (tournamentInfo: TournamentObject): StringToStringMap => {
   const teamColorMap = new Map<string, string>()
@@ -44,19 +43,6 @@ const getTeamColors = (tournamentInfo: TournamentObject): StringToStringMap => {
     teamColorMap.set(team.name, rgbToStyle(teamColorRGB))
   })
   return teamColorMap
-}
-
-const getPlayerColors = (
-  tournamentInfo: TournamentObject
-): NumberToStringMap => {
-  const playerColorMap = new Map<number, string>()
-  tournamentInfo.bracket.teams.forEach(team => {
-    const teamColorRGB = hexToRGB(team.color)
-    team.players.forEach(player => {
-      playerColorMap.set(player.pk, rgbToStyle(teamColorRGB))
-    })
-  })
-  return playerColorMap
 }
 
 export const convertStatsToView = (
@@ -105,8 +91,7 @@ export const convertStatsToView = (
 export const convertBracketToView = (
   bracket: string[][][],
   tournament: TournamentObject,
-  teamColorMapping: StringToStringMap,
-  playerColorMapping: NumberToStringMap
+  teamColorMapping: StringToStringMap
 ) => {
   // Find all team related information for quick access later
   const tournamentTeams = tournament.bracket.teams.sort(
@@ -228,7 +213,6 @@ export const TournamentDetails: React.FC = () => {
   const tournamentStats = tournamentStatsResponse.response.data
 
   const teamToColorMapping = getTeamColors(tournamentInfo)
-  const playerToColorMapping = getPlayerColors(tournamentInfo)
 
   const convertedBracket = !tournamentInfo ? (
     <Loading />
@@ -236,8 +220,7 @@ export const TournamentDetails: React.FC = () => {
     convertBracketToView(
       tournamentInfoBracket,
       tournamentInfo,
-      teamToColorMapping,
-      playerToColorMapping
+      teamToColorMapping
     )
   )
   const convertedStats = !tournamentStats ? (

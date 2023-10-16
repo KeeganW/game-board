@@ -6,6 +6,7 @@ import { Navigate } from 'react-router-dom'
 import { AuthContext } from 'src/Context'
 import { CenteredPage } from 'src/components/CenteredPage'
 import { notifications } from '@mantine/notifications'
+import { SMALL_WIDTH } from 'src/utils/helpers'
 
 export const Login: React.FC = () => {
   const { register, handleSubmit } = useForm()
@@ -73,7 +74,7 @@ export const Login: React.FC = () => {
   }
 
   return (
-    <CenteredPage pageWidth={300}>
+    <CenteredPage pageWidth={SMALL_WIDTH}>
       <Form onSubmit={handleSubmit(handleOnSubmit)}>
         <Form.Group className="mb-3" controlId="formBasicEmail">
           <Form.Label>Username</Form.Label>

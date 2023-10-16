@@ -10,6 +10,7 @@ import { getTokens } from 'src/utils/localStorageService'
 import { Loading } from 'src/components/Loading'
 import { useForm } from '@mantine/form'
 import { Checkbox, NumberInput } from '@mantine/core'
+import { SMALL_WIDTH } from 'src/utils/helpers'
 
 export const AddMatch: React.FC = () => {
   useUpdatePlayerInfo()
@@ -97,7 +98,7 @@ export const AddMatch: React.FC = () => {
     return <div>Please find this page through your associated tournament.</div>
   }
   return (
-    <CenteredPage pageWidth={300}>
+    <CenteredPage pageWidth={SMALL_WIDTH}>
       <Form
         onSubmit={form.onSubmit((values: any) =>
           handleOnSubmit({

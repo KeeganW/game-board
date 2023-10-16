@@ -5,6 +5,7 @@ import axios from 'src/axiosAuth'
 import { Navigate, useParams } from 'react-router-dom'
 import { CenteredPage } from 'src/components/CenteredPage'
 import { Title } from '@mantine/core'
+import { SMALL_WIDTH } from 'src/utils/helpers'
 
 export const ResetPassword: React.FC = () => {
   const { register, handleSubmit } = useForm()
@@ -30,13 +31,13 @@ export const ResetPassword: React.FC = () => {
   if (usernameSafe && tokenSafe) {
     if (passwordResetSent) {
       return (
-        <CenteredPage pageWidth={300}>
+        <CenteredPage pageWidth={SMALL_WIDTH}>
           <Navigate replace to="/login/" />
         </CenteredPage>
       )
     }
     return (
-      <CenteredPage pageWidth={300}>
+      <CenteredPage pageWidth={SMALL_WIDTH}>
         <Form onSubmit={handleSubmit(handleOnSubmit)}>
           <Form.Group className="mb-3" controlId="formHidden">
             <Form.Control
@@ -78,13 +79,13 @@ export const ResetPassword: React.FC = () => {
   }
   if (passwordResetSent) {
     return (
-      <CenteredPage pageWidth={300}>
+      <CenteredPage pageWidth={SMALL_WIDTH}>
         <Title>Please ask @0mni on discord for the password reset link!</Title>
       </CenteredPage>
     )
   }
   return (
-    <CenteredPage pageWidth={300}>
+    <CenteredPage pageWidth={SMALL_WIDTH}>
       <Form onSubmit={handleSubmit(handleOnSubmit)}>
         <Form.Group className="mb-3" controlId="formBasicEmail">
           <Form.Label>Username</Form.Label>

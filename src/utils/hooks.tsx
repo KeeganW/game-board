@@ -21,6 +21,7 @@ import {
   TournamentScores,
   TournamentStats,
   TournamentTeamColors,
+  TournamentTeamPlayers,
 } from 'src/types'
 import useAxios from 'src/useAxios'
 import { setUserState } from './localStorageService'
@@ -209,6 +210,14 @@ export function useGetTournamentPlayers(
 ): FetchResponse {
   const url = `/tournament_players/${tournamentPk || ''}`
   return useGetResponse<TournamentPlayers>(url, params)
+}
+
+export function useGetTournamentTeamPlayers(
+  tournamentPk?: string | number,
+  params?: any
+): FetchResponse {
+  const url = `/tournament_team_players/${tournamentPk || ''}`
+  return useGetResponse<TournamentTeamPlayers>(url, params)
 }
 
 export function useGetTournamentMatch(

@@ -3,13 +3,14 @@ import { GameObject, PlayerObjectFull, PlayerObjectLite } from 'src/types'
 import {
   MultiSelect,
   NumberInput,
-  Paper,
   Select,
   Title,
   Text,
   Switch,
   rem,
   Center,
+  Card,
+  Divider,
 } from '@mantine/core'
 import { DateInput } from '@mantine/dates'
 import { clone } from 'lodash'
@@ -19,36 +20,49 @@ export const RoundForm: React.FC<{
   form: any
   gameOptions: any
   playerOptions: any
+  matchPk?: any
   playerValidations?: any
+  tournamentTeamPlayers?: any
+  tournamentSchedule?: any
+  // Handle hides and disables
   hideInstructions?: boolean
+  hideSubstituteWarning?: boolean
   disableGameSubmission?: boolean
   disableDateSubmission?: boolean
   disablePlayersSubmission?: boolean
   disableSubmitterSubmission?: boolean
   disableRanksSubmission?: boolean
   disableScoresSubmission?: boolean
+  disableRepresentingSubmission?: boolean
   hideGameSubmission?: boolean
   hideDateSubmission?: boolean
   hidePlayersSubmission?: boolean
   hideRanksSubmission?: boolean
   hideScoresSubmission?: boolean
+  hideRepresentingSubmission?: boolean
 }> = ({
   form,
   gameOptions,
   playerOptions,
+  matchPk,
   playerValidations,
+  tournamentTeamPlayers,
+  tournamentSchedule,
   hideInstructions,
+  hideSubstituteWarning,
   disableGameSubmission,
   disableDateSubmission,
   disablePlayersSubmission,
   disableSubmitterSubmission,
   disableRanksSubmission,
   disableScoresSubmission,
+  disableRepresentingSubmission,
   hideGameSubmission,
   hideDateSubmission,
   hidePlayersSubmission,
   hideRanksSubmission,
   hideScoresSubmission,
+  hideRepresentingSubmission,
 }) => {
   // Search trackers
   const [searchGame, onSearchGameChange] = useState('')
@@ -82,19 +96,68 @@ export const RoundForm: React.FC<{
     }
   }
 
+  // Loop over the player possibilities to get the list of selected ones.
   const selectedPlayerObjects = playerOptions?.filter(
     (value: PlayerObjectFull) => form.values.players.includes(value.username)
   )
 
-  const playerSubmitterOptions: any[] = []
+  // Get the teams playing for this scheduled game
+  const scheduledTeams: string[] = []
+  if (tournamentSchedule) {
+    tournamentSchedule.forEach((week: any[]) => {
+      week.forEach((match: any) => {
+        if (match.pk && match.pk.toString() === matchPk) {
+          const scheduledPlayerRanks = match.round.playerRanks || []
+          scheduledPlayerRanks.forEach((playerRank: any) =>
+            scheduledTeams.push(playerRank.player)
+          )
+        }
+      })
+    })
+  }
+
+  // Use the amount of players for ranks
+  const ranks: string[] = []
+  for (let i = 0; i < form.values.players.length; i += 1) {
+    ranks.push(`${i + 1}`)
+  }
+
+  // Maintain a list of players who still need to submit validation
+  const playersWhoNeedToValidate: any[] = []
   const playerSubmitterOptionsAll: any[] = []
-  selectedPlayerObjects?.forEach((value: PlayerObjectFull) => {
-    const playerOption = {
-      value: value.username,
-      label: `${value.firstName} ${value.lastName}`,
+  // Get all the players possible for submitter options.
+  selectedPlayerObjects?.forEach((selectedPlayer: PlayerObjectFull) => {
+    const selectedPlayerUsername: string = selectedPlayer.username
+
+    // Get the team that this selected player is on
+    let selectedPlayerTeam: string | undefined
+    if (
+      tournamentTeamPlayers &&
+      tournamentTeamPlayers[selectedPlayerUsername]
+    ) {
+      selectedPlayerTeam = tournamentTeamPlayers[selectedPlayerUsername]
     }
-    if (playerValidations && !playerValidations[value.username]) {
-      playerSubmitterOptions.push(playerOption)
+
+    // If the player doesn't have a team, then they are not part of this tournament, and are subbing
+    const playerInTournament = !!selectedPlayerTeam
+    // If the player has a team, but it isn't scheduled, then they are subbing
+    const playerTeamScheduled = !!(
+      selectedPlayerTeam && scheduledTeams.includes(selectedPlayerTeam)
+    )
+
+    // Create a more in depth object about this player
+    const playerOption = {
+      value: selectedPlayerUsername,
+      label: `${selectedPlayer.firstName} ${selectedPlayer.lastName}`,
+      ...selectedPlayer,
+      team: selectedPlayerTeam,
+      inTournament: playerInTournament,
+      teamScheduled: playerTeamScheduled,
+    }
+
+    // If the player is part of the validation list, make it an option to validate with
+    if (playerValidations && !playerValidations[selectedPlayerUsername]) {
+      playersWhoNeedToValidate.push(playerOption)
     }
     playerSubmitterOptionsAll.push(playerOption)
   })
@@ -165,24 +228,22 @@ export const RoundForm: React.FC<{
           label="Who are you?"
           disabled={disableSubmitterSubmission}
           data={
-            playerSubmitterOptions.length > 0
-              ? playerSubmitterOptions
+            playersWhoNeedToValidate.length > 0
+              ? playersWhoNeedToValidate
               : playerSubmitterOptionsAll || []
           }
           {...form.getInputProps('submitter')}
         />
       )}
 
+      {form.values.players.length > 0 && <Divider my="sm" />}
+
+      {/* We use the form value for players here, in case we have a case where the player object
+           doesn't exist, we still want to be able to edit them. */}
       {form.values.players &&
         form.values.players.map((playerUsername: string) => {
-          // Use the amount of players for ranks
-          const ranks: string[] = []
-          for (let i = 0; i < form.values.players.length; i += 1) {
-            ranks.push(`${i + 1}`)
-          }
-
           // Get player information
-          const playerObjects = playerOptions?.filter(
+          const playerObjects = playerSubmitterOptionsAll?.filter(
             (value: PlayerObjectFull) => value.username === playerUsername
           )
           const playerObject = playerObjects ? playerObjects[0] : undefined
@@ -204,13 +265,54 @@ export const RoundForm: React.FC<{
             />
           )
 
+          const defaultTeam =
+            playerObject.inTournament && playerObject.teamScheduled
+              ? playerObject.team
+              : undefined
+
+          // Compare the default team to the initial value for the form
+          const { value: initialTeamValue } = form.getInputProps(
+            `representing-input-${playerUsername}`
+          )
+
+          // If the initial value is undefined, and we have a default team, set the initial value
+          const newInitialValue = initialTeamValue || defaultTeam
+          if (initialTeamValue !== newInitialValue) {
+            form.setFieldValue(
+              `representing-input-${playerUsername}`,
+              newInitialValue
+            )
+          }
+
+          // Show sub warning if user tries to enter a sub
+          const showSubstituteWarning = playerObject.firstName === 'Substitute'
+
+          if (
+            playerIsSubmitter &&
+            hideRepresentingSubmission &&
+            hideScoresSubmission &&
+            hideRanksSubmission
+          ) {
+            return undefined
+          }
+
           return (
-            <Paper m="sm" p="md">
-              <Title order={4}>
-                {playerObject
-                  ? `${playerObject.firstName} ${playerObject.lastName}`
-                  : playerUsername}
-              </Title>
+            <Card withBorder shadow="sm" radius="md" m="" my="sm" p="sm" pt="">
+              <Center m="sm">
+                <Title order={4}>
+                  {playerObject
+                    ? `${playerObject.firstName} ${playerObject.lastName}`
+                    : playerUsername}
+                </Title>
+              </Center>
+
+              {showSubstituteWarning && !hideSubstituteWarning ? (
+                <Title order={5} style={{ color: 'orangered' }}>
+                  Please use the actual player&apos;s name, not the substitute
+                  for this team! Only use substitutes if the player&apos;s name
+                  doesn&apos;t exist.
+                </Title>
+              ) : undefined}
 
               {playerIsSubmitter ? undefined : (
                 <Center m="md">
@@ -224,6 +326,24 @@ export const RoundForm: React.FC<{
                     {...form.getInputProps(`honor-input-${playerUsername}`)}
                   />
                 </Center>
+              )}
+
+              {hideRepresentingSubmission ? undefined : (
+                <Select
+                  id={`representing-input-${playerUsername}`}
+                  label="Subbing for"
+                  disabled={disableRepresentingSubmission}
+                  data={scheduledTeams}
+                  // Hiding this breaks mantine form things, so don't actually hide it, use this hack
+                  style={
+                    defaultTeam
+                      ? { visibility: 'hidden', position: 'absolute' }
+                      : {}
+                  }
+                  {...form.getInputProps(
+                    `representing-input-${playerUsername}`
+                  )}
+                />
               )}
 
               {hideScoresSubmission ? undefined : (
@@ -245,7 +365,7 @@ export const RoundForm: React.FC<{
                   {...form.getInputProps(`rank-input-${playerUsername}`)}
                 />
               )}
-            </Paper>
+            </Card>
           )
         })}
     </>

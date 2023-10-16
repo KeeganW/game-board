@@ -64,6 +64,13 @@ export type PlayerObjectExposed = {
   lastName: string
 }
 
+export type TeamObject = {
+  pk: number
+  name: string
+  color: string
+  players: PlayerObjectLite[]
+}
+
 export type PlayerRankObject = {
   pk: number
   player: PlayerObjectFull
@@ -130,13 +137,6 @@ export type BracketMatchesObjectExposed = {
   modifiedScoring: boolean
 }
 
-export type TeamObject = {
-  pk: number
-  name: string
-  color: string
-  players: PlayerObjectLite[]
-}
-
 // export enum BracketTypes {
 //   ROUND_ROBIN = 'Round Robin',
 // }
@@ -201,6 +201,12 @@ export type TournamentSchedule = Map<
 export type TournamentPlayers = Map<
   [tournamentPk: string],
   Map<[playerPk: string], PlayerObjectExposed>
+> &
+  DetailResponse
+
+export type TournamentTeamPlayers = Map<
+  [tournamentPk: string],
+  Map<[playerPk: string], [teamName: string]>
 > &
   DetailResponse
 

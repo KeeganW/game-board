@@ -7,6 +7,7 @@ import { useUpdatePlayerInfo } from 'src/utils/hooks'
 import { AddTournamentInfo } from 'src/types'
 import { CenteredPage } from 'src/components/CenteredPage'
 import { getTokens } from 'src/utils/localStorageService'
+import { SMALL_WIDTH } from 'src/utils/helpers'
 
 export const AddTournament: React.FC = () => {
   useUpdatePlayerInfo()
@@ -46,7 +47,7 @@ export const AddTournament: React.FC = () => {
   }
 
   return (
-    <CenteredPage pageWidth={300}>
+    <CenteredPage pageWidth={SMALL_WIDTH}>
       <h3>Add Tournament</h3>
       <Form onSubmit={handleSubmit(handleOnSubmit)}>
         <Form.Group className="mb-3" controlId="tournamentName">

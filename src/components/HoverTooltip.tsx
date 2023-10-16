@@ -1,18 +1,13 @@
 import React from 'react'
-import { OverlayTrigger, Tooltip } from 'react-bootstrap'
+import { Tooltip } from '@mantine/core'
 
 export const HoverTooltip: React.FC<{
   tooltip: string | number
   text: any
 }> = ({ tooltip, text }) => {
   return (
-    <OverlayTrigger
-      delay={{ hide: 200, show: 300 }}
-      // eslint-disable-next-line react/no-unstable-nested-components
-      overlay={props => <Tooltip {...props}>{tooltip}</Tooltip>}
-      placement="top"
-    >
+    <Tooltip label={tooltip}>
       <span>{text}</span>
-    </OverlayTrigger>
+    </Tooltip>
   )
 }

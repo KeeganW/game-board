@@ -7,6 +7,7 @@ import { RoundForm } from 'src/forms/RoundForm'
 import { CenteredPage } from 'src/components/CenteredPage'
 import { Loading } from 'src/components/Loading'
 import { useForm } from '@mantine/form'
+import { SMALL_WIDTH } from 'src/utils/helpers'
 
 export const AddRound: React.FC = () => {
   useUpdatePlayerInfo()
@@ -60,7 +61,7 @@ export const AddRound: React.FC = () => {
   }
 
   return (
-    <CenteredPage pageWidth={300}>
+    <CenteredPage pageWidth={SMALL_WIDTH}>
       <Form onSubmit={form.onSubmit((values: any) => handleOnSubmit(values))}>
         <RoundForm form={form} gameOptions={games} playerOptions={players} />
         <Button variant="primary" type="submit">
