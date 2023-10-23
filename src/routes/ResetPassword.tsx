@@ -3,7 +3,7 @@ import { Button, Form } from 'react-bootstrap'
 import axios from 'src/axiosAuth'
 import { Navigate, useParams } from 'react-router-dom'
 import { CenteredPage } from 'src/components/CenteredPage'
-import { PasswordInput, TextInput, Title } from '@mantine/core'
+import { Center, PasswordInput, TextInput, Title } from '@mantine/core'
 import { SMALL_WIDTH } from 'src/utils/helpers'
 import { useForm } from '@mantine/form'
 
@@ -75,9 +75,11 @@ export const ResetPassword: React.FC = () => {
             placeholder="Confirm Password"
             {...form.getInputProps('confirm_password')}
           />
-          <Button variant="primary" type="submit">
-            Submit
-          </Button>
+          <Center>
+            <Button variant="primary" type="submit">
+              Reset
+            </Button>
+          </Center>
         </Form>
       </CenteredPage>
     )
@@ -85,21 +87,30 @@ export const ResetPassword: React.FC = () => {
   if (passwordResetSent) {
     return (
       <CenteredPage pageWidth={SMALL_WIDTH}>
-        <Title>Please ask @0mni on discord for the password reset link!</Title>
+        <Title order={2}>
+          Please ask @0mni on discord for the password reset link!
+        </Title>
       </CenteredPage>
     )
   }
   return (
     <CenteredPage pageWidth={SMALL_WIDTH}>
+      <Title order={2}>Find your Account</Title>
+      <p>
+        Please provide the username of your account, so a reset link can be
+        provided to you.
+      </p>
       <Form onSubmit={form.onSubmit((values: any) => handleOnSubmit(values))}>
         <TextInput
           id="username"
           label="Username"
           {...form.getInputProps('username')}
         />
-        <Button variant="primary" type="submit">
-          Submit
-        </Button>
+        <Center>
+          <Button variant="primary" type="submit">
+            Reset
+          </Button>
+        </Center>
       </Form>
     </CenteredPage>
   )

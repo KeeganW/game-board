@@ -7,6 +7,7 @@ import { AuthContext } from 'src/Context'
 import { CenteredPage } from 'src/components/CenteredPage'
 import { notifications } from '@mantine/notifications'
 import { SMALL_WIDTH } from 'src/utils/helpers'
+import { Anchor, Center } from '@mantine/core'
 
 export const Login: React.FC = () => {
   const { register, handleSubmit } = useForm()
@@ -94,10 +95,13 @@ export const Login: React.FC = () => {
             {...register('password', { required: true })}
           />
         </Form.Group>
-        <Button variant="primary" type="submit">
-          Submit
-        </Button>
+        <Center>
+          <Button variant="primary" type="submit">
+            Submit
+          </Button>
+        </Center>
       </Form>
+      <Anchor href="#/reset_password">Forgot password?</Anchor>
       {/* Once logged in, go to the logged in player's page. */}
       {authenticated &&
         playerPk >= 0 &&
