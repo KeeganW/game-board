@@ -1,10 +1,11 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import moment from 'moment'
 import { PlayerRankObject, RoundObject } from 'src/types'
 import { HoverTooltip } from 'src/components/HoverTooltip'
 import { CardDisplay } from 'src/components/CardDisplay'
 import { PlayerRankDisplay } from 'src/components/PlayerRankDisplay'
 import { RowDisplay } from 'src/components/RowDisplay'
+import { AuthContext } from '../Context'
 
 export const RoundDisplay: React.FC<{
   children?: any
@@ -29,6 +30,7 @@ export const RoundDisplay: React.FC<{
   isSchedule,
   highlightPlayerPk,
 }) => {
+  const { playerPk } = useContext(AuthContext)
   // Get the players and their scores/ranks listed out
   const roundScores = roundObject.playerRanks
     ?.sort((a: PlayerRankObject, b: PlayerRankObject) => a.rank - b.rank)
@@ -43,6 +45,7 @@ export const RoundDisplay: React.FC<{
           useUsernames={useUsernames}
           usePlayer={usePlayer}
           isSchedule={isSchedule}
+          activePlayerPk={playerPk}
           highlightPlayerPk={highlightPlayerPk}
         />
       )

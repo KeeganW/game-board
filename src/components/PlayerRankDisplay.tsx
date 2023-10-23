@@ -15,6 +15,7 @@ export const PlayerRankDisplay: React.FC<{
   useUsernames?: boolean
   usePlayer?: boolean
   isSchedule?: boolean
+  activePlayerPk?: number
   highlightPlayerPk?: number
 }> = ({
   playerRankObject,
@@ -25,6 +26,7 @@ export const PlayerRankDisplay: React.FC<{
   useUsernames,
   usePlayer,
   isSchedule,
+  activePlayerPk,
   highlightPlayerPk,
 }) => {
   // Get values we need
@@ -115,7 +117,8 @@ export const PlayerRankDisplay: React.FC<{
           )}
         </span>
       }
-      highlight={playerRankObject.player.pk === highlightPlayerPk}
+      greyHighlight={playerRankObject.player.pk === highlightPlayerPk}
+      colorHighlight={playerRankObject.player.pk === activePlayerPk}
     />
   )
 }

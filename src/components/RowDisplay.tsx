@@ -5,10 +5,17 @@ export const RowDisplay: React.FC<{
   rank: any
   player: any
   score: any
-  highlight?: boolean
-}> = ({ rank, player, score, highlight }) => {
+  greyHighlight?: boolean
+  colorHighlight?: boolean
+}> = ({ rank, player, score, greyHighlight, colorHighlight }) => {
+  let highlight = {}
+  if (colorHighlight) {
+    highlight = { backgroundColor: '#bdedff' }
+  } else if (greyHighlight) {
+    highlight = { backgroundColor: '#e2e2e2' }
+  }
   return (
-    <Grid px="sm" style={highlight ? { backgroundColor: '#e2e2e2' } : {}}>
+    <Grid px="sm" style={highlight}>
       {rank ? <Grid.Col span={1}>{rank}</Grid.Col> : undefined}
 
       {player ? (
