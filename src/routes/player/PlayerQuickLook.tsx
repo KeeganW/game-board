@@ -1,20 +1,8 @@
 import React from 'react'
-import { Col, Container, Row } from 'react-bootstrap'
 import { PlayerStats } from 'src/types'
 
 export const PlayerQuickLook: React.FC<{
   playerStatsInfo: PlayerStats
 }> = ({ playerStatsInfo }) => (
-  <Container>
-    <Row>
-      <Col>
-        <Row>
-          <h5>Number of Games Played</h5>
-        </Row>
-        <Row>
-          <div>{playerStatsInfo.numberGamesPlayed}</div>
-        </Row>
-      </Col>
-    </Row>
-  </Container>
+  <h5>{playerStatsInfo.numberGamesPlayed} Total Games Played</h5>
 )

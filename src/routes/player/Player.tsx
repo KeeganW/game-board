@@ -44,26 +44,11 @@ export const Player: React.FC = () => {
   return (
     <CenteredPage>
       <PlayerTitle playerInfo={playerInfo} />
-      <br />
       <PlayerQuickLook playerStatsInfo={playerStatsInfo} />
-      <br />
       <PlayerRecentGames
         playerStatsInfo={playerStatsInfo}
         playerPk={playerInfo.pk}
       />
-
-      {/* Charting Player Stats */}
-      {/* <Container> */}
-      {/*   <Row> */}
-      {/*     <Col>{`Wins by Month Graph: TODO`}</Col> */}
-      {/*   </Row> */}
-      {/*   <Row> */}
-      {/*     <Col>{`Win rate over time Graph: TODO`}</Col> */}
-      {/*   </Row> */}
-      {/*   <Row> */}
-      {/*     <Col>{`Win rate in top played Graph: TODO`}</Col> */}
-      {/*   </Row> */}
-      {/* </Container> */}
     </CenteredPage>
   )
 }

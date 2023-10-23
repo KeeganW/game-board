@@ -60,9 +60,12 @@ export const App = () => {
         <a href="#/tournament" className={classes.link}>
           Tournaments
         </a>,
-        <a href="#/add_round" className={classes.link}>
-          Add Round
+        <a href="#/current" className={classes.link}>
+          Current Standings
         </a>,
+        // <a href="#/add_round" className={classes.link}>
+        //   Add Round
+        // </a>,
       ]
     : [
         <a href="#/current" className={classes.link}>

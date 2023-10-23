@@ -15,6 +15,7 @@ export const PlayerRankDisplay: React.FC<{
   useUsernames?: boolean
   usePlayer?: boolean
   isSchedule?: boolean
+  highlightPlayerPk?: number
 }> = ({
   playerRankObject,
   teamColorMapping,
@@ -24,6 +25,7 @@ export const PlayerRankDisplay: React.FC<{
   useUsernames,
   usePlayer,
   isSchedule,
+  highlightPlayerPk,
 }) => {
   // Get values we need
   const playerColor = teamColorMapping?.get(playerRankObject.representing?.name)
@@ -56,7 +58,7 @@ export const PlayerRankDisplay: React.FC<{
         rank={undefined}
         player={
           <span>
-            {playerRankObject.representing ? (
+            {playerRankObject.representing && playerColor ? (
               <HoverTooltip
                 tooltip={playerRankObject.representing?.name}
                 text={
@@ -88,10 +90,14 @@ export const PlayerRankDisplay: React.FC<{
       }
       player={
         <span>
-          <HoverTooltip
-            tooltip={playerRankObject?.representing?.name}
-            text={<ThemeIcon size="xs" mr="xs" mb="-3px" color={playerColor} />}
-          />
+          {playerRankObject.representing && playerColor ? (
+            <HoverTooltip
+              tooltip={playerRankObject.representing?.name}
+              text={
+                <ThemeIcon size="xs" mr="xs" mb="-3px" color={playerColor} />
+              }
+            />
+          ) : undefined}
           <Link
             to={`/player/${playerRankObject.player.pk}`}
             style={{ color: 'black', textDecoration: 'none' }}
@@ -109,6 +115,7 @@ export const PlayerRankDisplay: React.FC<{
           )}
         </span>
       }
+      highlight={playerRankObject.player.pk === highlightPlayerPk}
     />
   )
 }

@@ -16,6 +16,7 @@ export const RoundDisplay: React.FC<{
   useUsernames?: boolean
   usePlayer?: boolean
   isSchedule?: boolean
+  highlightPlayerPk?: number
 }> = ({
   children,
   roundObject,
@@ -26,6 +27,7 @@ export const RoundDisplay: React.FC<{
   useUsernames,
   usePlayer,
   isSchedule,
+  highlightPlayerPk,
 }) => {
   // Get the players and their scores/ranks listed out
   const roundScores = roundObject.playerRanks
@@ -41,6 +43,7 @@ export const RoundDisplay: React.FC<{
           useUsernames={useUsernames}
           usePlayer={usePlayer}
           isSchedule={isSchedule}
+          highlightPlayerPk={highlightPlayerPk}
         />
       )
     })

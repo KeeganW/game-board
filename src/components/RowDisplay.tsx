@@ -5,9 +5,10 @@ export const RowDisplay: React.FC<{
   rank: any
   player: any
   score: any
-}> = ({ rank, player, score }) => {
+  highlight?: boolean
+}> = ({ rank, player, score, highlight }) => {
   return (
-    <Grid px="sm">
+    <Grid px="sm" style={highlight ? { backgroundColor: '#e2e2e2' } : {}}>
       {rank ? <Grid.Col span={1}>{rank}</Grid.Col> : undefined}
 
       {player ? (
