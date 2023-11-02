@@ -13,7 +13,7 @@ import {
   Divider,
 } from '@mantine/core'
 import { DateInput } from '@mantine/dates'
-import { clone } from 'lodash'
+import { clone, includes } from 'lodash'
 import { IconHeart, IconHeartFilled } from '@tabler/icons-react'
 
 export const RoundForm: React.FC<{
@@ -67,6 +67,7 @@ export const RoundForm: React.FC<{
   // Search trackers
   const [searchGame, onSearchGameChange] = useState('')
   const [searchPlayers, onSearchPlayersChange] = useState('')
+  const [showRanks, setShowRanks] = useState(false)
 
   // Handle searches, looking for enter to try to assign the first value.
   const handleSearchGameKeyDown = (event: any) => {
@@ -107,10 +108,23 @@ export const RoundForm: React.FC<{
     tournamentSchedule.forEach((week: any[]) => {
       week.forEach((match: any) => {
         if (match.pk && match.pk.toString() === matchPk) {
-          const scheduledPlayerRanks = match.round.playerRanks || []
-          scheduledPlayerRanks.forEach((playerRank: any) =>
-            scheduledTeams.push(playerRank.player)
-          )
+          // TODO(keegan): old way of doing this, decide if we still need it
+          // const scheduledPlayerRanks = match.round.playerRanks || []
+          // scheduledPlayerRanks.forEach((playerRank: any) => {
+          //     if (playerRank.player && !includes(scheduledTeams, playerRank.player)) {
+          //       scheduledTeams.push(playerRank.player)
+          //     }
+          //   }
+          // )
+          const scheduledPlayerRanks = match.round.scheduledTeams || []
+          scheduledPlayerRanks.forEach((scheduledTeam: any) => {
+            if (
+              scheduledTeam.name &&
+              !includes(scheduledTeams, scheduledTeam.name)
+            ) {
+              scheduledTeams.push(scheduledTeam.name)
+            }
+          })
         }
       })
     })
@@ -198,6 +212,14 @@ export const RoundForm: React.FC<{
           maw={400}
           mx="auto"
           {...form.getInputProps('date')}
+        />
+      )}
+      {!hideRanksSubmission ? undefined : (
+        <Switch
+          mt="xs"
+          label="Manually set place (for tiebreakers)"
+          checked={showRanks}
+          onChange={event => setShowRanks(event.currentTarget.checked)}
         />
       )}
       {hidePlayersSubmission ? undefined : (
@@ -356,10 +378,10 @@ export const RoundForm: React.FC<{
                 />
               )}
 
-              {hideRanksSubmission ? undefined : (
+              {hideRanksSubmission && !showRanks ? undefined : (
                 <Select
                   id={`rank-input-${playerUsername}`}
-                  label="Rank"
+                  label="Place"
                   disabled={disableRanksSubmission}
                   data={ranks}
                   {...form.getInputProps(`rank-input-${playerUsername}`)}

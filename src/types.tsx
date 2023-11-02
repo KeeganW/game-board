@@ -71,6 +71,12 @@ export type TeamObject = {
   players: PlayerObjectLite[]
 }
 
+export type TeamObjectExposed = {
+  pk: number
+  name: string
+  color: string
+}
+
 export type PlayerRankObject = {
   pk: number
   player: PlayerObjectFull
@@ -103,6 +109,7 @@ export type RoundObject = {
   game: GameObject
   date: string
   playerRanks: PlayerRankObject[]
+  scheduledTeams: TeamObject[]
   group: GroupObject
 }
 
@@ -111,6 +118,7 @@ export type RoundObjectExposed = {
   game: GameObjectExposed
   date: string
   playerRanks: PlayerRankObjectExposed[]
+  scheduledTeams: TeamObjectExposed[]
   group: string
 }
 

@@ -1,6 +1,6 @@
 import React, { useContext } from 'react'
 import moment from 'moment'
-import { PlayerRankObject, RoundObject } from 'src/types'
+import { PlayerRankObject, RoundObject, TeamObject } from 'src/types'
 import { HoverTooltip } from 'src/components/HoverTooltip'
 import { CardDisplay } from 'src/components/CardDisplay'
 import { PlayerRankDisplay } from 'src/components/PlayerRankDisplay'
@@ -50,6 +50,29 @@ export const RoundDisplay: React.FC<{
         />
       )
     })
+  const scheduleScores = roundObject.scheduledTeams?.map(
+    (teamObject: TeamObject) => {
+      return (
+        <PlayerRankDisplay
+          playerRankObject={
+            {
+              player: teamObject.name,
+              representing: teamObject,
+            } as any
+          }
+          teamColorMapping={teamColorMapping}
+          showTournamentScores={showTournamentScores}
+          modifiedScoring={modifiedScoring}
+          teamGame={teamGame}
+          useUsernames={useUsernames}
+          usePlayer={usePlayer}
+          isSchedule={isSchedule}
+          activePlayerPk={playerPk}
+          highlightPlayerPk={highlightPlayerPk}
+        />
+      )
+    }
+  )
 
   const playerRanksHeader = (
     <RowDisplay
@@ -66,7 +89,9 @@ export const RoundDisplay: React.FC<{
     <HoverTooltip tooltip={datePretty} text={dateFromNow} />
   )
 
-  const roundScoresWithHeader = [playerRanksHeader, ...roundScores]
+  const roundOrScheduleScores =
+    roundScores.length > 0 ? roundScores : scheduleScores
+  const roundScoresWithHeader = [playerRanksHeader, ...roundOrScheduleScores]
   // roundScores.length > 4
   //   ? [...roundScores.slice(0, 3), `and ${roundScores.length - 3} more...`]
   //   : roundScores
@@ -75,7 +100,7 @@ export const RoundDisplay: React.FC<{
     <CardDisplay
       title={roundObject.game.name}
       subtitle={dateWithTooltip}
-      content={isSchedule ? roundScores : roundScoresWithHeader}
+      content={isSchedule ? roundOrScheduleScores : roundScoresWithHeader}
     >
       {children}
     </CardDisplay>

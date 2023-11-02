@@ -1,10 +1,10 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { BracketMatchesObject, TeamObject, TournamentObject } from 'src/types'
 import { useParamsPk } from 'src/utils/helpers'
 import { useGetTournamentInfo, useGetTournamentStats } from 'src/utils/hooks'
 import { Col, Container, Row } from 'react-bootstrap'
-import { ThemeIcon } from '@mantine/core'
+import { Switch, ThemeIcon } from '@mantine/core'
 import { RoundDisplay } from 'src/components/RoundDisplay'
 import { CardDisplay } from 'src/components/CardDisplay'
 import { Loading } from 'src/components/Loading'
@@ -97,7 +97,8 @@ export const convertStatsToView = (
 export const convertBracketToView = (
   bracket: string[][][],
   tournament: TournamentObject,
-  teamColorMapping: StringToStringMap
+  teamColorMapping: StringToStringMap,
+  showTournamentScores?: boolean
 ) => {
   // Find all team related information for quick access later
   const tournamentTeams = tournament.bracket.teams.sort(
@@ -176,9 +177,8 @@ export const convertBracketToView = (
               <RoundDisplay
                 roundObject={tournamentRound}
                 teamColorMapping={teamColorMapping}
-                showTournamentScores={false}
+                showTournamentScores={showTournamentScores}
                 // TODO: Disable showing score breakdown except by admins
-                // showTournamentScores={true}
                 modifiedScoring={modifiedScoring}
                 teamGame={teamGame}
               />
@@ -194,9 +194,8 @@ export const convertBracketToView = (
               <RoundDisplay
                 roundObject={tournamentRound}
                 teamColorMapping={teamColorMapping}
-                showTournamentScores={false}
+                showTournamentScores={showTournamentScores}
                 // TODO: Disable showing score breakdown except by admins
-                // showTournamentScores={true}
                 modifiedScoring={false}
                 teamGame={false}
                 isSchedule={!!isScheduled}
@@ -244,6 +243,8 @@ export const convertBracketToView = (
 export const TournamentDetails: React.FC = () => {
   const tournamentPk = useParamsPk()
 
+  const [showTournamentScores, setShowTournamentScores] = useState(false)
+
   const tournamentInfoResponse = useGetTournamentInfo(tournamentPk)
   const tournamentStatsResponse = useGetTournamentStats(tournamentPk)
 
@@ -270,7 +271,8 @@ export const TournamentDetails: React.FC = () => {
     convertBracketToView(
       tournamentInfoBracket,
       tournamentInfo,
-      teamToColorMapping
+      teamToColorMapping,
+      showTournamentScores
     )
   )
   const convertedStats = !tournamentStats ? (
@@ -281,6 +283,15 @@ export const TournamentDetails: React.FC = () => {
 
   return (
     <Container>
+      <Row className="mb-4" style={{ position: 'absolute', right: '20px' }}>
+        <Switch
+          label="Show points"
+          checked={showTournamentScores}
+          onChange={event =>
+            setShowTournamentScores(event.currentTarget.checked)
+          }
+        />
+      </Row>
       <Row className="mb-4">
         <Col>
           {!tournamentInfo && <Loading />}

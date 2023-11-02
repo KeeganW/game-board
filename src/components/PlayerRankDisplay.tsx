@@ -51,9 +51,14 @@ export const PlayerRankDisplay: React.FC<{
   }
 
   // Make a decision on what we are displaying
+  const playerRankObjectPlayer = playerRankObject.player
+  const playerFullName =
+    playerRankObjectPlayer && playerRankObjectPlayer.firstName
+      ? `${playerRankObjectPlayer.firstName} ${playerRankObjectPlayer.lastName}`
+      : playerRankObjectPlayer
   const useUsernamesName = useUsernames
-    ? playerRankObject.player.username
-    : `${playerRankObject.player.firstName} ${playerRankObject.player.lastName}`
+    ? playerRankObjectPlayer?.username || playerRankObjectPlayer
+    : playerFullName
   if (isSchedule) {
     return (
       <RowDisplay
@@ -101,7 +106,9 @@ export const PlayerRankDisplay: React.FC<{
             />
           ) : undefined}
           <Link
-            to={`/player/${playerRankObject.player.pk}`}
+            to={`/player/${
+              playerRankObject.player?.pk || playerRankObject.player
+            }`}
             style={{ color: 'black', textDecoration: 'none' }}
           >
             {usePlayer ? playerRankObject.player : useUsernamesName}
@@ -117,8 +124,14 @@ export const PlayerRankDisplay: React.FC<{
           )}
         </span>
       }
-      greyHighlight={playerRankObject.player.pk === highlightPlayerPk}
-      colorHighlight={playerRankObject.player.pk === activePlayerPk}
+      greyHighlight={
+        (playerRankObject.player?.pk || playerRankObject.player) ===
+        highlightPlayerPk
+      }
+      colorHighlight={
+        (playerRankObject.player?.pk || playerRankObject.player) ===
+        activePlayerPk
+      }
     />
   )
 }
