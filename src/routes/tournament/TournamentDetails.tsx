@@ -200,7 +200,7 @@ export const convertBracketToView = (
                 teamGame={false}
                 isSchedule={!!isScheduled}
               >
-                {rounds}
+                {/* {rounds} */}
               </RoundDisplay>
             </Row>
           </Col>
