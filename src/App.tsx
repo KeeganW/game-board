@@ -27,10 +27,10 @@ export const App = () => {
   const [groupName, setGroupName] = useState(initialState.groupName)
   const [groupImageUrl, setGroupImageUrl] = useState(initialState.groupImageUrl)
 
-  const [opened, { toggle }] = useDisclosure()
+  const [opened, { toggle, close }] = useDisclosure()
 
   const groupLink = authenticated ? (
-    <a href={`#/group/${groupPk}`} className={classes.link}>
+    <a href={`#/group/${groupPk}`} className={classes.link} onClick={close}>
       <img
         alt=""
         src={groupImageUrl}
@@ -41,7 +41,7 @@ export const App = () => {
       {groupName}
     </a>
   ) : (
-    <a href="#/" className={classes.link}>
+    <a href="#/" className={classes.link} onClick={close}>
       <img
         alt=""
         src={`${process.env.PUBLIC_URL}/img/logo_outline.png`}
@@ -54,13 +54,17 @@ export const App = () => {
 
   const mainLinks = authenticated
     ? [
-        <a href={`#/player/${playerPk}`} className={classes.link}>
+        <a
+          href={`#/player/${playerPk}`}
+          className={classes.link}
+          onClick={close}
+        >
           Home
         </a>,
-        <a href="#/tournament" className={classes.link}>
+        <a href="#/tournament" className={classes.link} onClick={close}>
           Tournaments
         </a>,
-        <a href="#/current" className={classes.link}>
+        <a href="#/current" className={classes.link} onClick={close}>
           Current Standings
         </a>,
         // <a href="#/add_round" className={classes.link}>
@@ -68,22 +72,22 @@ export const App = () => {
         // </a>,
       ]
     : [
-        <a href="#/current" className={classes.link}>
+        <a href="#/current" className={classes.link} onClick={close}>
           Current Standings
         </a>,
-        <a href="#/acr" className={classes.link}>
+        <a href="#/acr" className={classes.link} onClick={close}>
           Add Round
         </a>,
       ]
 
   const authLinks = authenticated
     ? [
-        <Button component="a" href="#/logout" variant="default">
+        <Button component="a" href="#/logout" variant="default" onClick={close}>
           Log out
         </Button>,
       ]
     : [
-        <Button component="a" href="#/login" variant="default">
+        <Button component="a" href="#/login" variant="default" onClick={close}>
           Log in
         </Button>,
         // {/* <Button>Sign up</Button> */}
