@@ -228,6 +228,14 @@ export function useGetTournamentMatch(
   return useGetResponse<TournamentMatch>(url, params)
 }
 
+export function useGetAdminTournamentMatch(
+  tournamentPk: string | number,
+  params?: any
+): FetchResponse {
+  const url = `/admin_tournament_match/${tournamentPk}`
+  return useGetResponse<TournamentMatch>(url, params)
+}
+
 export function useGetTournamentInfo(
   tournamentPk: string | number,
   params?: any

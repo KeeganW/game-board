@@ -151,6 +151,7 @@ export const AddMatch: React.FC = () => {
                 form={form}
                 gameOptions={games}
                 playerOptions={players}
+                teamOptions={[]}
                 hideRanksSubmission
               />
             </Col>

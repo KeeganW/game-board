@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react'
 import { Button, Form } from 'react-bootstrap'
 import axios from 'src/axiosAuth'
 import {
+  useGetAdminTournamentMatch,
   useGetGame,
-  useGetTournamentMatch,
   useGetTournamentPlayers,
   useGetTournamentSchedule,
   useGetTournamentTeamColors,
@@ -13,10 +13,12 @@ import { RoundForm } from 'src/forms/RoundForm'
 import { CenteredPage } from 'src/components/CenteredPage'
 import { Loading } from 'src/components/Loading'
 import { useForm } from '@mantine/form'
-import QRCode from 'react-qr-code'
-import { Center, Title } from '@mantine/core'
-import { BracketMatchesObject, PlayerRankObject } from 'src/types'
-import { RoundDisplay } from 'src/components/RoundDisplay'
+import { Center } from '@mantine/core'
+import {
+  BracketMatchesObject,
+  PlayerRankObject,
+  TeamObjectExposed,
+} from 'src/types'
 import { notifications } from '@mantine/notifications'
 import {
   getTeamColorsMap,
@@ -24,12 +26,11 @@ import {
   SMALL_WIDTH,
 } from 'src/utils/helpers'
 
-export const AddCurrentTournamentRound: React.FC<{
+export const AdminEditRound: React.FC<{
   tournamentPk: string
   matchPk: string
-  submitterType: string
-}> = ({ tournamentPk, matchPk, submitterType }) => {
-  const [roundAdded, setRoundAdded] = useState<number>(-1)
+}> = ({ tournamentPk, matchPk }) => {
+  const [, setRoundAdded] = useState<number>(-1)
   // TODO(keegan): tournament setting for only a single point of honor
   //  Add this to round form:
   //   Did you enjoy this game? Thumbs up, Thumbs down
@@ -51,7 +52,7 @@ export const AddCurrentTournamentRound: React.FC<{
   const tournamentTeamColorsResponse = useGetTournamentTeamColors(tournamentPk)
 
   // Then, let's get the tournament and match information for this current instance
-  const tournamentMatchResponse = useGetTournamentMatch(matchPk)
+  const tournamentMatchResponse = useGetAdminTournamentMatch(matchPk)
   const tournamentMatch = tournamentMatchResponse.response?.data
 
   // Let's get the relevant match and its info
@@ -80,7 +81,12 @@ export const AddCurrentTournamentRound: React.FC<{
         match?.round?.playerRanks.map(
           (value: PlayerRankObject) => value.player.username
         ) || [],
-      submitter: '',
+      scheduledTeams:
+        match?.round?.scheduledTeams?.map(
+          (value: TeamObjectExposed) => value.name
+        ) || [],
+      hostTeam: match?.round?.hostTeam?.name || '',
+      submitter: 'h',
       ...playerScores,
       ...playerRankRanks,
       ...playerRankRepresenting,
@@ -108,6 +114,7 @@ export const AddCurrentTournamentRound: React.FC<{
     return <Loading />
   }
 
+  // TODO(keegan): this should be all players from group
   const players = playersResponse.response.data[tournamentPk]
   const games = gamesResponse.response.data
   const tournamentTeamPlayers =
@@ -139,74 +146,14 @@ export const AddCurrentTournamentRound: React.FC<{
       })
   }
 
-  if (roundAdded && roundAdded >= 0) {
-    // TODO(keegan): provide a link to round (`/round/${roundAdded}`), and a link to tournament
-    return (
-      <CenteredPage>
-        <Title m="lg">
-          Please have everyone at the table submit their sportsmanship scores!
-        </Title>
-        <QRCode
-          value={`https://keeganw.github.io/game-board/#/acr/${tournamentPk}/${matchPk}/a`}
-        />
-      </CenteredPage>
-    )
-  }
-  if (submitterType === 'h') {
-    return (
-      <CenteredPage pageWidth={SMALL_WIDTH}>
-        <Form
-          onSubmit={form.onSubmit((values: any) =>
-            handleOnSubmit({
-              ...values,
-              tournamentPk,
-              matchPk,
-              submitterType,
-            })
-          )}
-        >
-          <RoundForm
-            form={form}
-            gameOptions={games}
-            playerOptions={players}
-            teamOptions={teams}
-            matchPk={matchPk}
-            playerValidations={playerValidations}
-            tournamentTeamPlayers={tournamentTeamPlayers}
-            tournamentSchedule={tournamentSchedule}
-            hideRanksSubmission
-            hideScheduledTeamsSubmission
-          />
-          <Center>
-            <Button variant="primary" type="submit">
-              Submit Scores
-            </Button>
-          </Center>
-        </Form>
-      </CenteredPage>
-    )
-  }
-  if (match?.round?.playerRanks?.length === 0) {
-    return (
-      <CenteredPage pageWidth={SMALL_WIDTH}>
-        <Title>Please wait for the host to submit scores</Title>
-      </CenteredPage>
-    )
-  }
   return (
     <CenteredPage pageWidth={SMALL_WIDTH}>
-      <Title>Please validate the following scores</Title>
-      <RoundDisplay
-        roundObject={match?.round}
-        teamColorMapping={teamToColorMapping}
-      />
       <Form
         onSubmit={form.onSubmit((values: any) =>
           handleOnSubmit({
             ...values,
             tournamentPk,
             matchPk,
-            submitterType,
           })
         )}
       >
@@ -219,19 +166,11 @@ export const AddCurrentTournamentRound: React.FC<{
           playerValidations={playerValidations}
           tournamentTeamPlayers={tournamentTeamPlayers}
           tournamentSchedule={tournamentSchedule}
-          hideInstructions
-          hideSubstituteWarning
-          hideGameSubmission
-          hideDateSubmission
-          hidePlayersSubmission
           hideRanksSubmission
-          hideScoresSubmission
-          hideRepresentingSubmission
-          hideScheduledTeamsSubmission
         />
         <Center>
           <Button variant="primary" type="submit">
-            Validate Scores
+            Submit Scores
           </Button>
         </Center>
       </Form>

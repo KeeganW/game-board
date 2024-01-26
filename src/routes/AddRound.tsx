@@ -63,7 +63,12 @@ export const AddRound: React.FC = () => {
   return (
     <CenteredPage pageWidth={SMALL_WIDTH}>
       <Form onSubmit={form.onSubmit((values: any) => handleOnSubmit(values))}>
-        <RoundForm form={form} gameOptions={games} playerOptions={players} />
+        <RoundForm
+          form={form}
+          gameOptions={games}
+          playerOptions={players}
+          teamOptions={[]}
+        />
         <Button variant="primary" type="submit">
           Submit
         </Button>

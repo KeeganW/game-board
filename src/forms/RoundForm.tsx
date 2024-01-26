@@ -20,6 +20,7 @@ export const RoundForm: React.FC<{
   form: any
   gameOptions: any
   playerOptions: any
+  teamOptions: any
   matchPk?: any
   playerValidations?: any
   tournamentTeamPlayers?: any
@@ -30,6 +31,7 @@ export const RoundForm: React.FC<{
   disableGameSubmission?: boolean
   disableDateSubmission?: boolean
   disablePlayersSubmission?: boolean
+  disableScheduledTeamsSubmission?: boolean
   disableSubmitterSubmission?: boolean
   disableRanksSubmission?: boolean
   disableScoresSubmission?: boolean
@@ -37,6 +39,7 @@ export const RoundForm: React.FC<{
   hideGameSubmission?: boolean
   hideDateSubmission?: boolean
   hidePlayersSubmission?: boolean
+  hideScheduledTeamsSubmission?: boolean
   hideRanksSubmission?: boolean
   hideScoresSubmission?: boolean
   hideRepresentingSubmission?: boolean
@@ -44,6 +47,7 @@ export const RoundForm: React.FC<{
   form,
   gameOptions,
   playerOptions,
+  teamOptions,
   matchPk,
   playerValidations,
   tournamentTeamPlayers,
@@ -53,6 +57,7 @@ export const RoundForm: React.FC<{
   disableGameSubmission,
   disableDateSubmission,
   disablePlayersSubmission,
+  disableScheduledTeamsSubmission,
   disableSubmitterSubmission,
   disableRanksSubmission,
   disableScoresSubmission,
@@ -60,6 +65,7 @@ export const RoundForm: React.FC<{
   hideGameSubmission,
   hideDateSubmission,
   hidePlayersSubmission,
+  hideScheduledTeamsSubmission,
   hideRanksSubmission,
   hideScoresSubmission,
   hideRepresentingSubmission,
@@ -67,6 +73,8 @@ export const RoundForm: React.FC<{
   // Search trackers
   const [searchGame, onSearchGameChange] = useState('')
   const [searchPlayers, onSearchPlayersChange] = useState('')
+  const [searchScheduledTeams, onSearchScheduledTeamsChange] = useState('')
+  const [searchHostTeam, onSearchHostTeamChange] = useState('')
   const [showRanks, setShowRanks] = useState(false)
 
   // Handle searches, looking for enter to try to assign the first value.
@@ -96,6 +104,38 @@ export const RoundForm: React.FC<{
       }
     }
   }
+  const handleSearchScheduledTeamsKeyDown = (event: any) => {
+    if (event.key === 'Enter') {
+      // TODO(keegan): get this working
+      // const filtered = playerOptions.filter(
+      //   (value: TeamObjectExposed) =>
+      //     value.username.toLowerCase().includes(searchPlayers) &&
+      //     !form.values.players.includes(value.username)
+      // )
+      // if (filtered.length > 0) {
+      //   onSearchPlayersChange('')
+      //   const newPlayers = clone(form.values.players || [])
+      //   newPlayers.push(filtered[0].username)
+      //   form.setFieldValue('players', newPlayers)
+      // }
+    }
+  }
+  const handleSearchHostTeamKeyDown = (event: any) => {
+    if (event.key === 'Enter') {
+      // TODO(keegan): get this working
+      // const filtered = playerOptions.filter(
+      //   (value: TeamObjectExposed) =>
+      //     value.username.toLowerCase().includes(searchPlayers) &&
+      //     !form.values.players.includes(value.username)
+      // )
+      // if (filtered.length > 0) {
+      //   onSearchPlayersChange('')
+      //   const newPlayers = clone(form.values.players || [])
+      //   newPlayers.push(filtered[0].username)
+      //   form.setFieldValue('players', newPlayers)
+      // }
+    }
+  }
 
   // Loop over the player possibilities to get the list of selected ones.
   const selectedPlayerObjects = playerOptions?.filter(
@@ -108,14 +148,6 @@ export const RoundForm: React.FC<{
     tournamentSchedule.forEach((week: any[]) => {
       week.forEach((match: any) => {
         if (match.pk && match.pk.toString() === matchPk) {
-          // TODO(keegan): old way of doing this, decide if we still need it
-          // const scheduledPlayerRanks = match.round.playerRanks || []
-          // scheduledPlayerRanks.forEach((playerRank: any) => {
-          //     if (playerRank.player && !includes(scheduledTeams, playerRank.player)) {
-          //       scheduledTeams.push(playerRank.player)
-          //     }
-          //   }
-          // )
           const scheduledPlayerRanks = match.round.scheduledTeams || []
           scheduledPlayerRanks.forEach((scheduledTeam: any) => {
             if (
@@ -214,6 +246,40 @@ export const RoundForm: React.FC<{
           {...form.getInputProps('date')}
         />
       )}
+
+      {hideScheduledTeamsSubmission ? undefined : (
+        <MultiSelect
+          label="Scheduled Teams"
+          placeholder="The teams that are supposed to play"
+          onSearchChange={onSearchScheduledTeamsChange}
+          searchValue={searchScheduledTeams}
+          searchable
+          clearable
+          disabled={disableScheduledTeamsSubmission}
+          mb="sm"
+          nothingFound="No teams"
+          data={teamOptions || []}
+          onKeyDown={handleSearchScheduledTeamsKeyDown}
+          {...form.getInputProps('scheduledTeams')}
+        />
+      )}
+      {hideScheduledTeamsSubmission ? undefined : (
+        <Select
+          label="Host Team"
+          placeholder="The host of the game"
+          onSearchChange={onSearchHostTeamChange}
+          searchValue={searchHostTeam}
+          searchable
+          clearable
+          allowDeselect
+          disabled={disableScheduledTeamsSubmission}
+          nothingFound="No team"
+          data={teamOptions || []}
+          onKeyDown={handleSearchHostTeamKeyDown}
+          {...form.getInputProps('hostTeam')}
+        />
+      )}
+
       {!hideRanksSubmission ? undefined : (
         <Switch
           mt="xs"

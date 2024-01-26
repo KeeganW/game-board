@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { ThemeIcon } from '@mantine/core'
-import { PlayerRankObject } from 'src/types'
+import { PlayerRankObject, TeamObject } from 'src/types'
 import { HoverTooltip } from 'src/components/HoverTooltip'
 import { rankToScoreMap } from 'src/utils/helpers'
 import { RowDisplay } from 'src/components/RowDisplay'
@@ -11,6 +11,7 @@ export const PlayerRankDisplay: React.FC<{
   teamColorMapping?: Map<number | string, string>
   showTournamentScores?: boolean
   modifiedScoring?: boolean
+  hostTeam?: TeamObject
   teamGame?: boolean
   useUsernames?: boolean
   usePlayer?: boolean
@@ -22,6 +23,7 @@ export const PlayerRankDisplay: React.FC<{
   teamColorMapping,
   showTournamentScores,
   modifiedScoring,
+  hostTeam,
   teamGame,
   useUsernames,
   usePlayer,
@@ -31,6 +33,7 @@ export const PlayerRankDisplay: React.FC<{
 }) => {
   // Get values we need
   const playerColor = teamColorMapping?.get(playerRankObject.representing?.name)
+  const isHost = playerRankObject.representing?.name === hostTeam?.name
   let tooltip = `Base Score for Rank (${
     rankToScoreMap[playerRankObject.rank]
   }) + Player's Handicap (${playerRankObject.tournamentHandicap}) - Rank (${
@@ -78,6 +81,7 @@ export const PlayerRankDisplay: React.FC<{
               style={{ color: 'black', textDecoration: 'none' }}
             >
               {usePlayer ? playerRankObject.player : useUsernamesName}
+              {isHost ? ' (Host)' : ''}
             </Link>
           </span>
         }
@@ -112,6 +116,7 @@ export const PlayerRankDisplay: React.FC<{
             style={{ color: 'black', textDecoration: 'none' }}
           >
             {usePlayer ? playerRankObject.player : useUsernamesName}
+            {isHost ? ' (Host)' : ''}
           </Link>
         </span>
       }

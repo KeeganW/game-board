@@ -31,6 +31,7 @@ export const RoundDisplay: React.FC<{
   highlightPlayerPk,
 }) => {
   const { playerPk } = useContext(AuthContext)
+  const { hostTeam } = roundObject
   // Get the players and their scores/ranks listed out
   const roundScores = roundObject.playerRanks
     ?.sort((a: PlayerRankObject, b: PlayerRankObject) => a.rank - b.rank)
@@ -41,6 +42,7 @@ export const RoundDisplay: React.FC<{
           teamColorMapping={teamColorMapping}
           showTournamentScores={showTournamentScores}
           modifiedScoring={modifiedScoring}
+          hostTeam={hostTeam}
           teamGame={teamGame}
           useUsernames={useUsernames}
           usePlayer={usePlayer}
@@ -63,6 +65,7 @@ export const RoundDisplay: React.FC<{
           teamColorMapping={teamColorMapping}
           showTournamentScores={showTournamentScores}
           modifiedScoring={modifiedScoring}
+          hostTeam={hostTeam}
           teamGame={teamGame}
           useUsernames={useUsernames}
           usePlayer={usePlayer}

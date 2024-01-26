@@ -109,6 +109,7 @@ export type RoundObject = {
   game: GameObject
   date: string
   playerRanks: PlayerRankObject[]
+  hostTeam: TeamObject
   scheduledTeams: TeamObject[]
   group: GroupObject
 }
@@ -118,6 +119,7 @@ export type RoundObjectExposed = {
   game: GameObjectExposed
   date: string
   playerRanks: PlayerRankObjectExposed[]
+  hostTeam: TeamObjectExposed
   scheduledTeams: TeamObjectExposed[]
   group: string
 }
