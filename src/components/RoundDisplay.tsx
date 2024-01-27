@@ -34,7 +34,16 @@ export const RoundDisplay: React.FC<{
   const { hostTeam } = roundObject
   // Get the players and their scores/ranks listed out
   const roundScores = roundObject.playerRanks
-    ?.sort((a: PlayerRankObject, b: PlayerRankObject) => a.rank - b.rank)
+    ?.sort((a: PlayerRankObject, b: PlayerRankObject) => {
+      // Move representing to the top.
+      if (a.representing?.name === hostTeam?.name) {
+        return -1
+      }
+      if (b.representing?.name === hostTeam?.name) {
+        return 1
+      }
+      return a.rank - b.rank
+    })
     .map((playerRankObject: PlayerRankObject) => {
       return (
         <PlayerRankDisplay
