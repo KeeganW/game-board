@@ -26,6 +26,7 @@ import { CurrentTournamentRound } from './routes/roundSubmit/CurrentTournamentRo
 import { Round } from './routes/Round'
 import { ResetPassword } from './routes/ResetPassword'
 import { EditRound } from './routes/roundSubmit/EditRound'
+import { Draft } from './routes/draft/Draft'
 
 // More route information can be found at https://reactrouter.com/docs/en/v6/getting-started/tutorial
 const rootElement = document.getElementById('root')
@@ -61,8 +62,9 @@ render(
           <Route path="/add_match" element={<AddMatch />}>
             <Route path=":tournamentPk/:matchPk" element={<AddMatch />} />
           </Route>
+          <Route path="/draft/:pk" element={<Draft />} />
           <Route
-            path="/edit_round/:tournamentPk/:matchPk"
+            path="/edit_round/:tournamentPk/:matchNumber"
             element={<EditRound />}
           />
           <Route path="/add_round" element={<AddRound />} />

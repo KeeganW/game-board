@@ -354,7 +354,7 @@ export const RoundForm: React.FC<{
           )
 
           const defaultTeam =
-            playerObject.inTournament && playerObject.teamScheduled
+            playerObject?.inTournament && playerObject?.teamScheduled
               ? playerObject.team
               : undefined
 
@@ -373,7 +373,7 @@ export const RoundForm: React.FC<{
           }
 
           // Show sub warning if user tries to enter a sub
-          const showSubstituteWarning = playerObject.firstName === 'Substitute'
+          const showSubstituteWarning = playerObject?.firstName === 'Substitute'
 
           if (
             playerIsSubmitter &&

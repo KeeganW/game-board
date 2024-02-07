@@ -11,13 +11,16 @@ export const EditRound: React.FC = () => {
   // Ask the user whether they are the host or not
 
   const params = useParams()
-  const { tournamentPk, matchPk } = params
+  const { tournamentPk, matchNumber } = params
   const tournamentPkSafe = tournamentPk || ''
-  const matchPkSafe = matchPk || ''
+  const matchNumberSafe = matchNumber || ''
 
   return (
     <CenteredPage>
-      <AdminEditRound tournamentPk={tournamentPkSafe} matchPk={matchPkSafe} />
+      <AdminEditRound
+        tournamentPk={tournamentPkSafe}
+        matchNumber={matchNumberSafe}
+      />
     </CenteredPage>
   )
 }

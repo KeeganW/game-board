@@ -28,8 +28,8 @@ import {
 
 export const AdminEditRound: React.FC<{
   tournamentPk: string
-  matchPk: string
-}> = ({ tournamentPk, matchPk }) => {
+  matchNumber: string
+}> = ({ tournamentPk, matchNumber }) => {
   const [, setRoundAdded] = useState<number>(-1)
   // TODO(keegan): tournament setting for only a single point of honor
   //  Add this to round form:
@@ -52,11 +52,15 @@ export const AdminEditRound: React.FC<{
   const tournamentTeamColorsResponse = useGetTournamentTeamColors(tournamentPk)
 
   // Then, let's get the tournament and match information for this current instance
-  const tournamentMatchResponse = useGetAdminTournamentMatch(matchPk)
+  const tournamentMatchResponse = useGetAdminTournamentMatch(
+    tournamentPk,
+    matchNumber
+  )
   const tournamentMatch = tournamentMatchResponse.response?.data
 
   // Let's get the relevant match and its info
-  const match: BracketMatchesObject = tournamentMatch?.[matchPk] || {}
+  const match: BracketMatchesObject = tournamentMatch?.[matchNumber] || {}
+  const matchPk = match?.pk
   const playerRanks: PlayerRankObject[] = match?.round?.playerRanks
 
   // Get the current scores and ranks

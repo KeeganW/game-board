@@ -208,6 +208,16 @@ export type TournamentSchedule = Map<
 > &
   DetailResponse
 
+export type TournamentDraft = {
+  draft: {
+    tournament: TournamentObject
+    drafting: TeamObject
+    order: TeamObject[]
+    matches: BracketMatchesObject[]
+    type: string
+  }
+} & DetailResponse
+
 export type TournamentPlayers = Map<
   [tournamentPk: string],
   Map<[playerPk: string], PlayerObjectExposed>
