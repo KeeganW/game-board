@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
   useGetTournamentDraft,
   useGetTournamentTeamColors,
@@ -9,8 +9,12 @@ import {
   isStillLoading,
   useParamsPk,
 } from 'src/utils/helpers'
-import { BracketMatchesObject } from 'src/types'
+import { BracketMatchesObject, TeamObject } from 'src/types'
 import { RoundDisplay } from 'src/components/RoundDisplay'
+import { Button, Flex, Title } from '@mantine/core'
+import { CenteredPage } from 'src/components/CenteredPage'
+import axios from 'src/axiosAuth'
+import { floor } from 'lodash'
 
 export const Draft: React.FC = () => {
   const tournamentPk = useParamsPk()
@@ -18,34 +22,140 @@ export const Draft: React.FC = () => {
   const tournamentTeamColorsResponse = useGetTournamentTeamColors(tournamentPk)
   const tournamentDraftResponse = useGetTournamentDraft(tournamentPk)
 
-  if (isStillLoading([tournamentTeamColorsResponse, tournamentDraftResponse])) {
+  const [refetching, setRefetching] = useState<boolean>(false)
+
+  if (isStillLoading([tournamentTeamColorsResponse])) {
     return <Loading />
   }
 
   const tournamentTeamColors = tournamentTeamColorsResponse.response.data // Get colors
-  const tournamentDraft = tournamentDraftResponse.response.data // Get draft
+  const tournamentDraft = tournamentDraftResponse.response?.data // Get draft
 
   const teamToColorMapping = getTeamColorsMap(
     tournamentTeamColors[tournamentPk]
   )
+  const draft = tournamentDraft?.draft
+  const drafting = draft?.drafting
 
   // TODO: Make it so you can click on any one of these, and get taken to /edit_round/<tournamentpk>/match.match
-  // TODO: Get it so they are all laid out next to one another
-  const roundsToDisplay = tournamentDraft.draft.matches.map(
-    (match: BracketMatchesObject) => {
+  function draftMatch(match: number) {
+    setRefetching(true)
+    axios
+      .post(`/draft/${tournamentPk}/`, { matchPick: match }, {})
+      .then(() => {
+        // Player was logged in, we should have credentials, so redirect
+        tournamentDraftResponse.sendData()
+        setRefetching(false)
+      })
+      .catch(() => {
+        // TODO handle incorrect drafting
+        setRefetching(false)
+      })
+    return undefined
+  }
+
+  // TODO: some links to use elsewhere
+  // <Link to={`/draft/${tournamentPk}`} style={{textDecoration: "none"}}>
+  // <Link to={`/edit_round/${tournamentPk}/${match.match}`} style={{textDecoration: "none"}}>
+
+  const matches = tournamentDraft?.draft.matches.sort(
+    (a: BracketMatchesObject, b: BracketMatchesObject) => a.match - b.match
+  )
+  const numberOfTeams = tournamentDraft?.draft.tournament.bracket.teams.length
+  const startingWeek = floor(((matches?.[0]?.match || 1) - 1) / numberOfTeams)
+
+  // Breakout matches into the weeks they are being played in
+  const matchesByWeek: BracketMatchesObject[][] = []
+  const teamMatchesByWeek: Record<string, number>[] = []
+  if (tournamentDraft) {
+    tournamentDraft?.draft.matches.forEach((match: BracketMatchesObject) => {
+      const matchWeek = floor((match.match - 1) / numberOfTeams)
+      const indexWeek = matchWeek - startingWeek
+      if (!matchesByWeek[indexWeek]) {
+        matchesByWeek[indexWeek] = []
+        teamMatchesByWeek[indexWeek] = {}
+      }
+      matchesByWeek[indexWeek].push(match)
+      match.round.scheduledTeams.forEach((team: TeamObject) => {
+        teamMatchesByWeek[indexWeek][team.pk] =
+          (teamMatchesByWeek[indexWeek][team.pk] || 0) + 1
+      })
+    })
+  }
+
+  const roundsToDisplay = matchesByWeek.map(
+    (week: BracketMatchesObject[], weekIndex: number) => {
+      const weekDisplay = week?.map((match: BracketMatchesObject) => {
+        // Get conditions where we would disable this drafting option
+        const matchContainsDrafter =
+          match.round.scheduledTeams.filter(
+            (value: TeamObject) => value.pk === drafting.pk
+          ).length > 0
+        // TODO: the number here should be retrieved from the API get_number_teams_per_game_for_bracket_type
+        const matchHasTooManyTeams = match.round.scheduledTeams.length >= 4
+        const teamHasTooManyGamesInWeek =
+          teamMatchesByWeek[weekIndex][drafting.pk] >= 4
+        const isGettingData =
+          refetching || isStillLoading([tournamentDraftResponse])
+
+        const shouldDisable =
+          matchContainsDrafter ||
+          matchHasTooManyTeams ||
+          teamHasTooManyGamesInWeek ||
+          isGettingData
+        const pickButton = !shouldDisable && (
+          <Button
+            size="xs"
+            onClick={() => draftMatch(match.match)}
+            disabled={shouldDisable}
+          >
+            Draft
+          </Button>
+        )
+
+        return (
+          <RoundDisplay
+            roundObject={match.round as any}
+            teamColorMapping={teamToColorMapping}
+            showTournamentScores={false}
+            modifiedScoring={match.modifiedScoring}
+            teamGame={match.teamGame}
+            action={pickButton}
+            usePlayer
+            isSchedule
+            disabled={shouldDisable}
+          />
+        )
+      })
       return (
-        <RoundDisplay
-          roundObject={match.round as any}
-          teamColorMapping={teamToColorMapping}
-          showTournamentScores={false}
-          modifiedScoring={match.modifiedScoring}
-          teamGame={match.teamGame}
-          usePlayer
-          isSchedule
-        />
+        <>
+          <Title order={3}>Playoff {weekIndex + 1}</Title>
+          <Flex
+            direction={{ base: 'column', sm: 'row' }}
+            gap={{ base: 'sm', sm: 'lg' }}
+            justify={{ sm: 'center' }}
+            wrap="wrap"
+          >
+            {weekDisplay}
+          </Flex>
+        </>
       )
     }
   )
 
-  return <div>{roundsToDisplay}</div>
+  return (
+    <CenteredPage>
+      <div>
+        <Title>Currently Drafting: {draft?.drafting?.name}</Title>
+      </div>
+      <Flex
+        direction={{ base: 'column', sm: 'row' }}
+        gap={{ base: 'sm', sm: 'lg' }}
+        justify={{ sm: 'center' }}
+        wrap="wrap"
+      >
+        {roundsToDisplay}
+      </Flex>
+    </CenteredPage>
+  )
 }

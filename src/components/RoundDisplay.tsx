@@ -9,6 +9,8 @@ import { AuthContext } from '../Context'
 
 export const RoundDisplay: React.FC<{
   children?: any
+  action?: any
+  disabled?: boolean
   roundObject: RoundObject
   teamColorMapping?: Map<number | string, string>
   showTournamentScores?: boolean
@@ -20,6 +22,8 @@ export const RoundDisplay: React.FC<{
   highlightPlayerPk?: number
 }> = ({
   children,
+  action,
+  disabled,
   roundObject,
   teamColorMapping,
   showTournamentScores,
@@ -115,6 +119,8 @@ export const RoundDisplay: React.FC<{
     <CardDisplay
       title={roundObject.game.name}
       subtitle={dateWithTooltip}
+      action={action}
+      disabled={disabled}
       content={isSchedule ? roundOrScheduleScores : roundScoresWithHeader}
     >
       {children}

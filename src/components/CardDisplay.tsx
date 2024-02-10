@@ -1,15 +1,20 @@
 import React from 'react'
-import { Card, Flex, Title } from '@mantine/core'
+import { Card, Flex, Group, Overlay, Title } from '@mantine/core'
 
 export const CardDisplay: React.FC<{
   children?: any
   title: any
   subtitle: any
+  action?: any
+  disabled?: boolean
   content: any
-}> = ({ children, title, subtitle, content }) => {
+}> = ({ children, title, subtitle, action, disabled, content }) => {
   return (
     <Card withBorder shadow="sm" radius="md" pb="xl" style={{ width: '320px' }}>
-      <Title order={3}>{title}</Title>
+      <Group justify="space-between">
+        <Title order={3}>{title}</Title>
+        {action}
+      </Group>
       <Title order={6}>{subtitle}</Title>
 
       <Card.Section>
@@ -23,6 +28,8 @@ export const CardDisplay: React.FC<{
       </Card.Section>
 
       {children}
+
+      {disabled && <Overlay color="#000" backgroundOpacity={0.35} />}
     </Card>
   )
 }
