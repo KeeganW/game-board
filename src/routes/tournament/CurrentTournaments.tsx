@@ -105,7 +105,7 @@ const ScheduleForTournament: React.FC<{
           const teamMatchesForWeek: Record<string, string[]> = {}
           week.forEach((match: string[]) => {
             const matchObject = match as unknown as BracketMatchesObjectExposed
-            const round = matchObject.round
+            const { round } = matchObject
             round.scheduledTeams.forEach((team: TeamObjectExposed) => {
               const currentGames: string[] = teamMatchesForWeek[team.name] || []
               // Check to see if hosting, if so put it in the first position
@@ -119,23 +119,30 @@ const ScheduleForTournament: React.FC<{
           })
 
           // TODO(keegan): Turn this table into a new component.
-          const tableData = Object.entries(teamMatchesForWeek).map((teamMatches) => {
-            const teamName = (
-              <div style={{display: 'flex'}}>
-                <ThemeIcon size="xs" mr="xs" mb="-3px" color={teamColorMapping.get(teamMatches[0])} />
-                <Title order={6}>{teamMatches[0]}</Title>
-              </div>
-            )
-            return (
-              <Table.Tr key={teamMatches[0]}>
-                <Table.Td>{teamName}</Table.Td>
-                <Table.Td>{teamMatches[1][0]}</Table.Td>
-                <Table.Td>{teamMatches[1][1]}</Table.Td>
-                <Table.Td>{teamMatches[1][2]}</Table.Td>
-                <Table.Td>{teamMatches[1][3]}</Table.Td>
-              </Table.Tr>
-            )
-          })
+          const tableData = Object.entries(teamMatchesForWeek).map(
+            teamMatches => {
+              const teamName = (
+                <div style={{ display: 'flex' }}>
+                  <ThemeIcon
+                    size="xs"
+                    mr="xs"
+                    mb="-3px"
+                    color={teamColorMapping.get(teamMatches[0])}
+                  />
+                  <Title order={6}>{teamMatches[0]}</Title>
+                </div>
+              )
+              return (
+                <Table.Tr key={teamMatches[0]}>
+                  <Table.Td>{teamName}</Table.Td>
+                  <Table.Td>{teamMatches[1][0]}</Table.Td>
+                  <Table.Td>{teamMatches[1][1]}</Table.Td>
+                  <Table.Td>{teamMatches[1][2]}</Table.Td>
+                  <Table.Td>{teamMatches[1][3]}</Table.Td>
+                </Table.Tr>
+              )
+            }
+          )
           toDisplay = (
             <Table>
               <Table.Thead>
