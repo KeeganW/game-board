@@ -18,7 +18,6 @@ import moment from 'moment'
 import { BracketMatchesObjectExposed, TeamObjectExposed } from 'src/types'
 import { RoundDisplay } from 'src/components/RoundDisplay'
 import { Table, ThemeIcon, Title } from '@mantine/core'
-import { HoverTooltip } from '../../components/HoverTooltip'
 
 const ScoreboardForTournament: React.FC<{
   tournamentName: string
