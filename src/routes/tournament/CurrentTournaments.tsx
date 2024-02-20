@@ -15,8 +15,10 @@ import {
 } from 'src/utils/helpers'
 import { isArray } from 'lodash'
 import moment from 'moment'
-import { BracketMatchesObjectExposed } from 'src/types'
+import { BracketMatchesObjectExposed, TeamObjectExposed } from 'src/types'
 import { RoundDisplay } from 'src/components/RoundDisplay'
+import { Table, ThemeIcon, Title } from '@mantine/core'
+import { HoverTooltip } from '../../components/HoverTooltip'
 
 const ScoreboardForTournament: React.FC<{
   tournamentName: string
@@ -97,33 +99,87 @@ const ScheduleForTournament: React.FC<{
         moment(firstRound.date) < moment().add(6, 'days') &&
         moment(firstRound.date) > moment().subtract(1, 'days')
       ) {
-        const roundsForWeek = week.map((match: string[]) => {
-          const matchObject = match as unknown as BracketMatchesObjectExposed
-          if (isArray(match)) {
-            return <div />
-          }
-          const isSchedule = matchObject?.round?.playerRanks?.[0]?.rank === 0
-          return (
-            <Col>
-              <Row className="justify-content-center">
-                <RoundDisplay
-                  roundObject={matchObject.round as any}
-                  teamColorMapping={teamColorMapping}
-                  showTournamentScores={false}
-                  modifiedScoring={matchObject.modifiedScoring}
-                  teamGame={matchObject.teamGame}
-                  usePlayer
-                  isSchedule={isSchedule}
-                />
-              </Row>
-            </Col>
+        let toDisplay = null
+        // Determine if we are showing scores, or just the games people will be playing
+        if (moment(firstRound.date) > moment()) {
+          // Generate the team schedule.
+          const teamMatchesForWeek: Record<string, string[]> = {}
+          week.forEach((match: string[]) => {
+            const matchObject = match as unknown as BracketMatchesObjectExposed
+            const round = matchObject.round
+            round.scheduledTeams.forEach((team: TeamObjectExposed) => {
+              const currentGames: string[] = teamMatchesForWeek[team.name] || []
+              // Check to see if hosting, if so put it in the first position
+              if (round.hostTeam.pk === team.pk) {
+                currentGames.unshift(round.game.name)
+              } else {
+                currentGames.push(round.game.name)
+              }
+              teamMatchesForWeek[team.name] = currentGames
+            })
+          })
+
+          // TODO(keegan): Turn this table into a new component.
+          const tableData = Object.entries(teamMatchesForWeek).map((teamMatches) => {
+            const teamName = (
+              <div style={{display: 'flex'}}>
+                <ThemeIcon size="xs" mr="xs" mb="-3px" color={teamColorMapping.get(teamMatches[0])} />
+                <Title order={6}>{teamMatches[0]}</Title>
+              </div>
+            )
+            return (
+              <Table.Tr key={teamMatches[0]}>
+                <Table.Td>{teamName}</Table.Td>
+                <Table.Td>{teamMatches[1][0]}</Table.Td>
+                <Table.Td>{teamMatches[1][1]}</Table.Td>
+                <Table.Td>{teamMatches[1][2]}</Table.Td>
+                <Table.Td>{teamMatches[1][3]}</Table.Td>
+              </Table.Tr>
+            )
+          })
+          toDisplay = (
+            <Table>
+              <Table.Thead>
+                <Table.Tr>
+                  <Table.Th>Team</Table.Th>
+                  <Table.Th>Hosting</Table.Th>
+                  <Table.Th>Game 2</Table.Th>
+                  <Table.Th>Game 3</Table.Th>
+                  <Table.Th>Game 4</Table.Th>
+                </Table.Tr>
+              </Table.Thead>
+              <Table.Tbody>{tableData}</Table.Tbody>
+            </Table>
           )
-        })
+        } else {
+          toDisplay = week.map((match: string[]) => {
+            const matchObject = match as unknown as BracketMatchesObjectExposed
+            if (isArray(match)) {
+              return <div />
+            }
+            const isSchedule = matchObject?.round?.playerRanks?.[0]?.rank === 0
+            return (
+              <Col>
+                <Row className="justify-content-center">
+                  <RoundDisplay
+                    roundObject={matchObject.round as any}
+                    teamColorMapping={teamColorMapping}
+                    showTournamentScores={false}
+                    modifiedScoring={matchObject.modifiedScoring}
+                    teamGame={matchObject.teamGame}
+                    usePlayer
+                    isSchedule={isSchedule}
+                  />
+                </Row>
+              </Col>
+            )
+          })
+        }
         return (
           // eslint-disable-next-line react/no-array-index-key
           <Row className="mb-3 justify-content-center" key={weekIndex}>
             <h3 className="text-center">Week {weekIndex + 1}</h3>
-            {roundsForWeek}
+            {toDisplay}
           </Row>
         )
       }
