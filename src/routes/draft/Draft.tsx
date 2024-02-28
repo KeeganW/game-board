@@ -15,6 +15,7 @@ import { Button, Flex, Title } from '@mantine/core'
 import { CenteredPage } from 'src/components/CenteredPage'
 import axios from 'src/axiosAuth'
 import { floor } from 'lodash'
+import moment from 'moment'
 
 export const Draft: React.FC = () => {
   const tournamentPk = useParamsPk()
@@ -85,6 +86,10 @@ export const Draft: React.FC = () => {
 
   const roundsToDisplay = matchesByWeek.map(
     (week: BracketMatchesObject[], weekIndex: number) => {
+      const weekDateDisplay =
+        week && week.length > 0
+          ? moment(week[0].round.date).format('MMMM D, YYYY')
+          : ''
       const weekDisplay = week?.map((match: BracketMatchesObject) => {
         // Get conditions where we would disable this drafting option
         const matchContainsDrafter =
@@ -129,7 +134,10 @@ export const Draft: React.FC = () => {
       })
       return (
         <>
-          <Title order={3}>Playoff {weekIndex + 1}</Title>
+          <Title order={3}>
+            Playoff {weekIndex + 1}{' '}
+            {weekDateDisplay ? ` - ${weekDateDisplay}` : ''}
+          </Title>
           <Flex
             direction={{ base: 'column', sm: 'row' }}
             gap={{ base: 'sm', sm: 'lg' }}
