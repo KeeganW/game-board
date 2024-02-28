@@ -16,6 +16,7 @@ import { CenteredPage } from 'src/components/CenteredPage'
 import axios from 'src/axiosAuth'
 import { floor } from 'lodash'
 import moment from 'moment'
+import { notifications } from '@mantine/notifications'
 
 export const Draft: React.FC = () => {
   const tournamentPk = useParamsPk()
@@ -48,9 +49,16 @@ export const Draft: React.FC = () => {
         tournamentDraftResponse.sendData()
         setRefetching(false)
       })
-      .catch(() => {
-        // TODO handle incorrect drafting
+      .catch(loginErrorRes => {
         setRefetching(false)
+        notifications.show({
+          color: 'red',
+          title: 'Drafting Error',
+          message:
+            // eslint-disable-next-line no-underscore-dangle
+            loginErrorRes.response.data?.errors?.__all__ ||
+            'General error on this page.',
+        })
       })
     return undefined
   }
