@@ -1,107 +1,57 @@
-import React, { useEffect, useState } from 'react'
-import { Button, Form } from 'react-bootstrap'
-import { useForm, Controller } from 'react-hook-form'
-import axios from 'src/axiosAuth'
-import { Navigate } from 'react-router-dom'
-import { useUpdatePlayerInfo } from 'src/utils/hooks'
-import { AddTournamentInfo } from 'src/types'
+import React from 'react'
 import { CenteredPage } from 'src/components/CenteredPage'
-import { getTokens } from 'src/utils/localStorageService'
-import { SMALL_WIDTH } from 'src/utils/helpers'
+import { Checkbox, NumberInput, Select, TextInput } from '@mantine/core'
+import { DateInput } from '@mantine/dates'
+import { useForm } from '@mantine/form'
 
-export const AddTournament: React.FC = () => {
-  useUpdatePlayerInfo()
-  const authToken = getTokens()
-
-  const { register, handleSubmit, control } = useForm()
-  const [, setAddTournamentData] = useState<AddTournamentInfo | undefined>(
-    undefined
-  )
-  const [tournamentAdded, setTournamentAdded] = useState<number>(-1)
-
-  useEffect(() => {
-    axios
-      .get('/add_tournament_info/', {
-        headers: {
-          ...(authToken.access && {
-            Authorization: `Bearer ${authToken.access}`,
-          }),
-        },
-      })
-      .then(res => {
-        setAddTournamentData(res.data as AddTournamentInfo)
-      })
-  }, [])
-
-  const handleOnSubmit = (data: any) => {
-    // Get our objects
-    axios
-      .post('/add_tournament/', data, {})
-      .then(res => {
-        // Player was logged in, we should have credentials, so redirect
-        setTournamentAdded(res.data.pk)
-      })
-      .catch(() => {
-        // TODO handle incorrect credentials
-      })
-  }
-
+const TournamentForm: React.FC<{
+  form: any
+}> = ({ form }) => {
   return (
-    <CenteredPage pageWidth={SMALL_WIDTH}>
+    <CenteredPage>
       <h3>Add Tournament</h3>
-      <Form onSubmit={handleSubmit(handleOnSubmit)}>
-        <Form.Group className="mb-3" controlId="tournamentName">
-          <Form.Label>Name</Form.Label>
-          <Form.Control
-            type="text"
-            {...register('tournamentName', { required: true })}
-          />
-          <Form.Text className="text-muted" />
-        </Form.Group>
-        <Controller
-          control={control}
-          name="teams"
-          rules={{
-            required:
-              'Please, select at least two Teams to include in this tournament',
-          }}
-          render={({ fieldState }) => (
-            <div className="mb-3">
-              {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
-              <label htmlFor="team" className="form-label">
-                Teams
-              </label>
-              {/* <Typeahead */}
-              {/*   {...field} */}
-              {/*   id="team" */}
-              {/*   multiple */}
-              {/*   clearButton */}
-              {/*   className={fieldState.invalid ? 'is-invalid' : ''} */}
-              {/*   aria-describedby="teamsError" */}
-              {/*   options={ */}
-              {/*     addTournamentData */}
-              {/*       ? addTournamentData.teams.map(value => value.name) */}
-              {/*       : [] */}
-              {/*   } */}
-              {/* /> */}
-              <p id="teamsError" className="invalid-feedback">
-                {fieldState.error?.message}
-              </p>
-            </div>
-          )}
-        />
-        <Button variant="primary" type="submit">
-          Submit
-        </Button>
-      </Form>
-      {/* If login button stops working randomly, it probably has to do with this statement */}
-      {tournamentAdded &&
-        tournamentAdded >= 0 &&
-        (tournamentAdded >= 0 ? (
-          <Navigate replace to={`/tournament/${tournamentAdded}`} />
-        ) : (
-          <Navigate replace to="/tournament/" />
-        ))}
+      <TextInput label="Tournament Name" {...form.getInputProps('name')} />
+      <Select
+        label="Tournament Type"
+        data={['Team', 'Individual']}
+        {...form.getInputProps('type')}
+      />
+      <DateInput label="Start Date" {...form.getInputProps('startDate')} />
+      <Select
+        label="Round Frequency"
+        data={['Week', 'Day', 'None']}
+        {...form.getInputProps('roundFrequency')}
+      />
+      Note: None means it is up to the tournament directors to provide dates.
+      <NumberInput
+        label="Tournament Length"
+        {...form.getInputProps('length')}
+      />
+      <Checkbox
+        label="Include Playoffs"
+        {...form.getInputProps('includePlayoffs', { type: 'checkbox' })}
+      />
+      <NumberInput
+        label="Number of Playoff Rounds"
+        {...form.getInputProps('playoffRounds')}
+      />
+      <NumberInput label="Game Size" {...form.getInputProps('gameSize')} />
     </CenteredPage>
   )
+}
+
+export const AddTournament: React.FC = () => {
+  const initialValues = {
+    initialValues: {
+      date: new Date(),
+      type: 'Team',
+      roundFrequency: 'None',
+      length: 10,
+      includePlayoffs: false,
+      playoffRounds: 0,
+      gameSize: 4,
+    },
+  }
+  const form = useForm(initialValues)
+  return <TournamentForm form={form} />
 }

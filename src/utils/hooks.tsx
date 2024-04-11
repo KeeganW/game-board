@@ -261,3 +261,11 @@ export function useGetRecentRounds(
   const url = `/recent_rounds/${groupPk || ''}`
   return useGetResponse<RecentRounds>(url, params)
 }
+
+export function useGetGroupPlayers(
+  groupPk?: string | number,
+  params?: any
+): FetchResponse {
+  const url = `/players/${groupPk || ''}`
+  return useGetResponse<RecentRounds>(url, params)
+}

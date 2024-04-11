@@ -22,11 +22,12 @@ import { AddTournament } from 'src/routes/AddTournament'
 import { createTheme, MantineProvider } from '@mantine/core'
 import { Notifications } from '@mantine/notifications'
 import { CurrentTournaments } from './routes/tournament/CurrentTournaments'
-import { CurrentTournamentRound } from './routes/roundSubmit/CurrentTournamentRound'
 import { Round } from './routes/Round'
 import { ResetPassword } from './routes/ResetPassword'
 import { EditRound } from './routes/roundSubmit/EditRound'
 import { Draft } from './routes/draft/Draft'
+import { AddTeam } from './routes/AddTeam'
+import { EditTeamRound } from './routes/EditTeamRound'
 
 // More route information can be found at https://reactrouter.com/docs/en/v6/getting-started/tutorial
 const rootElement = document.getElementById('root')
@@ -70,19 +71,24 @@ render(
           <Route path="/add_round" element={<AddRound />} />
 
           {/* Stands for add_current_round, shortened for qr codes */}
-          <Route path="/acr" element={<CurrentTournamentRound />}>
-            <Route path=":tournamentPk" element={<CurrentTournamentRound />} />
-            <Route
-              path=":tournamentPk/:matchPk"
-              element={<CurrentTournamentRound />}
-            />
-            <Route
-              path=":tournamentPk/:matchPk/:submitterType"
-              element={<CurrentTournamentRound />}
-            />
-          </Route>
+
+          {/* Temp 4/10 night change */}
+          <Route path="/acr" element={<EditTeamRound />} />
+          {/* <Route path="/acr" element={<CurrentTournamentRound />}> */}
+          {/*   <Route path=":tournamentPk" element={<CurrentTournamentRound />} /> */}
+          {/*   <Route */}
+          {/*     path=":tournamentPk/:matchPk" */}
+          {/*     element={<CurrentTournamentRound />} */}
+          {/*   /> */}
+          {/*   <Route */}
+          {/*     path=":tournamentPk/:matchPk/:submitterType" */}
+          {/*     element={<CurrentTournamentRound />} */}
+          {/*   /> */}
+          {/* </Route> */}
 
           <Route path="/add_tournament" element={<AddTournament />} />
+          <Route path="/add_team" element={<AddTeam />} />
+          <Route path="/edit_team_round" element={<EditTeamRound />} />
           <Route path="/current" element={<CurrentTournaments />}>
             <Route path=":pk" element={<CurrentTournaments />} />
           </Route>
