@@ -9,7 +9,10 @@ import {
   TextInput,
   Title,
   Text,
-  Group, ActionIcon, ColorInput, MultiSelect
+  Group,
+  ActionIcon,
+  ColorInput,
+  MultiSelect,
 } from '@mantine/core'
 import { DateInput } from '@mantine/dates'
 import { useForm } from '@mantine/form'
@@ -18,8 +21,8 @@ import { notifications } from '@mantine/notifications'
 import { Navigate } from 'react-router-dom'
 import { IconTrash } from '@tabler/icons-react'
 import { randomId } from '@mantine/hooks'
-import { GameObject, PlayerObjectFull, PlayerObjectLite } from '../types'
 import { clone } from 'lodash'
+import { GameObject, PlayerObjectFull, PlayerObjectLite } from '../types'
 import { AuthContext } from '../Context'
 import { useGetGame, useGetGroupPlayers } from '../utils/hooks'
 import { isStillLoading } from '../utils/helpers'
@@ -62,96 +65,104 @@ const TournamentForm: React.FC<{
 }
 
 type TeamFormObject = {
-  key: string,
-  name: string,
-  players: string[],
-  games: string[],
-  color: string,
+  key: string
+  name: string
+  players: string[]
+  games: string[]
+  color: string
 }
 const TeamsForm: React.FC<{
   form: any
   playerOptions?: any
   gameOptions?: any
 }> = ({ form, playerOptions, gameOptions }) => {
-  const teams = form.getValues().teams.map((item: TeamFormObject, index: number) => {
-    const [searchGames, onSearchGamesChange] = useState('')
-    const [searchPlayers, onSearchPlayersChange] = useState('')
+  const teams = form
+    .getValues()
+    .teams.map((item: TeamFormObject, index: number) => {
+      const [searchGames, onSearchGamesChange] = useState('')
+      const [searchPlayers, onSearchPlayersChange] = useState('')
 
-    const handleSearchGamesKeyDown = (event: any) => {
-      if (event.key === 'Enter') {
-        const filtered = gameOptions.filter((value: GameObject) =>
-          value.name.toLowerCase().includes(searchGames) &&
-          !item.games.includes(value.name)
-        )
-        if (filtered.length > 0) {
-          onSearchGamesChange('')
-          const newGames = clone(item.games || [])
-          newGames.push(filtered[0].name)
-          form.setFieldValue(`teams.${index}.games`, newGames)
-        }
-      }
-    }
-    const handleSearchPlayersKeyDown = (event: any) => {
-      if (event.key === 'Enter') {
-        const filtered = playerOptions.filter(
-          (value: PlayerObjectLite) =>
-            value.username.toLowerCase().includes(searchPlayers) &&
-            !item.players.includes(value.username)
-        )
-        if (filtered.length > 0) {
-          onSearchPlayersChange('')
-          const newPlayers = clone(item.players || [])
-          console.log(newPlayers, filtered[0])
-          newPlayers.push(filtered[0].username)
-          console.log()
-          form.setFieldValue(`teams.${index}.players`, newPlayers)
-        }
-      }
-    }
-
-    return (
-      <Group key={item.key} mt="xs">
-        <TextInput
-          label="Team Name"
-          style={{ flex: 1 }}
-          {...form.getInputProps(`teams.${index}.name`)}
-        />
-        <ColorInput label="Team Color" {...form.getInputProps(`teams.${index}.color`)} />
-        <MultiSelect
-          label="Players"
-          placeholder="The players on this team"
-          onSearchChange={onSearchPlayersChange}
-          searchValue={searchPlayers}
-          searchable
-          clearable
-          nothingFound="No players"
-          data={
-            playerOptions?.map((value: PlayerObjectFull) => ({
-              value: value.username,
-              label: `${value.firstName} ${value.lastName}`,
-            })) || []
+      const handleSearchGamesKeyDown = (event: any) => {
+        if (event.key === 'Enter') {
+          const filtered = gameOptions.filter(
+            (value: GameObject) =>
+              value.name.toLowerCase().includes(searchGames) &&
+              !item.games.includes(value.name)
+          )
+          if (filtered.length > 0) {
+            onSearchGamesChange('')
+            const newGames = clone(item.games || [])
+            newGames.push(filtered[0].name)
+            form.setFieldValue(`teams.${index}.games`, newGames)
           }
-          onKeyDown={handleSearchPlayersKeyDown}
-          {...form.getInputProps(`teams.${index}.players`)}
-        />
-        <MultiSelect
-          label="Games"
-          placeholder="The games this team wants to play"
-          onSearchChange={onSearchGamesChange}
-          searchValue={searchGames}
-          searchable
-          clearable
-          nothingFound="No games"
-          data={gameOptions?.map((value: GameObject) => value.name) || []}
-          onKeyDown={handleSearchGamesKeyDown}
-          {...form.getInputProps(`teams.${index}.games`)}
-        />
-        <ActionIcon mt="lg" color="red" onClick={() => form.removeListItem('teams', index)}>
-          <IconTrash size="1rem"/>
-        </ActionIcon>
-      </Group>
-    )
-  });
+        }
+      }
+      const handleSearchPlayersKeyDown = (event: any) => {
+        if (event.key === 'Enter') {
+          const filtered = playerOptions.filter(
+            (value: PlayerObjectLite) =>
+              value.username.toLowerCase().includes(searchPlayers) &&
+              !item.players.includes(value.username)
+          )
+          if (filtered.length > 0) {
+            onSearchPlayersChange('')
+            const newPlayers = clone(item.players || [])
+            newPlayers.push(filtered[0].username)
+            form.setFieldValue(`teams.${index}.players`, newPlayers)
+          }
+        }
+      }
+
+      return (
+        <Group key={item.key} mt="xs">
+          <TextInput
+            label="Team Name"
+            style={{ flex: 1 }}
+            {...form.getInputProps(`teams.${index}.name`)}
+          />
+          <ColorInput
+            label="Team Color"
+            {...form.getInputProps(`teams.${index}.color`)}
+          />
+          <MultiSelect
+            label="Players"
+            placeholder="The players on this team"
+            onSearchChange={onSearchPlayersChange}
+            searchValue={searchPlayers}
+            searchable
+            clearable
+            nothingFound="No players"
+            data={
+              playerOptions?.map((value: PlayerObjectFull) => ({
+                value: value.username,
+                label: `${value.firstName} ${value.lastName}`,
+              })) || []
+            }
+            onKeyDown={handleSearchPlayersKeyDown}
+            {...form.getInputProps(`teams.${index}.players`)}
+          />
+          <MultiSelect
+            label="Games"
+            placeholder="The games this team wants to play"
+            onSearchChange={onSearchGamesChange}
+            searchValue={searchGames}
+            searchable
+            clearable
+            nothingFound="No games"
+            data={gameOptions?.map((value: GameObject) => value.name) || []}
+            onKeyDown={handleSearchGamesKeyDown}
+            {...form.getInputProps(`teams.${index}.games`)}
+          />
+          <ActionIcon
+            mt="lg"
+            color="red"
+            onClick={() => form.removeListItem('teams', index)}
+          >
+            <IconTrash size="1rem" />
+          </ActionIcon>
+        </Group>
+      )
+    })
 
   return (
     <CenteredPage>
@@ -159,7 +170,13 @@ const TeamsForm: React.FC<{
       <Group justify="center" mt="md">
         <Button
           onClick={() =>
-            form.insertListItem('teams', { name: '', color: "#ffffff", players: [], games: [], key: randomId() })
+            form.insertListItem('teams', {
+              name: '',
+              color: '#ffffff',
+              players: [],
+              games: [],
+              key: randomId(),
+            })
           }
         >
           Add Team
@@ -190,7 +207,9 @@ export const AddTournament: React.FC = () => {
       includePlayoffs: false,
       playoffRounds: 0,
       gameSize: 4,
-      teams: [{ name: '', color: "#ffffff", players: [], games: [], key: randomId() }],
+      teams: [
+        { name: '', color: '#ffffff', players: [], games: [], key: randomId() },
+      ],
     },
   })
 
@@ -198,7 +217,7 @@ export const AddTournament: React.FC = () => {
     return <Loading />
   }
 
-  if (tournamentAdded >=0) {
+  if (tournamentAdded >= 0) {
     return <Navigate replace to={`/tournament/${tournamentAdded}`} />
   }
 
@@ -218,7 +237,7 @@ export const AddTournament: React.FC = () => {
           color: 'red',
           title: 'Submission Error',
           message:
-          // eslint-disable-next-line no-underscore-dangle
+            // eslint-disable-next-line no-underscore-dangle
             res.response.data?.errors?.__all__ ||
             'Error submitting this round.',
         })
@@ -228,14 +247,16 @@ export const AddTournament: React.FC = () => {
   const nextButtonClicked = () => setCurrentState(currentState + 1)
   const prevButtonClicked = () => setCurrentState(currentState - 1)
 
-  const TournamentConfigObject = () => {
+  const tournamentConfigObject = () => {
     switch (currentState) {
       case 0: // Info on adding a tournament
         return (
           <CenteredPage>
             <Title>Welcome to the Tournament Creator!</Title>
             <Text>
-              Create exhilarating board game tournaments and bring out the competitive spirit in your friends or community. Customize your tournament settings below and let the games begin!
+              Create exhilarating board game tournaments and bring out the
+              competitive spirit in your friends or community. Customize your
+              tournament settings below and let the games begin!
             </Text>
             <Center>
               <Button onClick={nextButtonClicked}>Next</Button>
@@ -248,7 +269,9 @@ export const AddTournament: React.FC = () => {
             <Title>Configure Tournament</Title>
             <TournamentForm form={form} />
             <Center>
-              <Button variant="default" onClick={prevButtonClicked} mr="sm">Previous</Button>
+              <Button variant="default" onClick={prevButtonClicked} mr="sm">
+                Previous
+              </Button>
               <Button onClick={nextButtonClicked}>Next</Button>
             </Center>
           </CenteredPage>
@@ -257,21 +280,28 @@ export const AddTournament: React.FC = () => {
         return (
           <CenteredPage>
             <Title>Add Teams and Games</Title>
-            <TeamsForm form={form} playerOptions={players} gameOptions={games} />
+            <TeamsForm
+              form={form}
+              playerOptions={players}
+              gameOptions={games}
+            />
             <Center>
-              <Button variant="default" onClick={prevButtonClicked} mr="sm">Previous</Button>
+              <Button variant="default" onClick={prevButtonClicked} mr="sm">
+                Previous
+              </Button>
               <Button onClick={nextButtonClicked}>Next</Button>
             </Center>
           </CenteredPage>
         )
       case 3: // Review
-        console.log(form.getValues())
         return (
           <CenteredPage>
             <Title>Review</Title>
             TODO
             <Center>
-              <Button variant="default" onClick={prevButtonClicked} mr="sm">Previous</Button>
+              <Button variant="default" onClick={prevButtonClicked} mr="sm">
+                Previous
+              </Button>
               <Button type="submit">Submit</Button>
             </Center>
           </CenteredPage>
@@ -281,18 +311,16 @@ export const AddTournament: React.FC = () => {
     }
   }
 
-
   return (
     <CenteredPage>
       <form
         onSubmit={form.onSubmit(values => {
-            handleOnSubmit({
-              ...values,
-            })
-          }
-        )}
+          handleOnSubmit({
+            ...values,
+          })
+        })}
       >
-        <TournamentConfigObject />
+        {tournamentConfigObject}
       </form>
     </CenteredPage>
   )

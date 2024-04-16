@@ -84,9 +84,7 @@ render(
             />
           </Route>
 
-          <Route path="/add_tournament" element={<AddTournament />} >
-
-          </Route>
+          <Route path="/add_tournament" element={<AddTournament />} />
           <Route path="/add_team" element={<AddTeam />} />
           <Route path="/edit_team_round" element={<EditTeamRound />} />
           <Route path="/current" element={<CurrentTournaments />}>
