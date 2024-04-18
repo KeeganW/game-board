@@ -320,7 +320,7 @@ export const AddTournament: React.FC = () => {
           })
         })}
       >
-        {tournamentConfigObject}
+        {tournamentConfigObject()}
       </form>
     </CenteredPage>
   )
