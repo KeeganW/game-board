@@ -147,7 +147,7 @@ export const RoundForm: React.FC<{
   if (tournamentSchedule) {
     tournamentSchedule.forEach((week: any[]) => {
       week.forEach((match: any) => {
-        if (match.pk && match.pk.toString() === matchPk) {
+        if (match.pk && Number(match.pk) === Number(matchPk)) {
           const scheduledPlayerRanks = match.round.scheduledTeams || []
           scheduledPlayerRanks.forEach((scheduledTeam: any) => {
             if (

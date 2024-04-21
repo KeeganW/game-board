@@ -4,7 +4,7 @@ import { AuthContext } from 'src/Context'
 import { useLogout } from 'src/utils/hooks'
 import { CenteredPage } from 'src/components/CenteredPage'
 
-export const Logout: React.FC = () => {
+export const SignOut: React.FC = () => {
   const {
     authenticated,
     setAuthenticated,

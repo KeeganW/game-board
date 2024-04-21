@@ -82,15 +82,24 @@ export const App = () => {
 
   const authLinks = authenticated
     ? [
-        <Button component="a" href="#/logout" variant="default" onClick={close}>
-          Log out
+        <Button
+          component="a"
+          href="#/sign_out"
+          variant="default"
+          onClick={close}
+        >
+          Sign out
         </Button>,
       ]
     : [
-        <Button component="a" href="#/login" variant="default" onClick={close}>
-          Log in
+        <Button
+          component="a"
+          href="#/sign_in"
+          variant="default"
+          onClick={close}
+        >
+          Sign in
         </Button>,
-        // {/* <Button>Sign up</Button> */}
       ]
 
   return (

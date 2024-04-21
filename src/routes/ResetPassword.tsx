@@ -6,6 +6,7 @@ import { CenteredPage } from 'src/components/CenteredPage'
 import { Center, PasswordInput, TextInput, Title } from '@mantine/core'
 import { SMALL_WIDTH } from 'src/utils/helpers'
 import { useForm } from '@mantine/form'
+import { notifications } from '@mantine/notifications'
 
 export const ResetPassword: React.FC = () => {
   const [passwordResetSent, setPasswordResetSent] = useState<boolean>(false)
@@ -33,8 +34,15 @@ export const ResetPassword: React.FC = () => {
         // User has reset password
         setPasswordResetSent(true)
       })
-      .catch(() => {
-        // TODO handle incorrect credentials
+      .catch(res => {
+        notifications.show({
+          color: 'red',
+          title: 'Submission Error',
+          message:
+            // eslint-disable-next-line no-underscore-dangle
+            res.response.data?.errors?.__all__ ||
+            'Error resetting your password.',
+        })
       })
   }
 

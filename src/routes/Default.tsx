@@ -10,7 +10,7 @@ export const Default: React.FC = () => {
   console.log(`Using API ${axios.defaults.baseURL}`)
   return (
     <CenteredPage>
-      <h4>Welcome to the Game Board!</h4>
+      <h4>Welcome to Board Game Tournaments!</h4>
       <p>
         This application allows you to keep track of games played with friends.
         By entering all of the games you play, and their outcomes, we can

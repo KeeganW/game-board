@@ -5,17 +5,14 @@ import axios from 'src/axiosAuth'
 import { Navigate } from 'react-router-dom'
 import { AuthContext } from 'src/Context'
 import { CenteredPage } from 'src/components/CenteredPage'
-import { notifications } from '@mantine/notifications'
 import { SMALL_WIDTH } from 'src/utils/helpers'
-import { Anchor, Center } from '@mantine/core'
+import { notifications } from '@mantine/notifications'
 
-export const Login: React.FC = () => {
+export const SignUp: React.FC = () => {
   const { register, handleSubmit } = useForm()
   const {
     authenticated,
     setAuthenticated,
-    setTokenAccess,
-    setTokenRefresh,
     playerPk,
     setPlayerPk,
     setGroupPk,
@@ -26,50 +23,38 @@ export const Login: React.FC = () => {
   // Good resource
   // https://medium.com/swlh/django-rest-framework-and-spa-session-authentication-with-docker-and-nginx-aa64871f29cd
   const handleOnSubmit = (data: any) => {
+    // TODO: validate data, convert this into a hook
+    // Get our objects
     axios
-      .post('/token/login/', data, {})
-      .then(tokenResponse => {
-        // Player was logged in, we should have credentials, so redirect
-        setAuthenticated(true)
-        setTokenAccess(tokenResponse.data?.access)
-        setTokenRefresh(tokenResponse.data?.refresh)
-        localStorage.setItem('tokenAccess', tokenResponse.data?.access)
-        localStorage.setItem('tokenRefresh', tokenResponse.data?.refresh)
-
+      .get('/set-csrf/')
+      .then(() => {
         axios
-          .post('/login/', data, {})
-          .then(loginResponse => {
+          .post('/signup/', data, {})
+          .then(res => {
             // Player was logged in, we should have credentials, so redirect
-            setPlayerPk(loginResponse.data.playerPk || -1)
-            setGroupPk(loginResponse.data.groupPk || -1)
-            setGroupName(loginResponse.data.groupName || '')
-            setGroupImageUrl(loginResponse.data.groupImageUrl || '')
-
-            // Store this in our local storage for any other tabs that are opened
-            localStorage.setItem(
-              'initialState',
-              JSON.stringify(loginResponse.data)
-            )
+            setAuthenticated(true)
+            setPlayerPk(res.data.playerPk || -1)
+            setGroupPk(res.data.groupPk || -1)
+            setGroupName(res.data.groupName || '')
+            setGroupImageUrl(res.data.groupImageUrl || '')
           })
-          .catch(loginErrorRes => {
+          .catch(res => {
             notifications.show({
               color: 'red',
-              title: 'Login Error',
+              title: 'Submission Error',
               message:
                 // eslint-disable-next-line no-underscore-dangle
-                loginErrorRes.response.data?.errors?.__all__ ||
-                'General error on this page.',
+                res.response.data?.errors?.__all__ || 'Error submitting.',
             })
           })
       })
-      .catch(loginTokenErrorRes => {
+      .catch(res => {
         notifications.show({
           color: 'red',
-          title: 'Login Error',
+          title: 'Submission Error',
           message:
             // eslint-disable-next-line no-underscore-dangle
-            loginTokenErrorRes.response.data?.errors?.__all__ ||
-            'General error on this page.',
+            res.response.data?.errors?.__all__ || 'Error submitting.',
         })
       })
   }
@@ -87,6 +72,36 @@ export const Login: React.FC = () => {
           <Form.Text className="text-muted" />
         </Form.Group>
 
+        <Form.Group className="mb-3" controlId="formFirstName">
+          <Form.Label>First Name</Form.Label>
+          <Form.Control
+            type="text"
+            placeholder="Enter First Name"
+            {...register('first_name', { required: true })}
+          />
+          <Form.Text className="text-muted" />
+        </Form.Group>
+
+        <Form.Group className="mb-3" controlId="formLastName">
+          <Form.Label>Last Name</Form.Label>
+          <Form.Control
+            type="text"
+            placeholder="Enter Last Name"
+            {...register('last_name', { required: true })}
+          />
+          <Form.Text className="text-muted" />
+        </Form.Group>
+
+        <Form.Group className="mb-3" controlId="formDateOfBirth">
+          <Form.Label>Date of Birth</Form.Label>
+          <Form.Control
+            type="date"
+            placeholder="Date of Birth"
+            {...register('date_of_birth', { required: true })}
+          />
+          <Form.Text className="text-muted" />
+        </Form.Group>
+
         <Form.Group className="mb-3" controlId="formBasicPassword">
           <Form.Label>Password</Form.Label>
           <Form.Control
@@ -95,13 +110,19 @@ export const Login: React.FC = () => {
             {...register('password', { required: true })}
           />
         </Form.Group>
-        <Center>
-          <Button variant="primary" type="submit">
-            Submit
-          </Button>
-        </Center>
+
+        <Form.Group className="mb-3" controlId="formConfirmPassword">
+          <Form.Label>Confirm Password</Form.Label>
+          <Form.Control
+            type="password"
+            placeholder="Confirm Password"
+            {...register('confirm_password', { required: true })}
+          />
+        </Form.Group>
+        <Button variant="primary" type="submit">
+          Submit
+        </Button>
       </Form>
-      <Anchor href="#/reset_password">Forgot password?</Anchor>
       {/* Once logged in, go to the logged in player's page. */}
       {authenticated &&
         playerPk >= 0 &&

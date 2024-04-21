@@ -76,13 +76,14 @@ const TeamsForm: React.FC<{
   playerOptions?: any
   gameOptions?: any
 }> = ({ form, playerOptions, gameOptions }) => {
+  const [searchGames, onSearchGamesChange] = useState('')
+  const [searchPlayers, onSearchPlayersChange] = useState('')
+  const [indexBeingSearched, setIndexBeingSearched] = useState(-1)
   const teams = form
     .getValues()
     .teams.map((item: TeamFormObject, index: number) => {
-      const [searchGames, onSearchGamesChange] = useState('')
-      const [searchPlayers, onSearchPlayersChange] = useState('')
-
       const handleSearchGamesKeyDown = (event: any) => {
+        setIndexBeingSearched(index)
         if (event.key === 'Enter') {
           const filtered = gameOptions.filter(
             (value: GameObject) =>
@@ -98,6 +99,7 @@ const TeamsForm: React.FC<{
         }
       }
       const handleSearchPlayersKeyDown = (event: any) => {
+        setIndexBeingSearched(index)
         if (event.key === 'Enter') {
           const filtered = playerOptions.filter(
             (value: PlayerObjectLite) =>
@@ -128,7 +130,7 @@ const TeamsForm: React.FC<{
             label="Players"
             placeholder="The players on this team"
             onSearchChange={onSearchPlayersChange}
-            searchValue={searchPlayers}
+            searchValue={indexBeingSearched === index ? searchPlayers : ''}
             searchable
             clearable
             nothingFound="No players"
@@ -145,7 +147,7 @@ const TeamsForm: React.FC<{
             label="Games"
             placeholder="The games this team wants to play"
             onSearchChange={onSearchGamesChange}
-            searchValue={searchGames}
+            searchValue={indexBeingSearched === index ? searchGames : ''}
             searchable
             clearable
             nothingFound="No games"
@@ -239,7 +241,7 @@ export const AddTournament: React.FC = () => {
           message:
             // eslint-disable-next-line no-underscore-dangle
             res.response.data?.errors?.__all__ ||
-            'Error submitting this round.',
+            'Error submitting this tournament.',
         })
       })
   }

@@ -4,14 +4,16 @@ import { Routes, Route, HashRouter, Navigate } from 'react-router-dom'
 // eslint-disable-next-line import/no-unresolved
 import '@mantine/core/styles.css'
 // eslint-disable-next-line import/no-unresolved
+import '@mantine/dates/styles.css'
+// eslint-disable-next-line import/no-unresolved
 import '@mantine/notifications/styles.css'
 
 import 'src/index.css'
 import { App } from 'src/App'
 import { NotFound } from 'src/routes/NotFound'
-import { Login } from 'src/routes/Login'
-import { Signup } from 'src/routes/Signup'
-import { Logout } from 'src/routes/Logout'
+import { SignIn } from 'src/routes/SignIn'
+import { SignUp } from 'src/routes/SignUp'
+import { SignOut } from 'src/routes/SignOut'
 import { Default } from 'src/routes/Default'
 import { Player } from 'src/routes/player/Player'
 import { Group } from 'src/routes/Group'
@@ -29,6 +31,7 @@ import { Draft } from 'src/routes/draft/Draft'
 import { AddTeam } from 'src/routes/AddTeam'
 import { EditTeamRound } from 'src/routes/EditTeamRound'
 import { CurrentTournamentRound } from 'src/routes/roundSubmit/CurrentTournamentRound'
+import { AddGame } from 'src/routes/AddGame'
 
 // More route information can be found at https://reactrouter.com/docs/en/v6/getting-started/tutorial
 const rootElement = document.getElementById('root')
@@ -43,12 +46,12 @@ render(
         <Route path="/" element={<App />}>
           <Route path="/*" element={<NotFound />} />
           <Route path="/" element={<Default />} />
-          <Route path="/login" element={<Login />} />
+          <Route path="/sign_in" element={<SignIn />} />
           <Route path="/reset_password" element={<ResetPassword />}>
             <Route path=":username/:token" element={<ResetPassword />} />
           </Route>
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/logout" element={<Logout />} />
+          <Route path="/sign_up" element={<SignUp />} />
+          <Route path="/sign_out" element={<SignOut />} />
           <Route path="/player" element={<Player />}>
             <Route path=":pk" element={<Player />} />
           </Route>
@@ -86,6 +89,7 @@ render(
 
           <Route path="/add_tournament" element={<AddTournament />} />
           <Route path="/add_team" element={<AddTeam />} />
+          <Route path="/add_game" element={<AddGame />} />
           <Route path="/edit_team_round" element={<EditTeamRound />} />
           <Route path="/current" element={<CurrentTournaments />}>
             <Route path=":pk" element={<CurrentTournaments />} />

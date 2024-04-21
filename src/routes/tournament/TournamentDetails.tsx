@@ -4,12 +4,13 @@ import { BracketMatchesObject, TeamObject, TournamentObject } from 'src/types'
 import { useParamsPk } from 'src/utils/helpers'
 import { useGetTournamentInfo, useGetTournamentStats } from 'src/utils/hooks'
 import { Col, Container, Row } from 'react-bootstrap'
-import { Switch, ThemeIcon } from '@mantine/core'
+import { ActionIcon, Switch, ThemeIcon } from '@mantine/core'
 import { RoundDisplay } from 'src/components/RoundDisplay'
 import { CardDisplay } from 'src/components/CardDisplay'
 import { Loading } from 'src/components/Loading'
 import { HoverTooltip } from 'src/components/HoverTooltip'
 import { RowDisplay } from 'src/components/RowDisplay'
+import { IconEdit } from '@tabler/icons-react'
 
 // TODO(keegan): implement this function for white vs black text:
 //  https://blog.cristiana.tech/calculating-color-contrast-in-typescript-using-web-content-accessibility-guidelines-wcag
@@ -170,7 +171,20 @@ export const convertBracketToView = (
           round: tournamentRound,
           modifiedScoring,
           teamGame,
+          match,
         } = tournamentMatch
+
+        const editButton = (
+          <ActionIcon
+            component="a"
+            href={`#/edit_round/${tournament.pk}/${match}`}
+            variant="filled"
+            aria-label="Edit"
+          >
+            <IconEdit style={{ width: '70%', height: '70%' }} stroke={1.5} />
+          </ActionIcon>
+        )
+
         return (
           <Col className="mb-3">
             <Row className="justify-content-center">
@@ -181,13 +195,25 @@ export const convertBracketToView = (
                 // TODO: Disable showing score breakdown except by admins
                 modifiedScoring={modifiedScoring}
                 teamGame={teamGame}
+                action={editButton}
               />
             </Row>
           </Col>
         )
       }
       if (isScheduled) {
-        const { round: tournamentRound } = isScheduled
+        const { round: tournamentRound, match } = isScheduled
+
+        const editButton = (
+          <ActionIcon
+            component="a"
+            href={`#/edit_round/${tournament.pk}/${match}`}
+            variant="filled"
+            aria-label="Edit"
+          >
+            <IconEdit style={{ width: '70%', height: '70%' }} stroke={1.5} />
+          </ActionIcon>
+        )
         return (
           <Col className="mb-3">
             <Row className="justify-content-center">
@@ -199,6 +225,7 @@ export const convertBracketToView = (
                 modifiedScoring={false}
                 teamGame={false}
                 isSchedule={!!isScheduled}
+                action={editButton}
               >
                 {/* {rounds} */}
               </RoundDisplay>
