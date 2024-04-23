@@ -109,6 +109,7 @@ export const AddCurrentTournamentRound: React.FC<{
   }
 
   const players = playersResponse.response.data[tournamentPk]
+  const groupPlayers = playersResponse.response.data["group"]
   const games = gamesResponse.response.data
   const tournamentTeamPlayers =
     tournamentTeamPlayersResponse.response.data[tournamentPk]
@@ -168,7 +169,8 @@ export const AddCurrentTournamentRound: React.FC<{
           <RoundForm
             form={form}
             gameOptions={games}
-            playerOptions={players}
+            playerOptions={groupPlayers}
+            targetPlayerOptions={players}
             teamOptions={teams}
             matchPk={matchPk}
             playerValidations={playerValidations}
@@ -213,7 +215,8 @@ export const AddCurrentTournamentRound: React.FC<{
         <RoundForm
           form={form}
           gameOptions={games}
-          playerOptions={players}
+          playerOptions={groupPlayers}
+          targetPlayerOptions={players}
           teamOptions={teams}
           matchPk={matchPk}
           playerValidations={playerValidations}

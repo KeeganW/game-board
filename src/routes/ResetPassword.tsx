@@ -50,7 +50,7 @@ export const ResetPassword: React.FC = () => {
     if (passwordResetSent) {
       return (
         <CenteredPage pageWidth={SMALL_WIDTH}>
-          <Navigate replace to="/login/" />
+          <Navigate replace to="/sign_in/" />
         </CenteredPage>
       )
     }

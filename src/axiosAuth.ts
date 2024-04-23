@@ -60,7 +60,7 @@ axios.interceptors.response.use(
     ) {
       clearTokens()
       // TODO(keegan): not sure this works...
-      window.location.href = '/login'
+      window.location.href = '/sign_in'
       return Promise.reject(error)
     }
 

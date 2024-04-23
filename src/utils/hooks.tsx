@@ -221,6 +221,14 @@ export function useGetTournamentPlayers(
   return useGetResponse<TournamentPlayers>(url, params)
 }
 
+export function useGetGroupPlayerNames(
+  groupPk?: string | number,
+  params?: any
+): FetchResponse {
+  const url = `/group_players/${groupPk || ''}`
+  return useGetResponse<TournamentPlayers>(url, params)
+}
+
 export function useGetTournamentTeamPlayers(
   tournamentPk?: string | number,
   params?: any

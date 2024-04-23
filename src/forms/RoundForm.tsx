@@ -10,7 +10,7 @@ import {
   rem,
   Center,
   Card,
-  Divider,
+  Divider, MultiSelectProps,
 } from '@mantine/core'
 import { DateInput } from '@mantine/dates'
 import { clone, includes } from 'lodash'
@@ -20,6 +20,7 @@ export const RoundForm: React.FC<{
   form: any
   gameOptions: any
   playerOptions: any
+  targetPlayerOptions?: any
   teamOptions: any
   matchPk?: any
   playerValidations?: any
@@ -47,6 +48,7 @@ export const RoundForm: React.FC<{
   form,
   gameOptions,
   playerOptions,
+  targetPlayerOptions,
   teamOptions,
   matchPk,
   playerValidations,
@@ -208,6 +210,15 @@ export const RoundForm: React.FC<{
     playerSubmitterOptionsAll.push(playerOption)
   })
 
+  const renderPlayersMultiSelectOption: MultiSelectProps['renderOption'] = ({ option }) => {
+    const optionInTargetPlayerOptions = targetPlayerOptions.some((targetOption: PlayerObjectLite) => targetOption.username === option.value)
+    return (
+      <div>
+        <Text size="sm" style={optionInTargetPlayerOptions ? { fontWeight: 'bold' } : {}}>{option.label}</Text>
+      </div>
+    )
+  };
+
   // Return the actual form itself
   return (
     <>
@@ -305,6 +316,7 @@ export const RoundForm: React.FC<{
               label: `${value.firstName} ${value.lastName}`,
             })) || []
           }
+          renderOption={renderPlayersMultiSelectOption}
           onKeyDown={handleSearchPlayersKeyDown}
           {...form.getInputProps('players')}
         />
