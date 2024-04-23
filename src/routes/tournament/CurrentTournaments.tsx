@@ -241,7 +241,7 @@ export const CurrentTournaments: React.FC = () => {
 
         // Append all of this to an object to return
         return (
-          <div>
+          <div key={`scores${thisTournamentPk}`}>
             <ScoreboardForTournament
               key={thisTournamentPk}
               tournamentName={

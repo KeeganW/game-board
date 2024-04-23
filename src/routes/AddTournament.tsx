@@ -133,7 +133,7 @@ const TeamsForm: React.FC<{
             searchValue={indexBeingSearched === index ? searchPlayers : ''}
             searchable
             clearable
-            nothingFound="No players"
+            nothingFoundMessage="No players"
             data={
               playerOptions?.map((value: PlayerObjectFull) => ({
                 value: value.username,
@@ -150,7 +150,7 @@ const TeamsForm: React.FC<{
             searchValue={indexBeingSearched === index ? searchGames : ''}
             searchable
             clearable
-            nothingFound="No games"
+            nothingFoundMessage="No games"
             data={gameOptions?.map((value: GameObject) => value.name) || []}
             onKeyDown={handleSearchGamesKeyDown}
             {...form.getInputProps(`teams.${index}.games`)}

@@ -55,16 +55,27 @@ export const App = () => {
   const mainLinks = authenticated
     ? [
         <a
+          key="link-player"
           href={`#/player/${playerPk}`}
           className={classes.link}
           onClick={close}
         >
           Home
         </a>,
-        <a href="#/tournament" className={classes.link} onClick={close}>
+        <a
+          key="link-tournaments"
+          href="#/tournament"
+          className={classes.link}
+          onClick={close}
+        >
           Tournaments
         </a>,
-        <a href="#/current" className={classes.link} onClick={close}>
+        <a
+          key="link-current"
+          href="#/current"
+          className={classes.link}
+          onClick={close}
+        >
           Current Standings
         </a>,
         // <a href="#/add_round" className={classes.link}>
@@ -72,10 +83,20 @@ export const App = () => {
         // </a>,
       ]
     : [
-        <a href="#/current" className={classes.link} onClick={close}>
+        <a
+          key="link-current"
+          href="#/current"
+          className={classes.link}
+          onClick={close}
+        >
           Current Standings
         </a>,
-        <a href="#/acr" className={classes.link} onClick={close}>
+        <a
+          key="link-add-round"
+          href="#/acr"
+          className={classes.link}
+          onClick={close}
+        >
           Add Round
         </a>,
       ]
@@ -83,6 +104,7 @@ export const App = () => {
   const authLinks = authenticated
     ? [
         <Button
+          key="link-sign-out"
           component="a"
           href="#/sign_out"
           variant="default"
@@ -93,6 +115,7 @@ export const App = () => {
       ]
     : [
         <Button
+          key="link-sign-in"
           component="a"
           href="#/sign_in"
           variant="default"

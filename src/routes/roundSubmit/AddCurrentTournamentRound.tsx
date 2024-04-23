@@ -109,7 +109,7 @@ export const AddCurrentTournamentRound: React.FC<{
   }
 
   const players = playersResponse.response.data[tournamentPk]
-  const groupPlayers = playersResponse.response.data["group"]
+  const groupPlayers = playersResponse.response.data.group
   const games = gamesResponse.response.data
   const tournamentTeamPlayers =
     tournamentTeamPlayersResponse.response.data[tournamentPk]

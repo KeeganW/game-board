@@ -54,6 +54,7 @@ export const RoundDisplay: React.FC<{
     .map((playerRankObject: PlayerRankObject) => {
       return (
         <PlayerRankDisplay
+          key={`${roundObject.pk}${playerRankObject.pk}`}
           playerRankObject={playerRankObject}
           teamColorMapping={teamColorMapping}
           showTournamentScores={showTournamentScores}
@@ -95,6 +96,7 @@ export const RoundDisplay: React.FC<{
 
   const playerRanksHeader = (
     <RowDisplay
+      key={`rankHeader${roundObject.game.name}`}
       rank={<HoverTooltip tooltip="Rank" text="R" />}
       player="Player"
       score={<HoverTooltip tooltip="Score" text="S" />}

@@ -11,7 +11,11 @@ export const PlayerRecentGames: React.FC<{
     <h4>Last {playerStatsInfo.lastGamesPlayed.length} Games Played</h4>
     <Flex gap="md" justify="center" align="center" direction="row" wrap="wrap">
       {playerStatsInfo.lastGamesPlayed.map((round: RoundObject) => (
-        <RoundDisplay roundObject={round} highlightPlayerPk={playerPk} />
+        <RoundDisplay
+          key={`round${round.pk}`}
+          roundObject={round}
+          highlightPlayerPk={playerPk}
+        />
       ))}
     </Flex>
   </>

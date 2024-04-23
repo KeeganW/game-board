@@ -10,7 +10,8 @@ import {
   rem,
   Center,
   Card,
-  Divider, MultiSelectProps,
+  Divider,
+  MultiSelectProps,
 } from '@mantine/core'
 import { DateInput } from '@mantine/dates'
 import { clone, includes } from 'lodash'
@@ -210,14 +211,23 @@ export const RoundForm: React.FC<{
     playerSubmitterOptionsAll.push(playerOption)
   })
 
-  const renderPlayersMultiSelectOption: MultiSelectProps['renderOption'] = ({ option }) => {
-    const optionInTargetPlayerOptions = targetPlayerOptions.some((targetOption: PlayerObjectLite) => targetOption.username === option.value)
+  const renderPlayersMultiSelectOption: MultiSelectProps['renderOption'] = ({
+    option,
+  }) => {
+    const optionInTargetPlayerOptions = targetPlayerOptions.some(
+      (targetOption: PlayerObjectLite) => targetOption.username === option.value
+    )
     return (
       <div>
-        <Text size="sm" style={optionInTargetPlayerOptions ? { fontWeight: 'bold' } : {}}>{option.label}</Text>
+        <Text
+          size="sm"
+          style={optionInTargetPlayerOptions ? { fontWeight: 'bold' } : {}}
+        >
+          {option.label}
+        </Text>
       </div>
     )
-  };
+  }
 
   // Return the actual form itself
   return (
@@ -241,7 +251,7 @@ export const RoundForm: React.FC<{
           clearable
           allowDeselect
           disabled={disableGameSubmission}
-          nothingFound="No games"
+          nothingFoundMessage="No games"
           data={gameOptions?.map((value: GameObject) => value.name) || []}
           onKeyDown={handleSearchGameKeyDown}
           {...form.getInputProps('game')}
@@ -268,7 +278,7 @@ export const RoundForm: React.FC<{
           clearable
           disabled={disableScheduledTeamsSubmission}
           mb="sm"
-          nothingFound="No teams"
+          nothingFoundMessage="No teams"
           data={teamOptions || []}
           onKeyDown={handleSearchScheduledTeamsKeyDown}
           {...form.getInputProps('scheduledTeams')}
@@ -284,7 +294,7 @@ export const RoundForm: React.FC<{
           clearable
           allowDeselect
           disabled={disableScheduledTeamsSubmission}
-          nothingFound="No team"
+          nothingFoundMessage="No team"
           data={teamOptions || []}
           onKeyDown={handleSearchHostTeamKeyDown}
           {...form.getInputProps('hostTeam')}
@@ -309,7 +319,7 @@ export const RoundForm: React.FC<{
           clearable
           disabled={disablePlayersSubmission}
           mb="sm"
-          nothingFound="No players"
+          nothingFoundMessage="No players"
           data={
             playerOptions?.map((value: PlayerObjectFull) => ({
               value: value.username,

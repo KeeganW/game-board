@@ -59,7 +59,10 @@ export const convertStatsToView = (
           (a, b) => b[1] - a[1]
         )
         const scoring = sortedScores.map((scoringValue: any) => (
-          <Row className="mb-1 justify-content-center">
+          <Row
+            className="mb-1 justify-content-center"
+            key={`rawScoresByTeamRow${scoringValue[0]}`}
+          >
             <div
               className="col-md-auto rounded"
               style={{ backgroundColor: teamColorMapping.get(scoringValue[0]) }}
@@ -122,6 +125,8 @@ export const convertBracketToView = (
         // Create a placeholder for this score, with the team name.
         return realTeam ? (
           <RowDisplay
+            // eslint-disable-next-line react/no-array-index-key
+            key={`${weekIndex}${roundIndex}${teamIndex}`}
             rank={undefined}
             player={
               <span>
@@ -186,7 +191,7 @@ export const convertBracketToView = (
         )
 
         return (
-          <Col className="mb-3">
+          <Col key={`game${roundNumber}`} className="mb-3">
             <Row className="justify-content-center">
               <RoundDisplay
                 roundObject={tournamentRound}
@@ -215,7 +220,7 @@ export const convertBracketToView = (
           </ActionIcon>
         )
         return (
-          <Col className="mb-3">
+          <Col key={`game${roundNumber}`} className="mb-3">
             <Row className="justify-content-center">
               <RoundDisplay
                 roundObject={tournamentRound}
@@ -258,7 +263,7 @@ export const convertBracketToView = (
     }
     return (
       // eslint-disable-next-line react/no-array-index-key
-      <Row className="mb-3 justify-content-center" key={weekIndex}>
+      <Row className="mb-3 justify-content-center" key={`week-${weekIndex}`}>
         <h3 className="text-center">Week {weekIndex + 1}</h3>
         {roundsForWeek}
       </Row>

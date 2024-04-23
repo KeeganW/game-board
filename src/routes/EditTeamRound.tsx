@@ -72,7 +72,7 @@ const TeamRoundForm: React.FC<{
         searchable
         clearable
         mb="sm"
-        nothingFound="No games"
+        nothingFoundMessage="No games"
         data={gameOptions?.map((value: GameObject) => value.name) || []}
         onKeyDown={handleSearchGameKeyDown}
         {...form.getInputProps('game')}
@@ -85,7 +85,7 @@ const TeamRoundForm: React.FC<{
         searchable
         clearable
         mb="sm"
-        nothingFound="No players"
+        nothingFoundMessage="No players"
         data={
           playerOptions?.map((value: PlayerObjectFull) => ({
             value: value.username,
@@ -109,7 +109,7 @@ const TeamRoundForm: React.FC<{
         searchable
         clearable
         mb="sm"
-        nothingFound="No players"
+        nothingFoundMessage="No players"
         data={
           playerOptions?.map((value: PlayerObjectFull) => ({
             value: value.username,

@@ -1,5 +1,5 @@
 import React from 'react'
-import { render } from 'react-dom'
+import ReactDOM from 'react-dom/client'
 import { Routes, Route, HashRouter, Navigate } from 'react-router-dom'
 // eslint-disable-next-line import/no-unresolved
 import '@mantine/core/styles.css'
@@ -34,11 +34,11 @@ import { CurrentTournamentRound } from 'src/routes/roundSubmit/CurrentTournament
 import { AddGame } from 'src/routes/AddGame'
 
 // More route information can be found at https://reactrouter.com/docs/en/v6/getting-started/tutorial
-const rootElement = document.getElementById('root')
 const theme = createTheme({
   /** Put your mantine theme override here */
 })
-render(
+const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
+root.render(
   <MantineProvider theme={theme}>
     <Notifications />
     <HashRouter>
@@ -98,6 +98,5 @@ render(
         <Route path="/*" element={<Navigate to="/" />} />
       </Routes>
     </HashRouter>
-  </MantineProvider>,
-  rootElement
+  </MantineProvider>
 )
