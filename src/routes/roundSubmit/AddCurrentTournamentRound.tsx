@@ -176,7 +176,6 @@ export const AddCurrentTournamentRound: React.FC<{
             playerValidations={playerValidations}
             tournamentTeamPlayers={tournamentTeamPlayers}
             tournamentSchedule={tournamentSchedule}
-            hideRanksSubmission
             hideScheduledTeamsSubmission
           />
           <Center>

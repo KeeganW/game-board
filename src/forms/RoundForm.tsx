@@ -301,7 +301,7 @@ export const RoundForm: React.FC<{
         />
       )}
 
-      {!hideRanksSubmission ? undefined : (
+      {hideRanksSubmission ? undefined : (
         <Switch
           mt="xs"
           label="Manually set place (for tiebreakers)"
@@ -466,7 +466,7 @@ export const RoundForm: React.FC<{
                 />
               )}
 
-              {hideRanksSubmission && !showRanks ? undefined : (
+              {!showRanks ? undefined : (
                 <Select
                   id={`rank-input-${playerUsername}`}
                   label="Place"
