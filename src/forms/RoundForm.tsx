@@ -14,7 +14,7 @@ import {
   MultiSelectProps,
 } from '@mantine/core'
 import { DateInput } from '@mantine/dates'
-import { clone, includes } from 'lodash'
+import { clone, includes, isEmpty } from 'lodash'
 import { IconHeart, IconHeartFilled } from '@tabler/icons-react'
 
 export const RoundForm: React.FC<{
@@ -214,7 +214,7 @@ export const RoundForm: React.FC<{
   const renderPlayersMultiSelectOption: MultiSelectProps['renderOption'] = ({
     option,
   }) => {
-    const optionInTargetPlayerOptions = targetPlayerOptions.some(
+    const optionInTargetPlayerOptions = targetPlayerOptions?.some(
       (targetOption: PlayerObjectLite) => targetOption.username === option.value
     )
     return (
@@ -228,6 +228,11 @@ export const RoundForm: React.FC<{
       </div>
     )
   }
+
+  const playerOptionsOrTargetOptions =
+    playerOptions && !isEmpty(playerOptions)
+      ? playerOptions
+      : targetPlayerOptions || []
 
   // Return the actual form itself
   return (
@@ -321,7 +326,7 @@ export const RoundForm: React.FC<{
           mb="sm"
           nothingFoundMessage="No players"
           data={
-            playerOptions?.map((value: PlayerObjectFull) => ({
+            playerOptionsOrTargetOptions?.map((value: PlayerObjectFull) => ({
               value: value.username,
               label: `${value.firstName} ${value.lastName}`,
             })) || []
