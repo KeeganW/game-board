@@ -98,6 +98,7 @@ export const Draft: React.FC = () => {
         week && week.length > 0
           ? moment(week[0].round.date).format('MMMM D, YYYY')
           : ''
+      let disabledCount = 0
       const weekDisplay = week?.map((match: BracketMatchesObject) => {
         // Get conditions where we would disable this drafting option
         const matchContainsDrafter =
@@ -125,6 +126,7 @@ export const Draft: React.FC = () => {
             Draft
           </Button>
         )
+        disabledCount += shouldDisable ? 1 : 0
 
         return (
           <RoundDisplay
@@ -140,7 +142,7 @@ export const Draft: React.FC = () => {
           />
         )
       })
-      return (
+      return disabledCount === week.length ? null : (
         <>
           <Title order={3}>
             Playoff {weekIndex + 1}{' '}
