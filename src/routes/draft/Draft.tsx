@@ -102,22 +102,18 @@ export const Draft: React.FC = () => {
       let disabledCount = 0
       const weekDisplay = week?.map((match: BracketMatchesObject) => {
         // Get conditions where we would disable this drafting option
-        const validPicksForTeam = validMatchPicks?.[drafting.name]?.[weekIndex + 1] || []
+        const validPicksForTeam =
+          validMatchPicks?.[drafting.name]?.[weekIndex + 1] || []
         const matchIsValid = validPicksForTeam.includes(match.match)
 
         const isGettingData =
           refetching || isStillLoading([tournamentDraftResponse])
 
-        const shouldDisable =
-          !matchIsValid ||
-          isGettingData
+        const shouldDisable = !matchIsValid || isGettingData
         const pickButton = !shouldDisable && (
           <Button
             size="xs"
-            onClick={() => {
-              console.log(`Drafting ${match.match}`)
-              draftMatch(match.match)
-            }}
+            onClick={() => draftMatch(match.match)}
             disabled={shouldDisable}
           >
             Draft
@@ -161,7 +157,11 @@ export const Draft: React.FC = () => {
   return (
     <CenteredPage>
       <div>
-        {refetching ? <Loading /> : <Title>Currently Drafting: {drafting?.name}</Title>}
+        {refetching ? (
+          <Loading />
+        ) : (
+          <Title>Currently Drafting: {drafting?.name}</Title>
+        )}
       </div>
       <Flex
         direction={{ base: 'column', sm: 'row' }}

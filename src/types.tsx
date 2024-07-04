@@ -208,15 +208,9 @@ export type TournamentSchedule = Map<
 > &
   DetailResponse
 
-export type WeekValidMatchPicks = Map<
-  [week: number],
-  number[]
->
+export type WeekValidMatchPicks = Map<[week: number], number[]>
 
-export type ValidMatchPicks = Map<
-  [team: string],
-  WeekValidMatchPicks
->
+export type ValidMatchPicks = Map<[team: string], WeekValidMatchPicks>
 
 export type TournamentDraft = {
   draft: {
