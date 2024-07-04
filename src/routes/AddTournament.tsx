@@ -59,6 +59,10 @@ const TournamentForm: React.FC<{
         label="Number of Playoff Rounds"
         {...form.getInputProps('playoffRounds')}
       />
+      <Checkbox
+        label="Predraft Tournament Rounds"
+        {...form.getInputProps('predraftRounds', { type: 'checkbox' })}
+      />
       <NumberInput label="Game Size" {...form.getInputProps('gameSize')} />
     </CenteredPage>
   )
@@ -208,6 +212,7 @@ export const AddTournament: React.FC = () => {
       length: 10,
       includePlayoffs: false,
       playoffRounds: 0,
+      predraftRounds: true,
       gameSize: 4,
       teams: [
         { name: '', color: '#ffffff', players: [], games: [], key: randomId() },

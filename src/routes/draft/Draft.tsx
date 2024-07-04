@@ -37,6 +37,7 @@ export const Draft: React.FC = () => {
     tournamentTeamColors[tournamentPk]
   )
   const draft = tournamentDraft?.draft
+  const validMatchPicks = tournamentDraft?.validMatchPicks
   const drafting = draft?.drafting
 
   // TODO: Make it so you can click on any one of these, and get taken to /edit_round/<tournamentpk>/match.match
@@ -101,26 +102,22 @@ export const Draft: React.FC = () => {
       let disabledCount = 0
       const weekDisplay = week?.map((match: BracketMatchesObject) => {
         // Get conditions where we would disable this drafting option
-        const matchContainsDrafter =
-          match.round.scheduledTeams.filter(
-            (value: TeamObject) => value.pk === drafting.pk
-          ).length > 0
-        // TODO: the number here should be retrieved from the API get_number_teams_per_game_for_bracket_type
-        const matchHasTooManyTeams = match.round.scheduledTeams.length >= 4
-        const teamHasTooManyGamesInWeek =
-          teamMatchesByWeek[weekIndex][drafting.pk] >= 4
+        const validPicksForTeam = validMatchPicks?.[drafting.name]?.[weekIndex + 1] || []
+        const matchIsValid = validPicksForTeam.includes(match.match)
+
         const isGettingData =
           refetching || isStillLoading([tournamentDraftResponse])
 
         const shouldDisable =
-          matchContainsDrafter ||
-          matchHasTooManyTeams ||
-          teamHasTooManyGamesInWeek ||
+          !matchIsValid ||
           isGettingData
         const pickButton = !shouldDisable && (
           <Button
             size="xs"
-            onClick={() => draftMatch(match.match)}
+            onClick={() => {
+              console.log(`Drafting ${match.match}`)
+              draftMatch(match.match)
+            }}
             disabled={shouldDisable}
           >
             Draft
@@ -164,7 +161,7 @@ export const Draft: React.FC = () => {
   return (
     <CenteredPage>
       <div>
-        <Title>Currently Drafting: {draft?.drafting?.name}</Title>
+        {refetching ? <Loading /> : <Title>Currently Drafting: {drafting?.name}</Title>}
       </div>
       <Flex
         direction={{ base: 'column', sm: 'row' }}
