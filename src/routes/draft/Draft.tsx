@@ -46,7 +46,6 @@ export const Draft: React.FC = () => {
     axios
       .post(`/draft/${tournamentPk}/`, { matchPick: match }, {})
       .then(() => {
-        // Player was logged in, we should have credentials, so redirect
         tournamentDraftResponse.sendData()
         setRefetching(false)
       })
@@ -138,7 +137,7 @@ export const Draft: React.FC = () => {
       return disabledCount === week.length ? null : (
         <>
           <Title order={3}>
-            Playoff {weekIndex + 1}{' '}
+            Week {weekIndex + 2}{' '}
             {weekDateDisplay ? ` - ${weekDateDisplay}` : ''}
           </Title>
           <Flex
@@ -157,7 +156,7 @@ export const Draft: React.FC = () => {
   return (
     <CenteredPage>
       <div>
-        {refetching ? (
+        {refetching || tournamentDraftResponse.loading ? (
           <Loading />
         ) : (
           <Title>Currently Drafting: {drafting?.name}</Title>

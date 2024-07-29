@@ -25,12 +25,14 @@ import {
   isStillLoading,
   SMALL_WIDTH,
 } from 'src/utils/helpers'
+import { useNavigate } from 'react-router-dom'
 
 export const AdminEditRound: React.FC<{
   tournamentPk: string
   matchNumber: string
 }> = ({ tournamentPk, matchNumber }) => {
   const [, setRoundAdded] = useState<number>(-1)
+  const navigate = useNavigate()
   // TODO(keegan): tournament setting for only a single point of honor
   //  Add this to round form:
   //   Did you enjoy this game? Thumbs up, Thumbs down
@@ -137,6 +139,7 @@ export const AdminEditRound: React.FC<{
       .then(res => {
         // Player was logged in, we should have credentials, so redirect
         setRoundAdded(res.data.pk)
+        navigate(-1)
       })
       .catch(res => {
         notifications.show({
