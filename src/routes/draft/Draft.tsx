@@ -25,6 +25,9 @@ export const Draft: React.FC = () => {
   const tournamentDraftResponse = useGetTournamentDraft(tournamentPk)
 
   const [refetching, setRefetching] = useState<boolean>(false)
+  const [currentlyDrafting, setCurrentlyDrafting] = useState<
+    string | undefined
+  >(undefined)
 
   if (isStillLoading([tournamentTeamColorsResponse])) {
     return <Loading />
@@ -43,6 +46,14 @@ export const Draft: React.FC = () => {
   // TODO: Make it so you can click on any one of these, and get taken to /edit_round/<tournamentpk>/match.match
   function draftMatch(match: number) {
     setRefetching(true)
+    const draftingIndex = draft?.order.findIndex(
+      (teamObject: TeamObject) => teamObject.name === drafting.name
+    )
+    const nextDraftingObject =
+      draft?.order[
+        draftingIndex + 1 < draft?.order.length ? draftingIndex + 1 : 0
+      ]
+    setCurrentlyDrafting(nextDraftingObject?.name)
     axios
       .post(`/draft/${tournamentPk}/`, { matchPick: match }, {})
       .then(() => {
@@ -102,14 +113,13 @@ export const Draft: React.FC = () => {
       const weekDisplay = week?.map((match: BracketMatchesObject) => {
         // Get conditions where we would disable this drafting option
         const validPicksForTeam =
-          validMatchPicks?.[drafting.name]?.[weekIndex + 1] || []
+          validMatchPicks?.[drafting.name]?.[startingWeek + weekIndex] || []
         const matchIsValid = validPicksForTeam.includes(match.match)
 
-        const isGettingData =
-          refetching || isStillLoading([tournamentDraftResponse])
+        const isGettingData = isStillLoading([tournamentDraftResponse])
 
-        const shouldDisable = !matchIsValid || isGettingData
-        const pickButton = !shouldDisable && (
+        const shouldDisable = refetching || !matchIsValid || isGettingData
+        const pickButton = (
           <Button
             size="xs"
             onClick={() => draftMatch(match.match)}
@@ -118,7 +128,8 @@ export const Draft: React.FC = () => {
             Draft
           </Button>
         )
-        disabledCount += shouldDisable ? 1 : 0
+        // Only increment the disabled count when this match isn't pickable
+        disabledCount += !matchIsValid ? 1 : 0
 
         return (
           <RoundDisplay
@@ -130,14 +141,14 @@ export const Draft: React.FC = () => {
             action={pickButton}
             usePlayer
             isSchedule
-            disabled={shouldDisable}
+            disabled={refetching || shouldDisable}
           />
         )
       })
       return disabledCount === week.length ? null : (
         <>
           <Title order={3}>
-            Week {weekIndex + 2}{' '}
+            Week {startingWeek + weekIndex + 1}{' '}
             {weekDateDisplay ? ` - ${weekDateDisplay}` : ''}
           </Title>
           <Flex
@@ -156,10 +167,12 @@ export const Draft: React.FC = () => {
   return (
     <CenteredPage>
       <div>
-        {refetching || tournamentDraftResponse.loading ? (
+        {!(currentlyDrafting || drafting?.name) ? (
           <Loading />
         ) : (
-          <Title>Currently Drafting: {drafting?.name}</Title>
+          <Title>
+            Currently Drafting: {currentlyDrafting || drafting?.name}
+          </Title>
         )}
       </div>
       <Flex
