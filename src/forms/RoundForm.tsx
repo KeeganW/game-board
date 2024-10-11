@@ -317,6 +317,7 @@ export const RoundForm: React.FC<{
       {hidePlayersSubmission ? undefined : (
         <MultiSelect
           label="Players"
+          description="Bold indicates player is in tournament"
           placeholder="The players who played"
           onSearchChange={onSearchPlayersChange}
           searchValue={searchPlayers}

@@ -91,8 +91,10 @@ const ScheduleForTournament: React.FC<{
 }> = ({ schedule, teamColorMapping }) => {
   // Loop through every part of the triple matrix in the bracket object
   const results = schedule.map((week: string[][], weekIndex: number) => {
+    let date
     if (week && week.length > 0) {
       const firstRound = (week[0] as any).round
+      date = moment(firstRound.date).format('MMM Do')
       if (
         firstRound &&
         moment(firstRound.date) < moment().add(6, 'days') &&
@@ -184,7 +186,10 @@ const ScheduleForTournament: React.FC<{
         return (
           // eslint-disable-next-line react/no-array-index-key
           <Row className="mb-3 justify-content-center" key={weekIndex}>
-            <h3 className="text-center">Week {weekIndex + 1}</h3>
+            <h3 className="text-center">
+              Week {weekIndex + 1}
+              {date ? ` - ${date}` : ''}
+            </h3>
             {toDisplay}
           </Row>
         )

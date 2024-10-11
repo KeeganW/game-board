@@ -11,7 +11,7 @@ import {
 } from 'src/utils/helpers'
 import { BracketMatchesObject, TeamObject } from 'src/types'
 import { RoundDisplay } from 'src/components/RoundDisplay'
-import { Button, Flex, Title } from '@mantine/core'
+import { Button, Flex, List, Text, Title } from '@mantine/core'
 import { CenteredPage } from 'src/components/CenteredPage'
 import axios from 'src/axiosAuth'
 import { floor } from 'lodash'
@@ -42,17 +42,58 @@ export const Draft: React.FC = () => {
   const draft = tournamentDraft?.draft
   const validMatchPicks = tournamentDraft?.validMatchPicks
   const drafting = draft?.drafting
+  const draftType = draft?.type
+
+  const draftingIndex = draft?.order.findIndex(
+    (teamObject: TeamObject) => teamObject.name === drafting.name
+  )
+  const draftOrderSnakef = draftType === 'snakef' ? draft?.order.length : 0
+  const nextDraftingObject =
+    draftType === 'snaker'
+      ? draft?.order[draftingIndex - 1 > 0 ? draftingIndex - 1 : 0]
+      : draft?.order[
+          draftingIndex + 1 < draft?.order.length
+            ? draftingIndex + 1
+            : draftOrderSnakef
+        ]
+
+  function pickOrder() {
+    const listItems = draft?.order.map((team: TeamObject) => {
+      return (
+        <List.Item>
+          <Text
+            style={{
+              fontWeight: `${
+                (currentlyDrafting || drafting?.name) === team.name
+                  ? 'bold'
+                  : 'normal'
+              }`,
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+              textOverflow: 'ellipsis',
+            }}
+          >
+            {team.name}
+          </Text>
+        </List.Item>
+      )
+    })
+    return (
+      <div style={{ width: '100%', marginTop: 50 }}>
+        <Title order={3}>Pick Order</Title>
+        <List
+          listStyleType="none"
+          style={{ width: '100px', marginTop: '20px' }}
+        >
+          {listItems}
+        </List>
+      </div>
+    )
+  }
 
   // TODO: Make it so you can click on any one of these, and get taken to /edit_round/<tournamentpk>/match.match
   function draftMatch(match: number) {
     setRefetching(true)
-    const draftingIndex = draft?.order.findIndex(
-      (teamObject: TeamObject) => teamObject.name === drafting.name
-    )
-    const nextDraftingObject =
-      draft?.order[
-        draftingIndex + 1 < draft?.order.length ? draftingIndex + 1 : 0
-      ]
     setCurrentlyDrafting(nextDraftingObject?.name)
     axios
       .post(`/draft/${tournamentPk}/`, { matchPick: match }, {})
@@ -175,13 +216,16 @@ export const Draft: React.FC = () => {
           </Title>
         )}
       </div>
-      <Flex
-        direction={{ base: 'column', sm: 'row' }}
-        gap={{ base: 'sm', sm: 'lg' }}
-        justify={{ sm: 'center' }}
-        wrap="wrap"
-      >
-        {roundsToDisplay}
+      <Flex>
+        {!(currentlyDrafting || drafting?.name) ? null : pickOrder()}
+        <Flex
+          direction={{ base: 'column', sm: 'row' }}
+          gap={{ base: 'sm', sm: 'lg' }}
+          justify={{ sm: 'center' }}
+          wrap="wrap"
+        >
+          {roundsToDisplay}
+        </Flex>
       </Flex>
     </CenteredPage>
   )
