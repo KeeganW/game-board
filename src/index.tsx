@@ -32,6 +32,7 @@ import { AddTeam } from 'src/routes/AddTeam'
 import { EditTeamRound } from 'src/routes/EditTeamRound'
 import { CurrentTournamentRound } from 'src/routes/roundSubmit/CurrentTournamentRound'
 import { AddGame } from 'src/routes/AddGame'
+import { DraftPreferences } from 'src/routes/draft/DraftPreferences'
 
 // More route information can be found at https://reactrouter.com/docs/en/v6/getting-started/tutorial
 const theme = createTheme({
@@ -68,6 +69,10 @@ root.render(
             <Route path=":tournamentPk/:matchPk" element={<AddMatch />} />
           </Route>
           <Route path="/draft/:pk" element={<Draft />} />
+          <Route
+            path="/draft_preferences/:token"
+            element={<DraftPreferences />}
+          />
           <Route
             path="/edit_round/:tournamentPk/:matchNumber"
             element={<EditRound />}

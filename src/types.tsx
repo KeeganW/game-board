@@ -223,6 +223,11 @@ export type TournamentDraft = {
   validMatchPicks: ValidMatchPicks
 } & DetailResponse
 
+export type TournamentDraftPreferences = {
+  team: TeamObjectExposed
+  preferences: BracketMatchesObjectExposed[]
+} & DetailResponse
+
 export type TournamentPlayers = Map<
   [tournamentPk: string],
   Map<[playerPk: string], PlayerObjectExposed>

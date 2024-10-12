@@ -13,6 +13,7 @@ import {
   RoundObject,
   RoundObjectLite,
   TournamentDraft,
+  TournamentDraftPreferences,
   TournamentMatch,
   TournamentMatches,
   TournamentNames,
@@ -211,6 +212,14 @@ export function useGetTournamentDraft(
 ): FetchResponse {
   const url = `/draft/${tournamentPk}`
   return useGetResponse<TournamentDraft>(url, params)
+}
+
+export function useGetTournamentDraftPreferences(
+  token?: string,
+  params?: any
+): FetchResponse {
+  const url = `/draft_preferences/${token}`
+  return useGetResponse<TournamentDraftPreferences>(url, params)
 }
 
 export function useGetTournamentPlayers(
