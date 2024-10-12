@@ -77,7 +77,7 @@ export const DraftPreferences: React.FC = () => {
     <CenteredPage>
       <h2 className="text-center">Draft Preferences for {draftTeam.name}</h2>
       <Text style={{ maxWidth: '600px' }}>
-        Please re-arrange the items in this list by dragging and dropping them,
+        Please rearrange the items in this list by dragging and dropping them,
         then saving your preferences. The order for your team should indicate
         your overall preference for games to be played in the designated week.
         Your picks will be factored into drafting, picking your highest
