@@ -83,7 +83,7 @@ export const DraftPreferences: React.FC = () => {
         Your picks will be factored into drafting, picking your highest
         available choice when it is your turn to draft.
       </Text>
-      <h3 className="text-center">Week 6 - Oct 30th</h3>
+      <h3 className="text-center">Week 7 - Nov 6th</h3>
       <DraggableList state={state} handlers={handlers} />
       <Center>
         <Button variant="primary" onClick={handleOnSubmit}>
