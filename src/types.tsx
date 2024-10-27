@@ -225,6 +225,7 @@ export type TournamentDraft = {
 
 export type TournamentDraftPreferences = {
   team: TeamObjectExposed
+  schedule: Array<[week: Array<[match: Array<BracketMatchesObjectExposed>]>]>
   preferences: BracketMatchesObjectExposed[]
 } & DetailResponse
 

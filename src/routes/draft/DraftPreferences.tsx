@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { ReactNode, useEffect } from 'react'
 import { useGetTournamentDraftPreferences } from 'src/utils/hooks'
 import { Loading } from 'src/components/Loading'
 import { isStillLoading } from 'src/utils/helpers'
@@ -11,6 +11,7 @@ import { DraggableList } from 'src/components/DraggableList'
 import axios from 'src/axiosAuth'
 import { notifications } from '@mantine/notifications'
 import { Button } from 'react-bootstrap'
+import moment from 'moment'
 
 export const DraftPreferences: React.FC = () => {
   const { token } = useParams()
@@ -71,7 +72,69 @@ export const DraftPreferences: React.FC = () => {
     tournamentDraftPreferencesResponse.response?.data // Get draft
 
   const draftTeam = tournamentDraftPreferences?.team
-  // const draftPreferences = tournamentDraftPreferences?.preferences
+  const draftSchedule = tournamentDraftPreferences?.schedule
+  const draftPreferences = tournamentDraftPreferences?.preferences
+
+  // Figure out what the min/max matches from the preferences are
+  const minMatch = draftPreferences.reduce(
+    (prev: BracketMatchesObjectExposed, curr: BracketMatchesObjectExposed) =>
+      curr.match < prev.match ? curr : prev
+  )
+  const maxMatch = draftPreferences.reduce(
+    (prev: BracketMatchesObjectExposed, curr: BracketMatchesObjectExposed) =>
+      curr.match > prev.match ? curr : prev
+  )
+
+  const listsToShow: ReactNode[] = []
+  let minMatchWeek = -1
+
+  // Loop over the schedule to generate the draggable lists for all weeks in the preferences.
+  draftSchedule.forEach(
+    (schedule: BracketMatchesObjectExposed[], index: number) => {
+      const numMatchesInWeek = schedule.length
+      const numPreferencesInWeek = numMatchesInWeek - 1
+      // If there are matches in the week
+      if (numMatchesInWeek > 0) {
+        const firstMatch = schedule[0]
+        const weekNumber = index + 1
+        const activeWeek =
+          firstMatch.match >= minMatch.match &&
+          firstMatch.match <= maxMatch.match
+
+        // If we are setting preferences for the week
+        if (activeWeek) {
+          if (minMatchWeek < 0) {
+            minMatchWeek = weekNumber
+          }
+          const dateString = moment(firstMatch.round.date).format('MMM Do')
+
+          // Gather items needed for draggable list
+          const title = `Week ${weekNumber} - ${dateString}`
+          const startIndex = (weekNumber - minMatchWeek) * numPreferencesInWeek
+          const endIndex = startIndex + numPreferencesInWeek
+
+          // Add to the lists we want to show to the user
+          listsToShow.push(
+            <div>
+              <h3 className="text-center">{title}</h3>
+              <DraggableList
+                state={state}
+                handlers={handlers}
+                startIndex={startIndex}
+                endIndex={endIndex}
+              />
+              <Center>
+                <Button variant="primary" onClick={handleOnSubmit}>
+                  Save Preferences
+                </Button>
+              </Center>
+            </div>
+          )
+        }
+      }
+    }
+  )
+  // TODO issue with later weeks dragging
 
   return (
     <CenteredPage>
@@ -83,13 +146,7 @@ export const DraftPreferences: React.FC = () => {
         Your picks will be factored into drafting, picking your highest
         available choice when it is your turn to draft.
       </Text>
-      <h3 className="text-center">Week 7 - Nov 6th</h3>
-      <DraggableList state={state} handlers={handlers} />
-      <Center>
-        <Button variant="primary" onClick={handleOnSubmit}>
-          Save Preferences
-        </Button>
-      </Center>
+      {listsToShow}
     </CenteredPage>
   )
 }

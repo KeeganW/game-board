@@ -7,37 +7,44 @@ export const DraggableList: React.FC<{
   children?: any
   state: any[]
   handlers: UseListStateHandlers<any>
-}> = ({ children, state, handlers }) => {
-  const draggableItems = state.slice(0, 10).map((item, index) => (
-    <Draggable key={item.key} index={index} draggableId={item.key.toString()}>
-      {provided => (
-        <div
-          {...provided.draggableProps}
-          {...provided.dragHandleProps}
-          ref={provided.innerRef}
-        >
-          <List.Item
-            style={{
-              borderStyle: 'solid',
-              borderColor: 'lightgrey',
-              borderWidth: '1px',
-              borderRadius: '3px',
-              margin: '3px',
-              padding: '3px',
-              backgroundColor: 'white',
-            }}
+  startIndex: number
+  endIndex: number
+}> = ({ children, state, handlers, startIndex, endIndex }) => {
+  const draggableItems = state
+    .slice(startIndex, endIndex)
+    .map((item, index) => (
+      <Draggable key={item.key} index={index} draggableId={item.key.toString()}>
+        {provided => (
+          <div
+            {...provided.draggableProps}
+            {...provided.dragHandleProps}
+            ref={provided.innerRef}
           >
-            <Text>{item.value}</Text>
-          </List.Item>
-        </div>
-      )}
-    </Draggable>
-  ))
+            <List.Item
+              style={{
+                borderStyle: 'solid',
+                borderColor: 'lightgrey',
+                borderWidth: '1px',
+                borderRadius: '3px',
+                margin: '3px',
+                padding: '3px',
+                backgroundColor: 'white',
+              }}
+            >
+              <Text>{item.value}</Text>
+            </List.Item>
+          </div>
+        )}
+      </Draggable>
+    ))
 
   return (
     <DragDropContext
       onDragEnd={({ destination, source }) =>
-        handlers.reorder({ from: source.index, to: destination?.index || 0 })
+        handlers.reorder({
+          from: source.index + startIndex,
+          to: (destination?.index || 0) + startIndex,
+        })
       }
     >
       <Droppable droppableId="dnd-list" direction="vertical">
