@@ -1,7 +1,8 @@
 import React from 'react'
-import { List, Text } from '@mantine/core'
+import { ActionIcon, Flex, Group, List, Text } from '@mantine/core'
 import { UseListStateHandlers } from '@mantine/hooks'
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd'
+import { IconMenu2, IconQuestionMark } from '@tabler/icons-react'
 
 export const DraggableList: React.FC<{
   children?: any
@@ -20,7 +21,8 @@ export const DraggableList: React.FC<{
             {...provided.dragHandleProps}
             ref={provided.innerRef}
           >
-            <List.Item
+            <Group
+              justify="space-between"
               style={{
                 borderStyle: 'solid',
                 borderColor: 'lightgrey',
@@ -29,10 +31,36 @@ export const DraggableList: React.FC<{
                 margin: '3px',
                 padding: '3px',
                 backgroundColor: 'white',
+                height: '40px',
               }}
             >
-              <Text>{item.value}</Text>
-            </List.Item>
+              <List.Item>
+                <Text>{item.value}</Text>
+              </List.Item>
+
+              <Flex gap="5px">
+                <ActionIcon
+                  component="a"
+                  href={`https://boardgamegeek.com/boardgame/${item?.round?.game?.bggId}`}
+                  size="sm"
+                  aria-label="Open in a new tab"
+                  target="_blank"
+                  color="gray"
+                  // onClick={(event: any) => event.preventDefault()}
+                >
+                  <IconQuestionMark />
+                </ActionIcon>
+
+                <IconMenu2
+                  style={
+                    {
+                      // color: 'lightgrey',
+                      // marginRight: "10px"
+                    }
+                  }
+                />
+              </Flex>
+            </Group>
           </div>
         )}
       </Draggable>

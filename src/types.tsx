@@ -20,15 +20,13 @@ export type PlayerObjectLite = {
 export type GameObject = {
   pk: number
   name: string
-  description: string
-  gamePicture: string
+  bggId: string
 }
 
 export type GameObjectExposed = {
   pk: number
   name: string
-  description: string
-  gamePicture: string
+  bggId: string
 }
 
 export type GroupObject = {
