@@ -107,6 +107,12 @@ export const DraftPreferences: React.FC = () => {
             minMatchWeek = weekNumber
           }
           const dateString = moment(firstMatch.round.date).format('MMM Do')
+          const hostGame: BracketMatchesObjectExposed[] = schedule.filter(
+            (match: BracketMatchesObjectExposed) =>
+              match.round.hostTeam.name === draftTeam.name
+          )
+          const hostGameName =
+            hostGame.length > 0 ? hostGame[0].round.game.name : ''
 
           // Gather items needed for draggable list
           const title = `Week ${weekNumber} - ${dateString}`
@@ -117,6 +123,9 @@ export const DraftPreferences: React.FC = () => {
           listsToShow.push(
             <div>
               <h3 className="text-center">{title}</h3>
+              {hostGameName ? (
+                <h5 className="text-center">Hosting: {hostGameName}</h5>
+              ) : null}
               <DraggableList
                 state={state}
                 handlers={handlers}
