@@ -25,16 +25,6 @@ export const DraggableList: React.FC<{
             <Group
               justify="space-between"
               className={classes.group}
-              style={{
-                borderStyle: 'solid',
-                borderColor: 'lightgrey',
-                borderWidth: '1px',
-                borderRadius: '6px',
-                margin: '4px',
-                padding: '6px',
-                fontSize: '14px',
-                height: '36px',
-              }}
             >
               <List.Item>
                 <Text size="sm">{item.value}</Text>

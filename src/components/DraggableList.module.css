@@ -1,6 +1,21 @@
 .group {
     /* Group should have some hover color effects */
     background-color: #efefef;
+
+    /* Modified spacing around fonts to match components */
+    font-size: 14px;
+    height: 36px;
+
+    /* A small simple border */
+    border-style: solid;
+    border-color: lightgrey;
+    border-width: 1px;
+    border-radius: 6px;
+
+    /* And some custom padding */
+    margin: 4px;
+    padding: 6px 6px 6px 8px;
+
     &:hover {
         background-color: #d8d8d8;
     }
