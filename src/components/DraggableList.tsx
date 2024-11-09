@@ -2,7 +2,8 @@ import React from 'react'
 import { ActionIcon, Flex, Group, List, Text } from '@mantine/core'
 import { UseListStateHandlers } from '@mantine/hooks'
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd'
-import { IconMenu2, IconQuestionMark } from '@tabler/icons-react'
+import { IconGripVertical, IconInfoCircle } from '@tabler/icons-react'
+import classes from 'src/components/DraggableList.module.css'
 
 export const DraggableList: React.FC<{
   children?: any
@@ -23,42 +24,37 @@ export const DraggableList: React.FC<{
           >
             <Group
               justify="space-between"
+              className={classes.group}
               style={{
                 borderStyle: 'solid',
                 borderColor: 'lightgrey',
                 borderWidth: '1px',
-                borderRadius: '3px',
-                margin: '3px',
-                padding: '3px',
-                backgroundColor: 'white',
-                height: '40px',
+                borderRadius: '6px',
+                margin: '4px',
+                padding: '6px',
+                fontSize: '14px',
+                height: '36px',
               }}
             >
               <List.Item>
-                <Text>{item.value}</Text>
+                <Text size="sm">{item.value}</Text>
               </List.Item>
 
-              <Flex gap="5px">
+              <Flex gap="5px" align="center">
                 <ActionIcon
                   component="a"
                   href={`https://boardgamegeek.com/boardgame/${item?.round?.game?.bggId}`}
-                  size="sm"
+                  size="xs"
                   aria-label="Open in a new tab"
                   target="_blank"
-                  color="gray"
-                  // onClick={(event: any) => event.preventDefault()}
+                  variant="transparent"
                 >
-                  <IconQuestionMark />
+                  <IconInfoCircle
+                    className={`${classes.icon} ${classes.iconLarger} ${classes.iconHover}`}
+                  />
                 </ActionIcon>
 
-                <IconMenu2
-                  style={
-                    {
-                      // color: 'lightgrey',
-                      // marginRight: "10px"
-                    }
-                  }
-                />
+                <IconGripVertical className={classes.icon} />
               </Flex>
             </Group>
           </div>
@@ -67,23 +63,29 @@ export const DraggableList: React.FC<{
     ))
 
   return (
-    <DragDropContext
-      onDragEnd={({ destination, source }) =>
-        handlers.reorder({
-          from: source.index + startIndex,
-          to: (destination?.index || 0) + startIndex,
-        })
-      }
+    <div
+      style={{
+        marginBottom: '8px',
+      }}
     >
-      <Droppable droppableId="dnd-list" direction="vertical">
-        {provided => (
-          <div {...provided.droppableProps} ref={provided.innerRef}>
-            <List type="ordered">{draggableItems}</List>
-            {provided.placeholder}
-          </div>
-        )}
-      </Droppable>
-      {children}
-    </DragDropContext>
+      <DragDropContext
+        onDragEnd={({ destination, source }) =>
+          handlers.reorder({
+            from: source.index + startIndex,
+            to: (destination?.index || 0) + startIndex,
+          })
+        }
+      >
+        <Droppable droppableId="dnd-list" direction="vertical">
+          {provided => (
+            <div {...provided.droppableProps} ref={provided.innerRef}>
+              <List type="ordered">{draggableItems}</List>
+              {provided.placeholder}
+            </div>
+          )}
+        </Droppable>
+        {children}
+      </DragDropContext>
+    </div>
   )
 }

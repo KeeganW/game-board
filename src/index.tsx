@@ -21,7 +21,7 @@ import { Tournament } from 'src/routes/tournament/Tournament'
 import { AddRound } from 'src/routes/AddRound'
 import { AddMatch } from 'src/routes/AddMatch'
 import { AddTournament } from 'src/routes/AddTournament'
-import { createTheme, MantineProvider } from '@mantine/core'
+import { MantineProvider } from '@mantine/core'
 import { Notifications } from '@mantine/notifications'
 import { CurrentTournaments } from 'src/routes/tournament/CurrentTournaments'
 import { Round } from 'src/routes/Round'
@@ -33,11 +33,8 @@ import { EditTeamRound } from 'src/routes/EditTeamRound'
 import { CurrentTournamentRound } from 'src/routes/roundSubmit/CurrentTournamentRound'
 import { AddGame } from 'src/routes/AddGame'
 import { DraftPreferences } from 'src/routes/draft/DraftPreferences'
+import { theme } from 'src/theme'
 
-// More route information can be found at https://reactrouter.com/docs/en/v6/getting-started/tutorial
-const theme = createTheme({
-  /** Put your mantine theme override here */
-})
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 root.render(
   <MantineProvider theme={theme}>

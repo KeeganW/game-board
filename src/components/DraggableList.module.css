@@ -1,0 +1,24 @@
+.group {
+    /* Group should have some hover color effects */
+    background-color: #efefef;
+    &:hover {
+        background-color: #d8d8d8;
+    }
+}
+
+.icon {
+    color: #656565;
+    width: 14px;
+    height: 14px;
+}
+
+.iconLarger {
+    width: 16px;
+    height: 16px;
+}
+
+.iconHover {
+    &:hover {
+        color: #000000;
+    }
+}
