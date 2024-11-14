@@ -76,11 +76,11 @@ export const DraftPreferences: React.FC = () => {
   const draftPreferences = tournamentDraftPreferences?.preferences
 
   // Figure out what the min/max matches from the preferences are
-  const minMatch = draftPreferences.reduce(
+  const minPreferenceMatch = draftPreferences.reduce(
     (prev: BracketMatchesObjectExposed, curr: BracketMatchesObjectExposed) =>
       curr.match < prev.match ? curr : prev
   )
-  const maxMatch = draftPreferences.reduce(
+  const maxPreferenceMatch = draftPreferences.reduce(
     (prev: BracketMatchesObjectExposed, curr: BracketMatchesObjectExposed) =>
       curr.match > prev.match ? curr : prev
   )
@@ -95,18 +95,21 @@ export const DraftPreferences: React.FC = () => {
       const numPreferencesInWeek = numMatchesInWeek - 1
       // If there are matches in the week
       if (numMatchesInWeek > 0) {
-        const firstMatch = schedule[0]
+        const firstScheduledWeekMatch = schedule[0]
+        const lastScheduledWeekMatch = schedule[schedule.length - 1]
         const weekNumber = index + 1
         const activeWeek =
-          firstMatch.match >= minMatch.match &&
-          firstMatch.match <= maxMatch.match
+          minPreferenceMatch.match >= firstScheduledWeekMatch.match &&
+          maxPreferenceMatch.match <= lastScheduledWeekMatch.match
 
         // If we are setting preferences for the week
         if (activeWeek) {
           if (minMatchWeek < 0) {
             minMatchWeek = weekNumber
           }
-          const dateString = moment(firstMatch.round.date).format('MMM Do')
+          const dateString = moment(firstScheduledWeekMatch.round.date).format(
+            'MMM Do'
+          )
           const hostGame: BracketMatchesObjectExposed[] = schedule.filter(
             (match: BracketMatchesObjectExposed) =>
               match.round.hostTeam.name === draftTeam.name

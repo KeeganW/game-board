@@ -22,10 +22,7 @@ export const DraggableList: React.FC<{
             {...provided.dragHandleProps}
             ref={provided.innerRef}
           >
-            <Group
-              justify="space-between"
-              className={classes.group}
-            >
+            <Group justify="space-between" className={classes.group}>
               <List.Item>
                 <Text size="sm">{item.value}</Text>
               </List.Item>
